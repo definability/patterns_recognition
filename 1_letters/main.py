@@ -17,8 +17,11 @@ if __name__ == '__main__':
     if (abs(1 - sum(probabilities)) > EPSILON):
         raise ValueError('Sum of probabilities should be equal 1')
 
-    image = draw_message(generate_message(letters, probabilities, count), 50)
-    noise = generate_noise(image.getbbox()[2], image.getbbox()[3])
+    letters = draw_message(generate_message(letters, probabilities, count), 50)
+    width, height = letters.getbbox()[2], letters.getbbox()[3]
+    noise = generate_noise(width, height)
 
-    image.paste(noise, mask=noise)
+    letters.paste(Image.new('RGB', (width, height), 'black'), mask=noise)
+    image = Image.new('RGB', (width, height), 'white')
+    image.paste(Image.new('RGB', (width, height), 'black'), mask=letters)
     image.save('out.png')
