@@ -1,12 +1,15 @@
 from PIL import Image, ImageDraw, ImageFont
 
-def draw_message(message, size):
-    font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf', size)
-    width, height = font.getsize(message)
-    o_width, o_height = font.getoffset(message)
+def draw_message(message, characters):
+    images = [characters[c] for c in message]
+
+    width  = sum(character.size[0] for character in images)
+    height = max(character.size[1] for character in images)
 
     image = Image.new('RGBA', (width, height), (0,0,0,0))
-    draw = ImageDraw.Draw(image)
-    draw.text((-o_width, -o_height), message, 'black', font=font)
+    horizontal_offset = 0
+    for character in images:
+        image.paste(character, (horizontal_offset, 0))
+        horizontal_offset += character.size[0]
 
-    return image.crop(image.getbbox())
+    return image
