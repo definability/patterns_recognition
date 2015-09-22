@@ -19,7 +19,9 @@ class Recognizer:
             self.patterns_matrices[p] = img_to_matrix(self.patterns[p], 3, True)
         self.fragments = {}
 
-    def get_penalty(self, pattern, offset):
+    def get_penalty(self, pattern, offset, zero):
+        if offset < 0:
+            return zero
         pattern_data = self.patterns_matrices[pattern]
         image_data = self.image_matrix[offset:offset+self.patterns[pattern].size[0]]
         result = 0
@@ -28,18 +30,22 @@ class Recognizer:
                 result += (x-k)**2
         return result
 
-    def calculate(self, add, mul, zero):
+    def gather_penalties(self, domains, offset, add, zero, one):
+        if offset <= 0:
+            return one
+        return reduce(add, [v for v in domains[offset].values()], zero)
+
+
+    def calculate(self, add, mul, zero, one):
         domains = [dict() for i in range(self.image.size[0]+1)]
         for i, domain in enumerate(domains):
-            for key in self.patterns:
-                value = self.patterns[key]
-                if value.size[0] > i:
-                    domain[key] = zero
-                elif value.size[0] == i:
-                    domain[key] = self.get_penalty(key, 0)
-                else:
-                    domain[key] = mul(self.get_penalty(key, i-value.size[0]), reduce(add, [v for v in domains[i-value.size[0]].values()], zero))
-        return (domains, reduce(add, [v for v in domains[len(domains)-1].values()], zero))
+            for key, pattern in self.patterns.iteritems():
+                offset = i - pattern.size[0]
+                penalty = self.get_penalty(key, offset, zero)
+                penalties = self.gather_penalties(domains, offset, add, zero, one)
+                domain[key] = mul(penalty, penalties)
+        penalties = self.gather_penalties(domains, len(domains)-1, add, zero, one)
+        return (domains, penalties)
 
     def argmin(self, obj):
         result = obj.keys()[0]
