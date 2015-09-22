@@ -1,6 +1,3 @@
-def get_penalty(image1, image2):
-    return sum((x[3] - k[3])**2for x, k in zip(list(image1.getdata()), list(image2.getdata())))
-
 def img_to_matrix(img, band=0, inverse=False):
     matrix = []
     data = list(img.getdata())
