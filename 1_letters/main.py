@@ -41,6 +41,5 @@ if __name__ == '__main__':
     print ''.join(recognized)
     print ''.join(message)
     print 1.0*sum([1 for r, m in zip(recognized, message) if r != m])/count
-    #print sum(get_penalty(characters[recognized[i]], characters[message[i]]) for i in range(len(message)) if recognized[i] != message[i])
 
     image.save('out.png')
