@@ -1,8 +1,5 @@
 def get_penalty(image1, image2):
-    image1_data = list(image1.getdata())
-    image2_data = list(image2.getdata())
-    result = sum((image1_data[i][3] - image2_data[i][3])**2 for i in range(len(image1_data)))
-    return result
+    return sum((x[3] - k[3])**2for x, k in zip(list(image1.getdata()), list(image2.getdata())))
 
 class Recognizer:
 
@@ -11,10 +8,7 @@ class Recognizer:
         self.image = image
 
     def get_penalty(self, pattern, offset):
-        part_data = list(self.image.crop((offset, 0, offset + pattern.size[0], pattern.size[1])).getdata())
-        pattern_data = list(pattern.getdata())
-        result = sum((part_data[i][0] - (255-pattern_data[i][3]))**2 for i in range(len(part_data)))
-        return result
+        return sum((x[0] - (255-k[3]))**2 for x, k in zip(list(self.image.crop((offset, 0, offset + pattern.size[0], pattern.size[1])).getdata()), list(pattern.getdata())))
 
     def calculate(self, add, mul, zero):
         domains = [dict() for i in range(self.image.size[0]+1)]
