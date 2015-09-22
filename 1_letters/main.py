@@ -36,7 +36,7 @@ if __name__ == '__main__':
     image.paste(Image.new('LA', (width, height), 'black'), mask=text)
 
     recognizer = Recognizer(characters, image)
-    domains, result = recognizer.calculate(lambda x, y: min(x, y), lambda x, y: x+y, float('inf'))
+    domains, result = recognizer.calculate(lambda x, y: min(x, y), lambda x, y: x+y, float('inf'), 0)
     recognized = recognizer.find_path(domains)
     print ''.join(recognized)
     print ''.join(message)
