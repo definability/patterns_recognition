@@ -29,7 +29,7 @@ if __name__ == '__main__':
     message = generate_message(letters, probabilities, count)
     text = draw_message(message, characters)
     width, height = text.size[0], text.size[1]
-    noise = generate_noise(width, height, 0)
+    noise = generate_noise(width, height, 0, 555)
 
     text.paste(Image.new('RGB', (width, height), 'black'), mask=noise)
     image = Image.new('RGB', (width, height), 'white')
@@ -40,6 +40,7 @@ if __name__ == '__main__':
     recognized = recognizer.find_path(domains)
     print ''.join(recognized)
     print ''.join(message)
-    print sum(get_penalty(characters[recognized[i]], characters[message[i]]) for i in range(len(message)) if recognized[i] != message[i])
+    print 1.0*sum([1 for r, m in zip(recognized, message) if r != m])/count
+    #print sum(get_penalty(characters[recognized[i]], characters[message[i]]) for i in range(len(message)) if recognized[i] != message[i])
 
     image.save('out.png')
