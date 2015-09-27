@@ -12,6 +12,8 @@ def get_characters(characters, size):
         image = Image.new('RGBA', (width, height), (0,0,0,0))
         draw = ImageDraw.Draw(image)
         draw.text((-o_width, -o_height), c, 'black', font=font)
-        images[c] = image.crop(image.getbbox())
-    images[' '] = Image.new('RGBA', (size/2, space_height), (0,0,0,0))
+        if c == ' ':
+            images[' '] = Image.new('RGBA', (size/2, space_height), (0,0,0,0))
+        else:
+            images[c] = image.crop(image.getbbox())
     return images
