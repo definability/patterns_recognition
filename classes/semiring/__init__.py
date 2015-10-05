@@ -1,4 +1,6 @@
-semirings = []
+from SemiringMinPlusElement import SemiringMinPlusElement
 
-__all__ = []
+semirings = [SemiringMinPlusElement]
+
+__all__ = ['SemiringMinPlusElement']
 
