@@ -28,6 +28,14 @@ class TestSemiringsBasicProperties(TestCase):
             self.assertEqual(S.unity(), S.unity())
             self.assertIsNot(S.unity(), S.unity())
 
+    def test_zero_add_zero(self):
+        for S in semirings:
+            self.assertEqual(S.zero() + S.zero(), S.zero())
+
+    def test_unity_mul_unity(self):
+        for S in semirings:
+            self.assertEqual(S.unity() * S.unity(), S.unity())
+
     def test_zero_mul_unity(self):
         for S in semirings:
             self.assertEqual(S.zero() * S.unity(), S.zero())
