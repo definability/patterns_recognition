@@ -1,6 +1,7 @@
 from SemiringMinPlusElement import SemiringMinPlusElement
+from SemiringMinPlusTuple import SemiringMinPlusTuple
 
-semirings = [SemiringMinPlusElement]
+semirings = [SemiringMinPlusElement, SemiringMinPlusTuple]
 
-__all__ = ['SemiringMinPlusElement']
+__all__ = ['SemiringMinPlusElement', 'SemiringMinPlusTuple']
 
