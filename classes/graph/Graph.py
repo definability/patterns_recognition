@@ -25,6 +25,6 @@ class Graph(object):
 
 
     def check_edge(self, e):
-        if not self.V.issuperset(e.get_vertices()):
+        if not self.V.issuperset(set(e.get_vertices())):
             raise ValueError("All vertices should be in graph's vertices' set")
 
