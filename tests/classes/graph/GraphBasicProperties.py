@@ -15,7 +15,7 @@ class TestGraphBasicProperties(TestCase):
 
 
     def test_constructor(self):
-        g = Graph()
+        self.assertIsInstance(Graph(set(), set()), Graph)
 
 
 if __name__ == '__main__':
