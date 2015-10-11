@@ -1,23 +1,30 @@
+from Edge import Edge
+from Vertex import Vertex
+
+
 class Graph(object):
 
 
     def __init__(self, V, E):
 
-        if not isinstance(V, set):
-            raise ValueError("You should provide set of vertices")
-        else:
-            self.V = V
+        if isinstance(V, Vertex):
+            V = set([V])
+        elif not isinstance(V, set):
+            V = set(V)
 
-        if not isinstance(E, set):
-            raise ValueError("You should provide set of edges")
-        else:
-            self.E = E
+        if isinstance(E, Edge):
+            E = set([E])
+        elif not isinstance(E, set):
+            E = set(E)
+
+        self.V = V
+        self.E = E
 
         for e in E:
             self.check_edge(e)
 
 
     def check_edge(self, e):
-        if e.vertices[0] not in self.V or e.vertices[1] not in self.V:
+        if not self.V.issuperset(e.get_vertices()):
             raise ValueError("All vertices should be in graph's vertices' set")
 
