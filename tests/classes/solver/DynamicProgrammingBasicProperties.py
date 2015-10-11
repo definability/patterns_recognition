@@ -25,6 +25,17 @@ class TestGraphBasicProperties(TestCase):
         self.assertIsInstance(g, DynamicProgramming)
 
 
+    def test_prepare(self):
+        v_zero = Vertex(0)
+        v_one = Vertex(1)
+        e = Edge(v_zero, v_one)
+        g = DynamicProgramming([v_zero, v_one], [e])
+        g.set_start(v_zero)
+        g.set_end(v_one)
+        g.prepare()
+        self.assertFalse(e.is_visited())
+
+
 if __name__ == '__main__':
     main()
 
