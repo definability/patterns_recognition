@@ -1,9 +1,9 @@
 class Vertex(object):
 
 
-    def __init__(self, value, name=None):
-        self.value = value
+    def __init__(self, name=None):
         self.name = name
+        self.value = None
         self.inputs = set()
         self.outputs = set()
 
@@ -24,14 +24,30 @@ class Vertex(object):
         self.inputs.add(edge)
 
 
-    def get_inputs(self, edge):
+    def remove_input(self, edge):
+        self.inputs.remove(edge)
+
+
+    def remove_output(self, edge):
+        self.outputs.remove(edge)
+
+
+    def get_inputs(self):
         return self.inputs
+
+
+    def clear_inputs(self):
+        self.inputs.clear()
+
+
+    def clear_outputs(self):
+        self.outputs.clear()
 
 
     def add_output(self, edge):
         self.outputs.add(edge)
 
 
-    def get_outputs(self, edge):
+    def get_outputs(self):
         return self.outputs
 

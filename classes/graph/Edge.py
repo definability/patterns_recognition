@@ -4,7 +4,6 @@ class Edge(object):
     def __init__(self, x, y, value=None):
         self.vertices = (x, y)
         self.value = value
-        self.visited = False
 
 
     def get_vertices(self):
@@ -15,10 +14,6 @@ class Edge(object):
         return self.value
 
 
-    def set_visited(self, is_visited=True):
-        self.visited = is_visited
-
-
-    def is_visited(self):
-        return self.visited
+    def set_value(self, value):
+        self.value = value
 
