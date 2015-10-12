@@ -14,18 +14,19 @@ class DynamicProgramming(Graph):
         self.start = vertex
 
 
-    def set_end(self, vertex):
+    def set_finish(self, vertex):
         if vertex not in self.V:
             raise ValueError("Vertex should be in graph's vertices set")
-        self.end = vertex
+        self.finish = vertex
 
 
     def __prepare(self, semiring):
 
         for vertex in self.V:
-            vertex.clear_inputs()
             vertex.clear_outputs()
             vertex.set_value(semiring.zero())
+
+        self.start.set_value(semiring.unity())
 
         for edge in self.E:
             vertices = edge.get_vertices()
@@ -33,29 +34,27 @@ class DynamicProgramming(Graph):
             vertices[1].add_input(edge)
 
 
-    def __process_vertex(self, vertex, reached, to_visit):
+    def __process_vertex(self, vertex, visited, to_visit):
         for edge in vertex.get_outputs():
 
-            end = edge.get_vertices()[1]
-            end.set_value(vertex.get_value() * edge.get_value() + end.get_value())
+            finish = edge.get_vertices()[1]
+            finish.set_value(vertex.get_value() * edge.get_value() + finish.get_value())
 
-            end.remove_input(edge)
-            reached.add(end)
+            finish.remove_input(edge)
 
-            if len(end.get_inputs()) == 0:
-                to_visit.add(end)
-                reached.remove(end)
+            if len(finish.get_inputs()) == 0:
+                to_visit.add(finish)
 
 
     def solve(self, semiring):
 
         self.__prepare(semiring)
 
-        to_visit = set([self.end, self.start])
-        reached = set()
+        to_visit = set([self.finish, self.start])
+        visited = set()
 
-        while len(to_visit) and self.end not in reached:
-            self.__process_vertex(to_visit.pop(), reached, to_visit)
+        while len(to_visit) and self.finish not in visited:
+            self.__process_vertex(to_visit.pop(), visited, to_visit)
 
-        return self.end.get_value()
+        return self.finish.get_value()
 
