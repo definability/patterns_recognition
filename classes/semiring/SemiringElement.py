@@ -49,8 +49,11 @@ class SemiringElement(object):
         return self.value == b.value
 
     def __neq__(self, b):
-        return not self == b
+        return self.value != b.value
 
     def __str__(self):
         return str(self.value)
+
+    def __repr__(self):
+        return repr(self.value)
 
