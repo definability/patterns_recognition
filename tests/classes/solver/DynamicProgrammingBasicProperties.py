@@ -58,7 +58,7 @@ class TestGraphBasicProperties(TestCase):
 
 
     def test_solve_square(self):
-        """Solve problem with rhombus
+        """Solve problem with square
 
         start ---1--> A
           |           |
