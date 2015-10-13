@@ -23,6 +23,7 @@ class DynamicProgramming(Graph):
     def __prepare(self, semiring):
 
         for vertex in self.V:
+            vertex.clear_inputs()
             vertex.clear_outputs()
             vertex.set_value(semiring.zero())
 
