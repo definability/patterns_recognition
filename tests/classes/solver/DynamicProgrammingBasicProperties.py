@@ -93,17 +93,13 @@ class TestGraphBasicProperties(TestCase):
     def test_solve_square(self):
         """Find length of the shortest path (min,+)
 
-        start --5--> A --1---> B
-          |                    |
-          1                    3
-          |                    |
-          V                    V
-          x --5--> y --2--> z  C
-                            |  |
-                            1  9
-                            |  |
-                            V  V
-                           finish
+        start -5-> A ---1----> B --3--> C
+          |                             |
+          1                             9
+          |                             |
+          V                             V
+          x --5--> y --2--> z --1--> finish
+
 
         Right answer is 9
         """
@@ -122,11 +118,11 @@ class TestGraphBasicProperties(TestCase):
         start_a = Edge(start, a, SemiringMinPlusElement(5))
         a_b = Edge(a, b, SemiringMinPlusElement(1))
         b_c = Edge(b, c, SemiringMinPlusElement(3))
-        c_finish = Edge(c, finish, SemiringMinPlusElement(0))
+        c_finish = Edge(c, finish, SemiringMinPlusElement(9))
 
         start_x = Edge(start, x, SemiringMinPlusElement(1))
         x_y = Edge(x, y, SemiringMinPlusElement(5))
-        y_z = Edge(x, y, SemiringMinPlusElement(2))
+        y_z = Edge(y, z, SemiringMinPlusElement(2))
         z_finish = Edge(z, finish, SemiringMinPlusElement(1))
 
         g = DynamicProgramming([start, finish, a, b, c, x, y, z],
@@ -137,6 +133,54 @@ class TestGraphBasicProperties(TestCase):
 
         self.assertEqual(g.solve(SemiringMinPlusElement),
                          SemiringMinPlusElement(9))
+
+
+    def test_solve_crossed_square(self):
+        """Find length of the shortest path (min,+)
+
+        start -5-> A ---1----> B --3--> C
+          |        |                    |
+          1        0                    9
+          |        |                    |
+          V        V                    V
+          x --5--> y --2--> z --1--> finish
+
+        Right answer is 8
+        """
+
+        start = Vertex('start')
+        finish = Vertex('finish')
+
+        a = Vertex('a')
+        b = Vertex('b')
+        c = Vertex('c')
+
+        x = Vertex('x')
+        y = Vertex('y')
+        z = Vertex('z')
+
+        start_a = Edge(start, a, SemiringMinPlusElement(5))
+        a_b = Edge(a, b, SemiringMinPlusElement(1))
+        b_c = Edge(b, c, SemiringMinPlusElement(3))
+        c_finish = Edge(c, finish, SemiringMinPlusElement(9))
+
+        start_x = Edge(start, x, SemiringMinPlusElement(1))
+        x_y = Edge(x, y, SemiringMinPlusElement(5))
+        y_z = Edge(y, z, SemiringMinPlusElement(2))
+        z_finish = Edge(z, finish, SemiringMinPlusElement(1))
+
+        a_y = Edge(a, y, SemiringMinPlusElement(0))
+
+        g = DynamicProgramming([start, finish, a, b, c, x, y, z],
+                               [start_a, a_b, b_c, c_finish,
+                                start_x, x_y, y_z, z_finish,
+                                a_y])
+        g.set_start(start)
+        g.set_finish(finish)
+
+        self.assertEqual(g.solve(SemiringMinPlusElement),
+                         SemiringMinPlusElement(8))
+
 
 
 if __name__ == '__main__':
