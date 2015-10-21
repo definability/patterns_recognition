@@ -4,7 +4,7 @@ from classes.semiring import semirings
 from classes.semiring.SemiringElement import SemiringElement
 
 
-class TestSemiringsBasicProperties(TestCase):
+class TestSemiringBasicProperties(TestCase):
 
 
     def setUp(self):

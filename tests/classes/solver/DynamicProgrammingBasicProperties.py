@@ -6,7 +6,7 @@ from classes.semiring import semirings#SemiringMinPlusElement, SemiringPlusMulEl
 from classes.semiring import SemiringMinPlusElement, SemiringPlusMulElement
 
 
-class TestGraphBasicProperties(TestCase):
+class TestDynamicProgrammingBasicProperties(TestCase):
 
 
     def setUp(self):
