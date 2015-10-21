@@ -1,0 +1,4 @@
+from DynamicProgrammingBasicProperties import TestDynamicProgrammingBasicProperties
+
+test_cases = [TestDynamicProgrammingBasicProperties]
+
