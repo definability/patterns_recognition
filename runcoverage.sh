@@ -1,5 +1,2 @@
-coverage run tests.py
-mv .coverage
-
-coverage report --show-missing
+coverage run tests.py && coverage report --show-missing
 
