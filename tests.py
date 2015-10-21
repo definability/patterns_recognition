@@ -1,4 +1,4 @@
-from unittest import TestSuite, TextTestRunner, defaultTestLoader
+from unittest import TestSuite, TextTestRunner
 from tests import tests
 
 
