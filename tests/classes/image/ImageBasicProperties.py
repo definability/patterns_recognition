@@ -39,7 +39,6 @@ class TestImageBasicProperties(TestCase):
                              [[2, 3], [5, 6], [8, 9]])
 
 
-
 if __name__ == '__main__':
     main()
 
