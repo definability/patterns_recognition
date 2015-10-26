@@ -11,8 +11,8 @@ if __name__ == '__main__':
     profile = None
 
     parser = ArgumentParser(description='Testing arguments')
-    parser.add_argument('-p', '--profile',
-            help='Gather and show profiler information', action='store_true')
+    parser.add_argument('-p', '--profile', action='store_true',
+                        help='Gather and show profiler information')
     args = parser.parse_args()
 
     if args.profile:
