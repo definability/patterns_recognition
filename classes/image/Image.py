@@ -14,6 +14,10 @@ class Image:
         return self.data.reshape(self.height, self.width)
 
 
+    def get_data(self):
+        return self.data
+
+
     def crop_vertical(self, height, offset=0):
         return self.get_matrix()[offset:offset+height]
 
@@ -28,4 +32,17 @@ class Image:
 
     def split_horizontal(self, width, offset=0):
         return (self.get_matrix()[:,0:width], self.get_matrix()[:,width:])
+
+
+    def __sub__(self, image):
+        if self.height != image.height or self.width != image.width:
+            raise ValueError('Images must have equal sizes')
+        return Image(self.get_data() - image.get_data(), image.height, image.width)
+
+
+    def __isub__(self, image):
+        if self.height != image.height or self.width != image.width:
+            raise ValueError('Images must have equal sizes')
+        self.data -= image.get_data()
+        return self
 

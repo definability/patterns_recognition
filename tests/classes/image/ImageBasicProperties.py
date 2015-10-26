@@ -57,6 +57,22 @@ class TestImageBasicProperties(TestCase):
                              ([[3], [6], [9]]))
 
 
+    def test_sub(self):
+        a = Image([1, 2, 3, 4], 2)
+        b = Image([4, 3, 2, 1], 2)
+        c = a - b
+        self.assertEqual(c.get_matrix().tolist(),
+                         [[-3, -1], [1, 3]])
+
+
+    def test_isub(self):
+        a = Image([1, 2, 3, 4], 2)
+        b = Image([4, 3, 2, 1], 2)
+        a -= b
+        self.assertEqual(a.get_matrix().tolist(),
+                         [[-3, -1], [1, 3]])
+
+
 if __name__ == '__main__':
     main()
 
