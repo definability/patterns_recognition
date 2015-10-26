@@ -39,6 +39,24 @@ class TestImageBasicProperties(TestCase):
                              [[2, 3], [5, 6], [8, 9]])
 
 
+    def test_split_vertical(self):
+        for image in self.images:
+            splitted = image.split_vertical(2)
+            self.assertEqual(splitted[0].tolist(),
+                             ([[1, 2, 3], [4, 5, 6]]))
+            self.assertEqual(splitted[1].tolist(),
+                             ([[7, 8, 9]]))
+
+
+    def test_split_horizontal(self):
+        for image in self.images:
+            splitted = image.split_horizontal(2)
+            self.assertEqual(splitted[0].tolist(),
+                             ([[1, 2], [4, 5], [7, 8]]))
+            self.assertEqual(splitted[1].tolist(),
+                             ([[3], [6], [9]]))
+
+
 if __name__ == '__main__':
     main()
 
