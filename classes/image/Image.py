@@ -25,6 +25,7 @@ class Image:
     def crop_horizontal(self, width, offset=0):
         return self.get_matrix()[:,offset:offset+width]
 
+
     def split_horizontal(self, width, offset=0):
         return (self.get_matrix()[:,0:width], self.get_matrix()[:,width:])
 
