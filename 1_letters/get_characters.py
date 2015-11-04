@@ -1,7 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont
 
 def get_characters(characters, size):
-    font = ImageFont.truetype('/usr/share/fonts/truetype/liberation/LiberationSansNarrow-Italic.ttf', size)
+    font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf', size)
     images = {}
     space_height = 0
     for c in characters:
