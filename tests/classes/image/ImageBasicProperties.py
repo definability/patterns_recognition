@@ -27,30 +27,30 @@ class TestImageBasicProperties(TestCase):
             self.assertEqual(image.get_matrix().tolist(), self.matrix)
 
 
-    def test_crop_vertical(self):
-        for image in self.images:
-            self.assertEqual(image.crop_vertical(2, 1).tolist(),
-                             [[4, 5, 6], [7, 8, 9]])
-
-
     def test_crop_horizontal(self):
         for image in self.images:
             self.assertEqual(image.crop_horizontal(2, 1).tolist(),
+                             [[4, 5, 6], [7, 8, 9]])
+
+
+    def test_crop_vertical(self):
+        for image in self.images:
+            self.assertEqual(image.crop_vertical(2, 1).tolist(),
                              [[2, 3], [5, 6], [8, 9]])
 
 
-    def test_split_vertical(self):
+    def test_split_horizontal(self):
         for image in self.images:
-            splitted = image.split_vertical(2)
+            splitted = image.split_horizontal(2)
             self.assertEqual(splitted[0].tolist(),
                              ([[1, 2, 3], [4, 5, 6]]))
             self.assertEqual(splitted[1].tolist(),
                              ([[7, 8, 9]]))
 
 
-    def test_split_horizontal(self):
+    def test_split_vertical(self):
         for image in self.images:
-            splitted = image.split_horizontal(2)
+            splitted = image.split_vertical(2)
             self.assertEqual(splitted[0].tolist(),
                              ([[1, 2], [4, 5], [7, 8]]))
             self.assertEqual(splitted[1].tolist(),

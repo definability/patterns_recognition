@@ -18,19 +18,19 @@ class Image:
         return self.data
 
 
-    def crop_vertical(self, height, offset=0):
+    def crop_horizontal(self, height, offset=0):
         return self.get_matrix()[offset:offset+height]
 
 
-    def split_vertical(self, height):
+    def split_horizontal(self, height):
         return (self.get_matrix()[0:height], self.get_matrix()[height:])
 
 
-    def crop_horizontal(self, width, offset=0):
+    def crop_vertical(self, width, offset=0):
         return self.get_matrix()[:,offset:offset+width]
 
 
-    def split_horizontal(self, width, offset=0):
+    def split_vertical(self, width, offset=0):
         return (self.get_matrix()[:,0:width], self.get_matrix()[:,width:])
 
 
