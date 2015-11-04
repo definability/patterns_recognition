@@ -33,6 +33,8 @@ class DynamicProgramming(Graph):
             vertices = edge.get_vertices()
             vertices[0].add_output(edge)
             vertices[1].add_input(edge)
+            if not isinstance(edge.get_value(), semiring):
+                edge.set_value(semiring(edge.get_value()))
 
 
     def __process_vertex(self, vertex, visited, to_visit):
