@@ -1,2 +1,2 @@
-coverage run tests.py && coverage report --show-missing
+coverage run -m tests && coverage report --show-missing
 
