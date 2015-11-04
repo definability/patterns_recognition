@@ -5,13 +5,14 @@ from get_characters import get_characters
 from generate_message import generate_message
 from draw_message import draw_message
 from generate_noise import generate_noise
-from Recognizer import Recognizer
+from build_problem import build_problem
+from classes.semiring import *
 
 from PIL import Image, ImageDraw
 
 EPSILON = float_info.epsilon
 FONT_SIZE = 14
-SIGMA = 255
+SIGMA = 0#255
 
 
 class bcolors:
@@ -61,16 +62,26 @@ if __name__ == '__main__':
     image = Image.new('RGB', (width, height), 'white')
     image.paste(Image.new('LA', (width, height), 'black'), mask=text)
 
-    recognizer = Recognizer(image, characters, dict(zip(letters, probabilities)))
+    gc_characters = {}
+    for c in characters:
+        gc_characters[c] = characters[c].convert('L')
 
-    domains, result = recognizer.calculate(lambda x, y: min(x, y), lambda x, y: x+y, float('inf'), 0, get_penalty)
-    recognized = recognizer.find_path(domains)
+    image = image.convert('L')
+    print 'Get vertices and edges'
+    problem = build_problem(image, gc_characters)
+    print 'Solve'
+    print problem.solve(SemiringMinPlusElement)
+
+    #recognizer = Recognizer(image, characters, dict(zip(letters, probabilities)))
+
+    #domains, result = recognizer.calculate(lambda x, y: min(x, y), lambda x, y: x+y, float('inf'), 0, get_penalty)
+    #recognized = recognizer.find_path(domains)
 
     #print 'ORIGINAL'
-    print ''.join(message)
+    #print ''.join(message)
     #print 'Simple'
-    print ''.join([('' if m == r else bcolors.FAIL) + r + bcolors.ENDC for m, r in zip(message, recognized)])
-    print 1.0*sum([1 for r, m in zip(recognized, message) if r != m])/count
+    #print ''.join([('' if m == r else bcolors.FAIL) + r + bcolors.ENDC for m, r in zip(message, recognized)])
+    #print 1.0*sum([1 for r, m in zip(recognized, message) if r != m])/count
 
     image.save('out.png')
 
