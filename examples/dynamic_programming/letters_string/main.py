@@ -12,7 +12,7 @@ from PIL import Image, ImageDraw
 
 EPSILON = float_info.epsilon
 FONT_SIZE = 14
-SIGMA = 0#255
+SIGMA = 255
 
 
 class bcolors:
@@ -68,9 +68,10 @@ if __name__ == '__main__':
 
     image = image.convert('L')
     print 'Get vertices and edges'
+
     problem = build_problem(image, gc_characters)
     print 'Solve'
-    print problem.solve(SemiringMinPlusElement)
+    print problem.solve(SemiringArgminPlusElement)
 
     #recognizer = Recognizer(image, characters, dict(zip(letters, probabilities)))
 

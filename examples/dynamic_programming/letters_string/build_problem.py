@@ -3,6 +3,9 @@ from classes.graph import *
 from classes.image import *
 from classes.solver import *
 
+from cProfile import Profile
+from pstats import Stats
+
 
 image_cache = {}
 
@@ -17,7 +20,6 @@ def get_cached(image, offset, width):
     return image_cache[offset][width]
 
 
-calls={'a':0}
 def process_img(img, patterns, previous_vertex, offset=0, vertices=None, edges=None):
 
     if vertices is None:
@@ -40,17 +42,15 @@ def process_img(img, patterns, previous_vertex, offset=0, vertices=None, edges=N
             vertices[current_key] = [current_vertex]
         sigma = ((Image(img_left).data-patterns[p].data)**2).sum()
 
-        edge = Edge(previous_vertex, current_vertex, sigma)
+        edge = Edge(previous_vertex, current_vertex, (sigma,p))
         edges.add(edge)
 
-        calls['a']+=1
-        print 'Call', calls['a'], 'for', p, 'of', patterns[p].width, 'on', offset+patterns[p].width
         process_img(Image(img_right), patterns, current_vertex, offset+patterns[p].width, vertices, edges)
 
     return vertices, edges
 
 
-def build_problem(main_img, patterns_imgs, Semiring=SemiringMinPlusElement):
+def build_problem(main_img, patterns_imgs, Semiring=SemiringArgminPlusElement):
 
     image = Image(list(main_img.getdata()), main_img.size[1], main_img.size[0])
     patterns = dict()
@@ -65,7 +65,11 @@ def build_problem(main_img, patterns_imgs, Semiring=SemiringMinPlusElement):
     if min_width > image.width:
         return Graph([start, end], fake_edge)
 
+    profile = Profile()
+    profile.enable()
     vertices, edges = process_img(image, patterns, start)
+    profile.disable()
+    Stats(profile).sort_stats('time').print_stats()
     vertices['start'] = [start]
     vertices['end'] = [end]
     if vertices.has_key(image.width):
