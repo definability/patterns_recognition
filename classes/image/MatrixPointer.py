@@ -113,3 +113,25 @@ class MatrixPointer:
                                      self.get_offset(0, height))
         return (top, bottom)
 
+
+    def map(self, f, *matrices):
+        """Apply function to matrices and return list with processed values.
+        
+        Keyword arguments:
+        f -- function to apply;
+
+        Positional arguments:
+        matrices -- matrices,
+            which are needed to be iterated during the operation.
+        """
+        generators = [m.get_generator() for m in matrices]
+        result = []
+        b = self.get_generator()
+        for v in b:
+            result.append(f(*([v]+[g.next() for g in generators])))
+        return result
+
+
+    def __sub__(self, matrix):
+        return self.map(lambda x, y: x-y, matrix)
+
