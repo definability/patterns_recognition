@@ -45,23 +45,11 @@ class TestMatrixPointerBasicProperties(TestCase):
             self.assertEqual(right.get_data(False),
                              ([3, 6, 9]))
 
-
-    """
     def test_sub(self):
-        a = MatrixPointer([1, 2, 3, 4], 2)
-        b = MatrixPointer([4, 3, 2, 1], 2)
+        a = MatrixPointer([1, 2, 3, 4], (2, 2))
+        b = MatrixPointer([4, 3, 2, 1], (2, 2))
         c = a - b
-        self.assertEqual(c.get_matrix().tolist(),
-                         [[-3, -1], [1, 3]])
-
-
-    def test_isub(self):
-        a = MatrixPointer([1, 2, 3, 4], 2)
-        b = MatrixPointer([4, 3, 2, 1], 2)
-        a -= b
-        self.assertEqual(a.get_matrix().tolist(),
-                         [[-3, -1], [1, 3]])
-    """
+        self.assertEqual(c, [-3, -1, 1, 3])
 
 
 if __name__ == '__main__':
