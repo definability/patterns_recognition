@@ -50,10 +50,10 @@ class MatrixPointer:
         """
         if source:
             return self.__data
-        return [e for e in self.get_iterator()]
+        return [e for e in self.get_generator()]
 
 
-    def get_iterator(self):
+    def get_generator(self):
         """Get generator of list with data, current pointer points to."""
         result = []
         for y in range(self.__offset[1], self.__offset[1]+self.__size[1]):
