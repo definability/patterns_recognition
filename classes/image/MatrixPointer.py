@@ -42,7 +42,7 @@ class MatrixPointer:
 
 
     def get_data(self, source=False):
-        """Get matrix or a simple list with data, current pointer points to.
+        """Get list with data, current pointer points to.
         
         Keyword arguments:
         source -- whether you need the source data (True),
@@ -50,13 +50,17 @@ class MatrixPointer:
         """
         if source:
             return self.__data
+        return [e for e in self.get_iterator()]
+
+
+    def get_iterator(self):
+        """Get generator of list with data, current pointer points to."""
         result = []
-        for offset in range(self.__offset[1], self.__offset[1]+self.__size[1]):
-            result.extend(self.__data[
-                          self.__original_size[0]*offset+self.__offset[0]:
-                          self.__original_size[0]*offset+self.__offset[0]
-                                                        +self.__size[0]])
-        return result
+        for y in range(self.__offset[1], self.__offset[1]+self.__size[1]):
+            for e in self.__data[self.__original_size[0]*y+self.__offset[0]:
+                                 self.__original_size[0]*y+self.__offset[0]
+                                 +self.__size[0]]:
+                yield e
 
 
     def get_offset(self, initial_offset=(0,0), y=0):
