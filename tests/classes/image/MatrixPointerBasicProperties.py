@@ -7,8 +7,8 @@ class TestMatrixPointerBasicProperties(TestCase):
 
 
     def setUp(self):
-        self.matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-        self.lst = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        self.matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12]]
+        self.lst = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
         self.pointers = [MatrixPointer(self.matrix),
                          MatrixPointer(self.lst, (3, 3))]
 
@@ -30,20 +30,20 @@ class TestMatrixPointerBasicProperties(TestCase):
 
     def test_split_horizontal(self):
         for pointer in self.pointers:
-            top, bottom = pointer.split_horizontal(2)
+            top, bottom = pointer.split_horizontal(3)
             self.assertEqual(top.get_data(False),
-                             ([1, 2, 3, 4, 5, 6]))
+                             ([1, 2, 3, 4, 5, 6, 7, 8, 9]))
             self.assertEqual(bottom.get_data(False),
-                             ([7, 8, 9]))
+                             ([10, 11, 12]))
 
 
     def test_split_vertical(self):
         for pointer in self.pointers:
             left, right = pointer.split_vertical(2)
             self.assertEqual(left.get_data(False),
-                             ([1, 2, 4, 5, 7, 8]))
+                             ([1, 2, 4, 5, 7, 8, 10, 11]))
             self.assertEqual(right.get_data(False),
-                             ([3, 6, 9]))
+                             ([3, 6, 9, 12]))
 
 
     def test_map_sum(self):
