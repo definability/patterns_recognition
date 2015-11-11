@@ -114,6 +114,18 @@ class MatrixPointer:
         return (top, bottom)
 
 
+    def __sync_generators(self, *matrices):
+        """Create synchronized generator based on length of current matrix.
+
+        Positional arguments:
+        matrices -- matrices,
+            which are needed to be iterated during the operation.
+        """
+        generators = [m.get_generator() for m in matrices]
+        for v in self.get_generator():
+            yield [v]+[g.next() for g in generators]
+
+
     def map(self, f, *matrices):
         """Apply function to matrices and return list with processed values.
         
@@ -124,11 +136,9 @@ class MatrixPointer:
         matrices -- matrices,
             which are needed to be iterated during the operation.
         """
-        generators = [m.get_generator() for m in matrices]
         result = []
-        b = self.get_generator()
-        for v in b:
-            result.append(f(*([v]+[g.next() for g in generators])))
+        for v in self.__sync_generators(*matrices):
+            result.append(f(*v))
         return result
 
 
