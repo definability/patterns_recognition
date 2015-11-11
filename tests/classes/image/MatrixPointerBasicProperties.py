@@ -46,14 +46,14 @@ class TestMatrixPointerBasicProperties(TestCase):
                              ([3, 6, 9]))
 
 
-    def test_map(self):
+    def test_map_sum(self):
         a = MatrixPointer([1, 2, 3, 4], (2, 2))
         b = MatrixPointer([4, 3, 2, 1], (2, 2))
         c = a.map(lambda x, y: x + y, b)
         self.assertEqual(c, [5]*4)
 
 
-    def test_reduce(self):
+    def test_reduce_sum(self):
         a = MatrixPointer([1, 2, 3, 4], (2, 2))
         b = MatrixPointer([4, 3, 2, 1], (2, 2))
         c = a.reduce(lambda accumulator, x, y: accumulator + x + y, 0, b)
