@@ -45,6 +45,14 @@ class TestMatrixPointerBasicProperties(TestCase):
             self.assertEqual(right.get_data(False),
                              ([3, 6, 9]))
 
+
+    def test_map(self):
+        a = MatrixPointer([1, 2, 3, 4], (2, 2))
+        b = MatrixPointer([4, 3, 2, 1], (2, 2))
+        c = a.map(lambda x, y: x + y, b)
+        self.assertEqual(c, [5]*4)
+
+
     def test_sub(self):
         a = MatrixPointer([1, 2, 3, 4], (2, 2))
         b = MatrixPointer([4, 3, 2, 1], (2, 2))
