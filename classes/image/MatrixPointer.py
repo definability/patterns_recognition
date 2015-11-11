@@ -142,6 +142,23 @@ class MatrixPointer:
         return result
 
 
+    def reduce(self, f, initial_value=None, *matrices):
+        """Apply function to matrices using accumulator and return the result.
+
+        Keyword arguments:
+        f -- function to apply;
+
+        Positional arguments:
+        matrices -- matrices,
+            which are needed to be iterated during the operation.
+        """
+        result = initial_value
+        b = self.get_generator()
+        for v in self.__sync_generators(*matrices):
+            result = (f(result, *v))
+        return result
+
+
     def __sub__(self, matrix):
         return self.map(lambda x, y: x-y, matrix)
 
