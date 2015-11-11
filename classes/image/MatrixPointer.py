@@ -136,27 +136,25 @@ class MatrixPointer:
         matrices -- matrices,
             which are needed to be iterated during the operation.
         """
-        result = []
-        for v in self.__sync_generators(*matrices):
-            result.append(f(*v))
-        return result
+        return [f(*v) for v in self.__sync_generators(*matrices)]
 
 
-    def reduce(self, f, initial_value=None, *matrices):
+    def reduce(self, f, current_value=None, *matrices):
         """Apply function to matrices using accumulator and return the result.
 
         Keyword arguments:
         f -- function to apply;
 
         Positional arguments:
+        current_value -- initial value,
+            which will be passed to f in the first operation.
         matrices -- matrices,
             which are needed to be iterated during the operation.
         """
-        result = initial_value
         b = self.get_generator()
         for v in self.__sync_generators(*matrices):
-            result = (f(result, *v))
-        return result
+            current_value = (f(current_value, *v))
+        return current_value
 
 
     def __sub__(self, matrix):
