@@ -24,8 +24,8 @@ class MatrixPointer:
                 size = (len(data), len(data[0]))
 
         if isinstance(data, MatrixPointer):
-            self.__data = data.get_data()
-            self.__original_size = data.get_size()
+            self.__data = data.get_data(True)
+            self.__original_size = data.get_size(True)
             self.__size = size
             self.__offset = data.get_offset(offset)
         else:
@@ -102,9 +102,9 @@ class MatrixPointer:
                 self.__offset[1]+y)
 
 
-    def get_size(self):
+    def get_size(self, original=False):
         """Get width and height of current matrix"""
-        return self.__size
+        return self.__original_size if original else self.__size
 
 
     def split_vertical(self, width):

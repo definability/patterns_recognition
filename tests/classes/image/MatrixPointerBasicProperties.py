@@ -87,6 +87,22 @@ class TestMatrixPointerBasicProperties(TestCase):
             self.assertEqual(right.get_data(False), self.lst)
 
 
+    def test_split_vertical_twice(self):
+        for pointer in self.pointers:
+            left, right = pointer.split_vertical(2)
+            left, right = left.split_vertical(1)
+            self.assertEqual(right.get_data(), [2, 5, 8, 11])
+            self.assertEqual(right.get_size(), (1, 4))
+
+
+    def test_split_horizontal_twice(self):
+        for pointer in self.pointers:
+            top, bottom = pointer.split_horizontal(2)
+            top, bottom = top.split_horizontal(1)
+            self.assertEqual(bottom.get_data(), [4, 5, 6])
+            self.assertEqual(bottom.get_size(), (3, 1))
+
+
     def test_map_sum(self):
         a = MatrixPointer([1, 2, 3, 4], (2, 2))
         b = MatrixPointer([4, 3, 2, 1], (2, 2))
