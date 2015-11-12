@@ -14,6 +14,7 @@ class MatrixPointer:
             default is False.
         """
 
+
         if size is None:
             if type(data) is not list or type(data[0]) is not list:
                 raise ValueError('If size is not set, data should be a matrix')
@@ -64,11 +65,15 @@ class MatrixPointer:
         """
         if source:
             return self.__data
+        if self.__size == (0, 0):
+            return None
         return [e for e in self.get_generator()]
 
 
     def get_generator(self):
         """Get generator of list with data, current pointer points to."""
+        if self.__size == (0, 0):
+            return
         result = []
         for y in range(self.__offset[1], self.__offset[1]+self.__size[1]):
             for e in self.__data[self.__original_size[0]*y+self.__offset[0]:
@@ -109,8 +114,10 @@ class MatrixPointer:
         - to first `width` columns of the matrix;
         - to other columns of the matrix.
         """
-        left = MatrixPointer(self, (width, self.__size[1]), self.get_offset())
-        right = MatrixPointer(self, (self.__size[0]-width, self.__size[1]),
+        height = 0 if width == 0 else self.__size[1]
+        left = MatrixPointer(self, (width, height), self.get_offset())
+        height = 0 if width == self.__size[0] else self.__size[1]
+        right = MatrixPointer(self, (self.__size[0]-width, height),
                                      self.get_offset(width, 0))
         return (left, right)
 
@@ -122,8 +129,10 @@ class MatrixPointer:
         - to first `height` rows of the matrix;
         - to other rows of the matrix.
         """
-        top = MatrixPointer(self, (self.__size[0], height), self.get_offset())
-        bottom = MatrixPointer(self, (self.__size[0], self.__size[1]-height),
+        width = 0 if height == 0 else self.__size[0]
+        top = MatrixPointer(self, (width, height), self.get_offset())
+        width = 0 if height == self.__size[1] else self.__size[0]
+        bottom = MatrixPointer(self, (width, self.__size[1]-height),
                                      self.get_offset(0, height))
         return (top, bottom)
 
