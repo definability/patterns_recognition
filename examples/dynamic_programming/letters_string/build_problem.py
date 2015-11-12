@@ -7,17 +7,11 @@ from cProfile import Profile
 from pstats import Stats
 
 
-image_cache = {}
-
-def get_cached(image, offset, width):
-    if image_cache.has_key(offset):
-        if image_cache[offset].has_key(width):
-            return image_cache[offset][width]
-        image_cache[offset][width] = image.split_vertical(width)
-        return image_cache[offset][width]
-    image_cache[offset] = dict()
-    image_cache[offset][width] = image.split_vertical(width)
-    return image_cache[offset][width]
+def prt_m(image):
+    for i in range(image.get_size()[1]):
+        for v in image.get_data()[i*image.get_size()[0]:(i+1)*image.get_size()[0]]:
+            print '%03d'%v,
+        print ''
 
 
 def process_img(img, patterns, previous_vertex, offset=0, vertices=None, edges=None):
@@ -29,40 +23,57 @@ def process_img(img, patterns, previous_vertex, offset=0, vertices=None, edges=N
 
     for p in patterns:
 
-        if patterns[p].width > img.width:
+        if patterns[p].get_size()[0] > img.get_size()[0]:
             continue
 
-        img_left, img_right = get_cached(img, offset, patterns[p].width)
+        print 'Processing "%c"'%p
+        img_left, img_right = img.split_vertical(patterns[p].get_size()[0])
+        print 'LEFT'
+        prt_m(img_left)
+        print 'RIGHT'
+        prt_m(img_right)
 
-        current_vertex = Vertex(p)
-        current_key = offset+patterns[p].width
+        current_vertex = None
+        current_key = offset+patterns[p].get_size()[0]
+        if vertices.has_key(current_key):
+            for vertex in vertices[current_key]:
+                if vertex.get_name() == p:
+                    current_vertex = vertex
+                    break
+        if current_vertex is None:
+            current_vertex = Vertex(p)
+
         if vertices.has_key(current_key):
             vertices[current_key].append(current_vertex)
         else:
             vertices[current_key] = [current_vertex]
-        sigma = ((Image(img_left).data-patterns[p].data)**2).sum()
+        sigma = img_left.reduce(lambda accumulator, x, y: accumulator + (x - y)**2, 0, patterns[p])
+        print (offset, offset+patterns[p].get_size()[0], p, sigma)
 
-        edge = Edge(previous_vertex, current_vertex, (sigma,p))
+        edge = Edge(previous_vertex, current_vertex, (sigma, p))
         edges.add(edge)
 
-        process_img(Image(img_right), patterns, current_vertex, offset+patterns[p].width, vertices, edges)
+        process_img(img_right, patterns, current_vertex, offset+patterns[p].get_size()[0], vertices, edges)
 
     return vertices, edges
 
 
 def build_problem(main_img, patterns_imgs, Semiring=SemiringArgminPlusElement):
 
-    image = Image(list(main_img.getdata()), main_img.size[1], main_img.size[0])
+    image = MatrixPointer(list(main_img.getdata()), (main_img.size[0], main_img.size[1]))
     patterns = dict()
+    prt_m(image)
     for p in patterns_imgs:
-        patterns[p] = Image(list(patterns_imgs[p].getdata()), patterns_imgs[p].size[1], patterns_imgs[p].size[0])
+        patterns[p] = MatrixPointer(list(patterns_imgs[p].getdata()), (patterns_imgs[p].size[0], patterns_imgs[p].size[1]))
+        prt_m(patterns[p])
+        print ''
 
     start = Vertex('start')
     end = Vertex('end')
     fake_edge = Edge(start, end, Semiring.get_zero())
 
-    min_width = min(patterns[p].width for p in patterns)
-    if min_width > image.width:
+    min_width = min(patterns[p].get_size()[0] for p in patterns)
+    if min_width > image.get_size()[0]:
         return Graph([start, end], fake_edge)
 
     profile = Profile()
@@ -72,9 +83,9 @@ def build_problem(main_img, patterns_imgs, Semiring=SemiringArgminPlusElement):
     Stats(profile).sort_stats('time').print_stats()
     vertices['start'] = [start]
     vertices['end'] = [end]
-    if vertices.has_key(image.width):
+    if vertices.has_key(image.get_size()[0]):
         edges = edges.union(Edge(v, end, Semiring.get_unity())
-                            for v in vertices[image.width])
+                            for v in vertices[image.get_size()[0]])
 
     problem = DynamicProgramming(sum(vertices.values(), []), edges)
     problem.set_start(start)
