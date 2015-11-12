@@ -28,6 +28,7 @@ class TestMatrixPointerBasicProperties(TestCase):
         for pointer in self.pointers:
             self.assertEqual(pointer.get_data(True), self.lst)
 
+
     def test_split_horizontal(self):
         for pointer in self.pointers:
             top, bottom = pointer.split_horizontal(3)
