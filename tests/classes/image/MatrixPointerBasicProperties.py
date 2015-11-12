@@ -29,6 +29,18 @@ class TestMatrixPointerBasicProperties(TestCase):
             self.assertEqual(pointer.get_data(True), self.lst)
 
 
+    def test_get_data_transposed(self):
+        a = MatrixPointer([1, 3, 5, 2, 4, 6], (2, 3), transpose=True)
+        self.assertEqual(a.get_data(), [1, 2, 3, 4, 5, 6])
+
+
+    def test_get_data_transposed_involutive(self):
+        for source in [self.matrix, self.lst]:
+            t = MatrixPointer(source, (4, 3), transpose=True).get_data()
+            tt = MatrixPointer(t, (3, 4), transpose=True).get_data()
+            self.assertEqual(tt, MatrixPointer(source, (3,4)).get_data())
+
+
     def test_split_horizontal(self):
         for pointer in self.pointers:
             top, bottom = pointer.split_horizontal(3)
