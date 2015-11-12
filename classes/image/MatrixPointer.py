@@ -1,7 +1,7 @@
 class MatrixPointer:
 
 
-    def __init__(self, data, size=None, offset=(0,0)):
+    def __init__(self, data, size=None, offset=(0,0), transpose=False):
         """Create a matrix pointer.
 
         Keyword arguments:
@@ -9,13 +9,18 @@ class MatrixPointer:
         size -- tuple (width, height) with size of current image fragment;
             default is None, but you can use it only when data is a matrix;
         offset -- tuple (x, y) with offset of current image fragment
-            from the left top element of the matrix; default is (0, 0).
+            from the left top element of the matrix; default is (0, 0);
+        transpose -- True if matrix needs to be transposed and False otherwise;
+            default is False.
         """
 
         if size is None:
             if type(data) is not list or type(data[0]) is not list:
                 raise ValueError('If size is not set, data should be a matrix')
-            size = (len(data[0]), len(data))
+            if not transpose:
+                size = (len(data[0]), len(data))
+            else:
+                size = (len(data), len(data[0]))
 
         if isinstance(data, MatrixPointer):
             self.__data = data.get_data()
@@ -27,6 +32,8 @@ class MatrixPointer:
             self.__original_size = size
             self.__size = size
             self.__offset = offset
+            if transpose:
+                self.__transpose()
 
 
     def __flatten(self, lst):
@@ -39,6 +46,13 @@ class MatrixPointer:
         elif type(lst[0]) is not list:
             return lst
         return sum(lst, [])
+
+
+    def __transpose(self):
+        result = []
+        for i in range(self.__original_size[1]):
+            result.extend(self.__data[i:self.__original_size[1]*self.__original_size[0]:self.__original_size[1]])
+        self.__data = result
 
 
     def get_data(self, source=False):
