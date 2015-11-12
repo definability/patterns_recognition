@@ -1,4 +1,3 @@
-import ipdb
 from unittest import TestCase, main
 
 from classes.image import MatrixPointer
