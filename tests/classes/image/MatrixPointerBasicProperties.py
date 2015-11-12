@@ -87,7 +87,6 @@ class TestMatrixPointerBasicProperties(TestCase):
             self.assertEqual(right.get_data(False), self.lst)
 
 
-
     def test_map_sum(self):
         a = MatrixPointer([1, 2, 3, 4], (2, 2))
         b = MatrixPointer([4, 3, 2, 1], (2, 2))
