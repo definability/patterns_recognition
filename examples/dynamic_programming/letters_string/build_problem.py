@@ -7,13 +7,6 @@ from cProfile import Profile
 from pstats import Stats
 
 
-def prt_m(image):
-    for i in range(image.get_size()[1]):
-        for v in image.get_data()[i*image.get_size()[0]:(i+1)*image.get_size()[0]]:
-            print '%03d'%v,
-        print ''
-
-
 def process_img(img, patterns, previous_vertex, offset=0, vertices=None, edges=None):
 
     if vertices is None:
@@ -26,12 +19,7 @@ def process_img(img, patterns, previous_vertex, offset=0, vertices=None, edges=N
         if patterns[p].get_size()[0] > img.get_size()[0]:
             continue
 
-        print 'Processing "%c"'%p
         img_left, img_right = img.split_vertical(patterns[p].get_size()[0])
-        print 'LEFT'
-        prt_m(img_left)
-        print 'RIGHT'
-        prt_m(img_right)
 
         current_vertex = None
         current_key = offset+patterns[p].get_size()[0]
@@ -62,11 +50,8 @@ def build_problem(main_img, patterns_imgs, Semiring=SemiringArgminPlusElement):
 
     image = MatrixPointer(list(main_img.getdata()), (main_img.size[0], main_img.size[1]))
     patterns = dict()
-    prt_m(image)
     for p in patterns_imgs:
         patterns[p] = MatrixPointer(list(patterns_imgs[p].getdata()), (patterns_imgs[p].size[0], patterns_imgs[p].size[1]))
-        prt_m(patterns[p])
-        print ''
 
     start = Vertex('start')
     end = Vertex('end')
