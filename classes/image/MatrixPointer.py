@@ -115,10 +115,10 @@ class MatrixPointer:
         - to other columns of the matrix.
         """
         height = 0 if width == 0 else self.__size[1]
-        left = MatrixPointer(self, (width, height), self.get_offset())
+        left = MatrixPointer(self, (width, height))
         height = 0 if width == self.__size[0] else self.__size[1]
         right = MatrixPointer(self, (self.__size[0]-width, height),
-                                     self.get_offset(width, 0))
+                                     (width, 0))
         return (left, right)
 
 
@@ -130,10 +130,10 @@ class MatrixPointer:
         - to other rows of the matrix.
         """
         width = 0 if height == 0 else self.__size[0]
-        top = MatrixPointer(self, (width, height), self.get_offset())
+        top = MatrixPointer(self, (width, height))
         width = 0 if height == self.__size[1] else self.__size[0]
         bottom = MatrixPointer(self, (width, self.__size[1]-height),
-                                     self.get_offset(0, height))
+                                     (0, height))
         return (top, bottom)
 
 
