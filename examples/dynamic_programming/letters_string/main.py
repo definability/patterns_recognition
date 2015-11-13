@@ -11,8 +11,8 @@ from classes.semiring import *
 from PIL import Image, ImageDraw
 
 EPSILON = float_info.epsilon
-FONT_SIZE = 7
-SIGMA = 0
+FONT_SIZE = 14
+SIGMA = 255
 
 
 class bcolors:
