@@ -118,7 +118,7 @@ class MatrixPointer:
         left = MatrixPointer(self, (width, height))
         height = 0 if width == self.__size[0] else self.__size[1]
         right = MatrixPointer(self, (self.__size[0]-width, height),
-                                     (width, 0))
+                                    (width, 0))
         return (left, right)
 
 
