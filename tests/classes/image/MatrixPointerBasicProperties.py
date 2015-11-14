@@ -24,6 +24,36 @@ class TestMatrixPointerBasicProperties(TestCase):
             self.assertIsInstance(pointer, MatrixPointer)
 
 
+    def test_constructor_exceptions(self):
+        with self.assertRaises(ValueError):
+            MatrixPointer([])
+        with self.assertRaises(ValueError):
+            MatrixPointer(MatrixPointer([[]]), transpose=True)
+
+
+    def test_constructor_one_element(self):
+        isinstance(MatrixPointer(1, (1, 1)), MatrixPointer)
+
+
+    def test_copy_constructor(self):
+        isinstance(MatrixPointer(MatrixPointer([[]])), MatrixPointer)
+
+
+    def test_constructor_transpose(self):
+        isinstance(MatrixPointer([[]], transpose=True), MatrixPointer)
+
+
+    def test_get_offset(self):
+        for pointer in self.pointers:
+            self.assertEqual(pointer.get_offset((1, 2)), (1, 2))
+            self.assertEqual(pointer.get_offset(1, 2), (1, 2))
+
+
+    def test_get_generator_empty(self):
+        with self.assertRaises(StopIteration):
+            MatrixPointer([[]]).get_generator().next()
+
+
     def test_get_data(self):
         for pointer in self.pointers:
             self.assertEqual(pointer.get_data(True), self.lst)

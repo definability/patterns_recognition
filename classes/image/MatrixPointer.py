@@ -14,12 +14,17 @@ class MatrixPointer:
             default is False.
         """
         if size is None:
-            if type(data) is not list or type(data[0]) is not list:
+            if isinstance(data, MatrixPointer) and transpose:
+                raise ValueError('You cannot transpose existing MatrixPointer')
+            elif isinstance(data, MatrixPointer):
+                size = data.get_size()
+            elif type(data) is not list or len(data) == 0 \
+                                        or type(data[0]) is not list:
                 raise ValueError('If size is not set, data should be a matrix')
-            if not transpose:
-                size = (len(data[0]), len(data))
-            else:
+            elif transpose:
                 size = (len(data), len(data[0]))
+            elif not transpose:
+                size = (len(data[0]), len(data))
 
         if isinstance(data, MatrixPointer):
             self.__data = data.get_data(True)
