@@ -174,7 +174,6 @@ class MatrixPointer:
         matrices -- matrices,
             which are needed to be iterated during the operation.
         """
-        b = self.get_generator()
         for v in self.__sync_generators(*matrices):
             current_value = (f(current_value, *v))
         return current_value
