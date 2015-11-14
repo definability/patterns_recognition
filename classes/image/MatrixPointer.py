@@ -13,8 +13,6 @@ class MatrixPointer:
         transpose -- True if matrix needs to be transposed and False otherwise;
             default is False.
         """
-
-
         if size is None:
             if type(data) is not list or type(data[0]) is not list:
                 raise ValueError('If size is not set, data should be a matrix')
