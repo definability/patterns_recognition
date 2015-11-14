@@ -179,7 +179,3 @@ class MatrixPointer:
             current_value = (f(current_value, *v))
         return current_value
 
-
-    def __sub__(self, matrix):
-        return self.map(lambda x, y: x-y, matrix)
-

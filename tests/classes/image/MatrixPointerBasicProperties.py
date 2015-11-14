@@ -130,6 +130,13 @@ class TestMatrixPointerBasicProperties(TestCase):
         self.assertEqual(c, [5]*4)
 
 
+    def test_map_sub(self):
+        a = MatrixPointer([1, 2, 3, 4], (2, 2))
+        b = MatrixPointer([4, 3, 2, 1], (2, 2))
+        c = a.map(lambda x, y: x - y, b)
+        self.assertEqual(c, [-3, -1, 1, 3])
+
+
     def test_reduce_sum(self):
         a = MatrixPointer([1, 2, 3, 4], (2, 2))
         b = MatrixPointer([4, 3, 2, 1], (2, 2))
@@ -142,13 +149,6 @@ class TestMatrixPointerBasicProperties(TestCase):
         b = MatrixPointer([4, 3, 2, 1], (2, 2))
         c = a.reduce(lambda accumulator, x, y: accumulator + (x - y)**2, 0, b)
         self.assertEqual(c, 20)
-
-
-    def test_sub(self):
-        a = MatrixPointer([1, 2, 3, 4], (2, 2))
-        b = MatrixPointer([4, 3, 2, 1], (2, 2))
-        c = a - b
-        self.assertEqual(c, [-3, -1, 1, 3])
 
 
 if __name__ == '__main__':
