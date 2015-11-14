@@ -50,6 +50,7 @@ class MatrixPointer:
 
 
     def __transpose(self):
+        """Transpose the matrix."""
         result = []
         for i in range(self.__original_size[1]):
             result.extend(self.__data[i:self.__original_size[1]*self.__original_size[0]:self.__original_size[1]])
