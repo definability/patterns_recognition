@@ -96,7 +96,6 @@ class MatrixPointer:
             left upper corner either horizontal offset;
         y -- vertical offset, if `initial_offset` is a horizontal offset.
         """
-
         if type(initial_offset) is tuple:
             return (self.__offset[0]+initial_offset[0],
                     self.__offset[1]+initial_offset[1])
