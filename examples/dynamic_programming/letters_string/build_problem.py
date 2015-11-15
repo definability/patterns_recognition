@@ -7,6 +7,7 @@ from cProfile import Profile
 from pstats import Stats
 
 
+sigmas = dict()
 def process_img(img, patterns, previous_vertex, offset=0, vertices=None, edges=None):
 
     if vertices is None:
@@ -22,25 +23,29 @@ def process_img(img, patterns, previous_vertex, offset=0, vertices=None, edges=N
 
         current_key = offset+patterns[p].get_size()[0]
         current_vertex = None
+        need_break = False
 
-        if vertices.has_key(current_key):
+        if current_key in vertices:
             for vertex in vertices[current_key]:
                 if vertex.get_name() == p:
                     current_vertex = vertex
                     break
 
         if current_vertex is not None:
-            break
-        current_vertex = Vertex(p)
+            edge = Edge(previous_vertex, current_vertex, (sigmas[(offset,p)], p))
+            edges.add(edge)
+            continue
+        if current_vertex is None:
+            current_vertex = Vertex(p)
 
-        if vertices.has_key(current_key):
+        if current_key in vertices:
             vertices[current_key].append(current_vertex)
         else:
             vertices[current_key] = [current_vertex]
 
         img_left, img_right = img.split_vertical(patterns[p].get_size()[0])
         sigma = img_left.reduce(lambda accumulator, x, y: accumulator + (x - y)**2, 0, patterns[p])
-
+        sigmas[(offset,p)] = sigma
         edge = Edge(previous_vertex, current_vertex, (sigma, p))
         edges.add(edge)
 
