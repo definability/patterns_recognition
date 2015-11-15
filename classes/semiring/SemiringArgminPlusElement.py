@@ -8,7 +8,7 @@ class SemiringArgminPlusElement(SemiringElement):
 
     def __init__(self, value=None):
         if value is not None and type(value[1]) is not list:
-            value = (value[0], [value])
+            value = (value[0], [value[1]])
         super(SemiringArgminPlusElement, self).__init__(value)
 
 
