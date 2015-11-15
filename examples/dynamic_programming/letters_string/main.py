@@ -71,7 +71,7 @@ if __name__ == '__main__':
 
     problem = build_problem(image, gc_characters)
     print 'Solve'
-    print problem.solve(SemiringArgminPlusElement)
+    print '"'+''.join(problem.solve(SemiringArgminPlusElement).value[1])+'"'
 
     #recognizer = Recognizer(image, characters, dict(zip(letters, probabilities)))
 
