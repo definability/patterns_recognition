@@ -6,6 +6,7 @@ from generate_message import generate_message
 from draw_message import draw_message
 from generate_noise import generate_noise
 from build_problem import build_problem
+from classes.image import *
 from classes.semiring import *
 
 from PIL import Image, ImageDraw
@@ -56,6 +57,7 @@ if __name__ == '__main__':
     message = generate_message(letters, probabilities, count)
     text = draw_message(message, characters)
     width, height = text.size[0], text.size[1]
+    mp_orig = MatrixPointer(list(text.convert('L').getdata()), (text.size[0], text.size[1]))
     noise = generate_noise(width, height, 0, SIGMA)
 
     text.paste(Image.new('RGB', (width, height), 'black'), mask=noise)
@@ -71,7 +73,11 @@ if __name__ == '__main__':
 
     problem = build_problem(image, gc_characters)
     print 'Solve'
-    print '"'+''.join(problem.solve(SemiringArgminPlusElement).value[1])+'"'
+    solution = problem.solve(SemiringArgminPlusElement)
+    print '"'+''.join(solution.value[1])+'"'
+    mp_img = MatrixPointer(list(image.getdata()), (image.size[0], image.size[1]))
+    diff = solution.value[0] - mp_img.reduce(lambda accumulator, x, y: accumulator + (x - y)**2, 0, mp_orig)
+    print 'Solution is better than original on', diff, '(negative number is bad)'
 
     #recognizer = Recognizer(image, characters, dict(zip(letters, probabilities)))
 
