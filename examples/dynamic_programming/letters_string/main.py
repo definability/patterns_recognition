@@ -76,7 +76,7 @@ if __name__ == '__main__':
     solution = problem.solve(SemiringArgminPlusElement)
     print '"'+''.join(solution.value[1])+'"'
     mp_img = MatrixPointer(list(image.getdata()), (image.size[0], image.size[1]))
-    diff = solution.value[0] - mp_img.reduce(lambda accumulator, x, y: accumulator + (x - y)**2, 0, mp_orig)
+    diff = mp_img.reduce(lambda accumulator, x, y: accumulator + (x - y)**2, 0, mp_orig) - solution.value[0]
     print 'Solution is better than original on', diff, '(negative number is bad)'
 
     #recognizer = Recognizer(image, characters, dict(zip(letters, probabilities)))
