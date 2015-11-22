@@ -7,7 +7,7 @@ from cProfile import Profile
 from pstats import Stats
 
 
-sigmas = dict()
+#sigmas = dict()
 def process_img(img, patterns, previous_vertex, offset=0, vertices=None, edges=None):
 
     if vertices is None:
@@ -32,21 +32,22 @@ def process_img(img, patterns, previous_vertex, offset=0, vertices=None, edges=N
                     break
 
         if current_vertex is not None:
-            edge = Edge(previous_vertex, current_vertex, (sigmas[(offset,p)], p))
+            #edge = Edge(previous_vertex, current_vertex, (sigmas[(offset,p)], p))
+            edge = Edge(previous_vertex, current_vertex, (0, []))
             edges.add(edge)
             continue
-        if current_vertex is None:
-            current_vertex = Vertex(p)
+
+        img_left, img_right = img.split_vertical(patterns[p].get_size()[0])
+        sigma = img_left.reduce(lambda accumulator, x, y: accumulator + (x - y)**2, 0, patterns[p])
+        current_vertex = Vertex(p, (sigma, p))
 
         if current_key in vertices:
             vertices[current_key].append(current_vertex)
         else:
             vertices[current_key] = [current_vertex]
 
-        img_left, img_right = img.split_vertical(patterns[p].get_size()[0])
-        sigma = img_left.reduce(lambda accumulator, x, y: accumulator + (x - y)**2, 0, patterns[p])
-        sigmas[(offset,p)] = sigma
-        edge = Edge(previous_vertex, current_vertex, (sigma, p))
+        #edge = Edge(previous_vertex, current_vertex, (sigma, p))
+        edge = Edge(previous_vertex, current_vertex, (0, []))
         edges.add(edge)
 
         process_img(img_right, patterns, current_vertex, offset+patterns[p].get_size()[0], vertices, edges)
