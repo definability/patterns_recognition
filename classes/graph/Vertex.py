@@ -1,9 +1,9 @@
 class Vertex(object):
 
 
-    def __init__(self, name=None):
+    def __init__(self, name=None, value=None):
         self.name = name
-        self.value = None
+        self.value = value
         self.inputs = set()
         self.outputs = set()
 
