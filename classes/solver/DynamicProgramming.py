@@ -25,8 +25,9 @@ class DynamicProgramming(Graph):
         for vertex in self.V:
             vertex.clear_inputs()
             vertex.clear_outputs()
+            if vertex.get_value() is not None and not isinstance(vertex.get_value(), semiring):
+                vertex.set_value(semiring(vertex.get_value()))
 
-        self.start.set_value(semiring.unity())
 
         for edge in self.E:
             vertices = edge.get_vertices()
@@ -36,16 +37,17 @@ class DynamicProgramming(Graph):
                 edge.set_value(semiring(edge.get_value()))
 
 
-    def __process_vertex(self, vertex, visited, to_visit, vertices_values):
+    def __process_vertex(self, vertex, visited, to_visit, caddy, semiring):
         for edge in vertex.get_outputs():
 
             finish = edge.get_vertices()[1]
-            if finish not in vertices_values:
-                vertices_values[finish] = finish.get_value()
-            if vertices_values[finish] is None:
-                vertices_values[finish] = vertices_values[vertex] * edge.get_value()
+            finish_value = semiring.unity() if finish.get_value() is None else finish.get_value()
+            edge_value = semiring.unity() if edge.get_value() is None else edge.get_value()
+            if finish not in caddy:
+                caddy[finish] = caddy[vertex] * edge_value * finish_value
             else:
-                vertices_values[finish] += vertices_values[vertex] * edge.get_value()
+                caddy[finish] += caddy[vertex] * edge_value * finish_value
+
 
             finish.remove_input(edge)
 
@@ -60,10 +62,10 @@ class DynamicProgramming(Graph):
         to_visit = set([self.finish, self.start])
         visited = set()
 
-        vertices_values = {self.start: self.start.get_value()}
+        caddy = {self.start: semiring.unity() if self.start.get_value() is None else self.start.get_value()}
 
         while len(to_visit) and self.finish not in visited:
-            self.__process_vertex(to_visit.pop(), visited, to_visit, vertices_values)
+            self.__process_vertex(to_visit.pop(), visited, to_visit, caddy, semiring)
 
-        return vertices_values[self.finish]
+        return caddy[self.finish]
 
