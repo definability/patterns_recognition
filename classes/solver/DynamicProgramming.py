@@ -41,8 +41,10 @@ class DynamicProgramming(Graph):
         for edge in vertex.get_outputs():
 
             finish = edge.get_vertices()[1]
-            finish_value = semiring.unity() if finish.get_value() is None else finish.get_value()
-            edge_value = semiring.unity() if edge.get_value() is None else edge.get_value()
+            finish_value = semiring.unity() if finish.get_value() is None \
+                                            else finish.get_value()
+            edge_value = semiring.unity() if edge.get_value() is None \
+                                          else edge.get_value()
             if finish not in caddy:
                 caddy[finish] = caddy[vertex] * edge_value * finish_value
             else:
@@ -62,7 +64,10 @@ class DynamicProgramming(Graph):
         to_visit = set([self.finish, self.start])
         visited = set()
 
-        caddy = {self.start: semiring.unity() if self.start.get_value() is None else self.start.get_value()}
+        caddy = {
+            self.start: semiring.unity() if self.start.get_value() is None \
+                                         else self.start.get_value()
+        }
 
         while len(to_visit) and self.finish not in visited:
             self.__process_vertex(to_visit.pop(), visited, to_visit, caddy, semiring)
