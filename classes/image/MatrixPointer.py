@@ -145,6 +145,11 @@ class MatrixPointer:
         matrices -- matrices,
             which are needed to be iterated during the operation.
         """
+        if len(matrices) == 1:
+            g = matrices[0].get_generator()
+            for v in self.get_generator():
+                yield [v, g.next()]
+            raise StopIteration
         generators = [m.get_generator() for m in matrices]
         for v in self.get_generator():
             yield [v]+[g.next() for g in generators]
