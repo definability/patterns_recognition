@@ -32,7 +32,6 @@ def process_img(img, patterns, previous_vertex, offset=0, vertices=None, edges=N
                     break
 
         if current_vertex is not None:
-            #edge = Edge(previous_vertex, current_vertex, (sigmas[(offset,p)], p))
             edge = Edge(previous_vertex, current_vertex, (0, []))
             edges.add(edge)
             continue
@@ -46,7 +45,6 @@ def process_img(img, patterns, previous_vertex, offset=0, vertices=None, edges=N
         else:
             vertices[current_key] = [current_vertex]
 
-        #edge = Edge(previous_vertex, current_vertex, (sigma, p))
         edge = Edge(previous_vertex, current_vertex, (0, []))
         edges.add(edge)
 
