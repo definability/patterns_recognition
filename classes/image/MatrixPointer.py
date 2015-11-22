@@ -77,6 +77,10 @@ class MatrixPointer:
         """Get generator of list with data, current pointer points to."""
         if self.__size == (0, 0):
             raise StopIteration
+        if self.__offset == (0, 0) and self.__size == self.__original_size:
+            for e in self.__data:
+                yield e
+            raise StopIteration
         for y in range(self.__offset[1], self.__offset[1]+self.__size[1]):
             for e in self.__data[self.__original_size[0]*y+self.__offset[0]:
                                  self.__original_size[0]*y+self.__offset[0]
