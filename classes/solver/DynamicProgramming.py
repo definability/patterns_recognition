@@ -25,7 +25,8 @@ class DynamicProgramming(Graph):
         for vertex in self.V:
             vertex.clear_inputs()
             vertex.clear_outputs()
-            if vertex.get_value() is not None and not isinstance(vertex.get_value(), semiring):
+            if vertex.get_value() is not None \
+                and not isinstance(vertex.get_value(), semiring):
                 vertex.set_value(semiring(vertex.get_value()))
 
 
@@ -70,7 +71,8 @@ class DynamicProgramming(Graph):
         }
 
         while len(to_visit) and self.finish not in visited:
-            self.__process_vertex(to_visit.pop(), visited, to_visit, caddy, semiring)
+            self.__process_vertex(to_visit.pop(), visited, to_visit, caddy,
+                                  semiring)
 
         return caddy[self.finish]
 
