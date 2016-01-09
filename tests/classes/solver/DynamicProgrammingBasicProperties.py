@@ -90,7 +90,7 @@ class TestDynamicProgrammingBasicProperties(TestCase):
             self.assertEqual(g.solve(S), S.unity()+S.unity())
 
 
-    def test_solve_square(self):
+    def test_solve_big_square(self):
         """Find length of the shortest path (min,+)
 
         start -5-> A ---1----> B --3--> C
