@@ -26,9 +26,9 @@ class Graph(object):
         self.domains = dict()
         for v in self.V:
             if v.domain not in self.domains:
-                self.domains[v.domain] = [v]
+                self.domains[v.domain] = set([v])
             else:
-                self.domains[v.domain].append(v)
+                self.domains[v.domain].add(v)
 
 
     def check_edge(self, e):
