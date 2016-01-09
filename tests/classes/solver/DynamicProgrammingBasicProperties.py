@@ -2,7 +2,7 @@ from unittest import TestCase, main
 
 from classes.graph import Graph, Edge, Vertex
 from classes.solver import DynamicProgramming
-from classes.semiring import semirings#SemiringMinPlusElement, SemiringPlusMulElement
+from classes.semiring import semirings
 from classes.semiring import SemiringMinPlusElement, SemiringPlusMulElement
 
 
