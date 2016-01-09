@@ -20,11 +20,26 @@ class Graph(object):
         self.V = V
         self.E = E
 
-        for e in E:
+        for e in self.E:
             self.check_edge(e)
+
+        self.domains = dict()
+        for v in self.V:
+            if v.domain not in self.domains:
+                self.domains[v.domain] = [v]
+            else:
+                self.domains[v.domain].append(v)
 
 
     def check_edge(self, e):
         if not self.V.issuperset(set(e.get_vertices())):
             raise ValueError("All vertices should be in graph's vertices' set")
+
+
+    def get_domains(self):
+        return self.domains.keys()
+
+
+    def get_domain(self, domain):
+        return self.domains[domain]
 
