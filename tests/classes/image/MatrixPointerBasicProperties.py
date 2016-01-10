@@ -143,7 +143,7 @@ class TestMatrixPointerBasicProperties(TestCase):
             self.assertEqual(left.get_data(), [3, 6, 9, 12])
 
 
-    def test_split_horizontal_twice(self):
+    def test_split_horizontal_twice_additional(self):
         for pointer in self.pointers:
             top, bottom = pointer.split_horizontal(2)
             self.assertEqual(bottom.get_data(), [7, 8, 9, 10, 11, 12])
