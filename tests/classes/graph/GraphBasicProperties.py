@@ -1,6 +1,7 @@
 from unittest import TestCase, main
 
 from classes.graph import Graph, Edge, Vertex
+from classes.semiring import SemiringMinPlusElement
 
 
 class TestGraphBasicProperties(TestCase):
@@ -66,6 +67,30 @@ class TestGraphBasicProperties(TestCase):
         self.assertItemsEqual(g.get_domain((0,1)), set([v_aA, v_aB]))
         self.assertItemsEqual(g.get_domain((0,2)), set([v_bA]))
         self.assertItemsEqual(g.get_domain((1,1)), set([v_cA, v_cB]))
+
+
+    def test_prepare(self):
+        start = Vertex('start')
+        finish = Vertex('finish')
+
+        a = Vertex('a')
+        b = Vertex('b')
+        c = Vertex('c')
+
+        start_a = Edge(start, a, SemiringMinPlusElement(5))
+        a_b = Edge(a, b, SemiringMinPlusElement(1))
+        a_c = Edge(a, c, SemiringMinPlusElement(5))
+        b_c = Edge(b, c, SemiringMinPlusElement(3))
+        c_finish = Edge(c, finish, SemiringMinPlusElement(9))
+
+        g = Graph([start, finish, a, b, c],
+                  [start_a, a_b, b_c, a_c, c_finish])
+
+        g.prepare(SemiringMinPlusElement)
+        self.assertItemsEqual(a.get_outputs(), [a_b, a_c])
+        self.assertItemsEqual(b.get_inputs(), [a_b])
+        self.assertItemsEqual(b.get_outputs(), [b_c])
+        self.assertItemsEqual(c.get_inputs(), [b_c, a_c])
 
 
 if __name__ == '__main__':

@@ -20,24 +20,6 @@ class DynamicProgramming(Graph):
         self.finish = vertex
 
 
-    def __prepare(self, semiring):
-
-        for vertex in self.V:
-            vertex.clear_inputs()
-            vertex.clear_outputs()
-            if vertex.get_value() is not None \
-                and not isinstance(vertex.get_value(), semiring):
-                vertex.set_value(semiring(vertex.get_value()))
-
-
-        for edge in self.E:
-            vertices = edge.get_vertices()
-            vertices[0].add_output(edge)
-            vertices[1].add_input(edge)
-            if not isinstance(edge.get_value(), semiring):
-                edge.set_value(semiring(edge.get_value()))
-
-
     def __process_vertex(self, vertex, visited, to_visit, caddy, semiring):
         for edge in vertex.get_outputs():
 
@@ -60,7 +42,7 @@ class DynamicProgramming(Graph):
 
     def solve(self, semiring):
 
-        self.__prepare(semiring)
+        self.prepare(semiring)
 
         to_visit = set([self.finish, self.start])
         visited = set()
