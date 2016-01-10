@@ -52,3 +52,7 @@ class Vertex(object):
     def get_outputs(self):
         return self.outputs
 
+
+    def get_domain(self):
+        return self.domain
+
