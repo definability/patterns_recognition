@@ -26,7 +26,7 @@ class TestEnergyMinimizationBasicProperties(TestCase):
 
 
     def test_solve_trivial(self):
-        """Solve simple problem
+        """Solve trivial problem
 
         1 - 1 - 1
           \   \ 
