@@ -34,7 +34,7 @@ class TestEnergyMinimizationBasicProperties(TestCase):
           /   /
         3 - 3 - 3
 
-        Right answer is 1
+        Right answer is {3, 3, 3}
         """
         v_one_a = Vertex(value=1, domain='a')
         v_one_b = Vertex(value=1, domain='b')
