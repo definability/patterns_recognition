@@ -9,6 +9,7 @@ class EnergyMinimization(Graph):
 
 
     def __gamma(self):
+        n = 1
         i = 0
         while True:
             yield n**(-i)
