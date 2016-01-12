@@ -9,7 +9,7 @@ class EnergyMinimization(Graph):
 
 
     def __gamma(self, k):
-        n = 1000.
+        n = 100.
         for i in xrange(k):
             yield n/(i+1)
 
@@ -43,6 +43,11 @@ class EnergyMinimization(Graph):
                         phi[e.get_vertices()] = 0
                     else:
                         tmp -= phi[e.get_vertices()]
+                for e in v.get_inputs():
+                    if e.get_vertices() not in phi:
+                        phi[e.get_vertices()[::-1]] = 0
+                    else:
+                        tmp -= phi[e.get_vertices()]
                 if max_k[1] < tmp:
                     max_k = (v, tmp)
             for e in max_k[0].get_outputs():
@@ -52,15 +57,16 @@ class EnergyMinimization(Graph):
     def solve(self):
         self.prepare()
         phi = dict()
-        for gamma in self.__gamma(100):
+        for gamma in self.__gamma(100000):
             self.__iteration(phi, gamma)
         result = dict()
         print
         for domain in self.get_domains():
             result[domain] = (None, float('-inf'))
             for v in self.get_domain(domain):
-                tmp = v.get_value() - sum(phi[e.get_vertices()] \
-                                          for e in v.get_outputs())
+                tmp = v.get_value() \
+                        - sum(phi[e.get_vertices()] for e in v.get_outputs()) \
+                        - sum(phi[e.get_vertices()[::-1]] for e in v.get_inputs())
                 print '%s (%d): %f'%(v.get_domain(), v.get_value(), tmp)
                 if result[domain][1] < tmp:
                     result[domain] = (v, tmp)
