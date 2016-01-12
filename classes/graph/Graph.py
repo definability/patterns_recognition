@@ -44,12 +44,12 @@ class Graph(object):
         return self.domains[domain]
 
 
-    def prepare(self, semiring):
+    def prepare(self, semiring=None):
 
         for vertex in self.V:
             vertex.clear_inputs()
             vertex.clear_outputs()
-            if vertex.get_value() is not None \
+            if semiring is not None and vertex.get_value() is not None \
                 and not isinstance(vertex.get_value(), semiring):
                 vertex.set_value(semiring(vertex.get_value()))
 
@@ -57,6 +57,7 @@ class Graph(object):
             vertices = edge.get_vertices()
             vertices[0].add_output(edge)
             vertices[1].add_input(edge)
-            if not isinstance(edge.get_value(), semiring):
+            if semiring is not None \
+                and not isinstance(edge.get_value(), semiring):
                 edge.set_value(semiring(edge.get_value()))
 
