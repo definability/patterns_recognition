@@ -8,10 +8,12 @@ class EnergyMinimization(Graph):
         super(EnergyMinimization, self).__init__(V, E)
 
 
-    def __gamma(self, k):
-        n = 1000.
-        for i in xrange(k):
-            yield n/(i+1)
+    def __gamma(self):
+        n = 1
+        i = 0
+        while True:
+            yield n**(-i)
+            i += 1
 
 
     def __iteration(self, phi, gamma):
@@ -20,7 +22,7 @@ class EnergyMinimization(Graph):
             for v in self.get_domain(domain):
                 for e in v.get_outputs():
                     target_domain = e.get_vertices()[1].domain
-                    if (domain, target_domain) not in max_k:
+                    if target_domain not in max_k:
                         max_k[(domain, target_domain)] = (None, float('-inf'))
                     if e.get_vertices() not in phi:
                         phi[e.get_vertices()] = 0
@@ -39,10 +41,10 @@ class EnergyMinimization(Graph):
             for v in self.get_domain(domain):
                 tmp = v.get_value()
                 for e in v.get_outputs():
-                    if e.get_vertices() not in phi:
-                        phi[e.get_vertices()] = 0
+                    if (v, e[1]) not in phi:
+                        phi[(v, e[1])] = 0
                     else:
-                        tmp -= phi[e.get_vertices()]
+                        tmp -= phi[(v, e[1])]
                 if max_k[1] < tmp:
                     max_k = (v, tmp)
             for e in max_k[0].get_outputs():
@@ -50,22 +52,16 @@ class EnergyMinimization(Graph):
 
 
     def solve(self):
-        self.prepare()
         phi = dict()
-        for gamma in self.__gamma(100):
+        for gamma in self.__gamma():
             self.__iteration(phi, gamma)
+            break
         result = dict()
-        print
         for domain in self.get_domains():
             result[domain] = (None, float('-inf'))
             for v in self.get_domain(domain):
-                tmp = v.get_value() - sum(phi[e.get_vertices()] \
-                                          for e in v.get_outputs())
-                print '%s (%d): %f'%(v.get_domain(), v.get_value(), tmp)
+                tmp = v.get_value() - sum(phi[v, e[1]] for e in v.get_outputs())
                 if result[domain][1] < tmp:
                     result[domain] = (v, tmp)
-        print
-        #print phi
-        print [(result[domain][0].get_value(), result[domain][1]) for domain in result]
         return set(result[domain][0] for domain in result)
 
