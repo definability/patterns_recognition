@@ -5,7 +5,7 @@ from Vertex import Vertex
 class Graph(object):
 
 
-    def __init__(self, V, E):
+    def __init__(self, V, E, tau=set()):
 
         if isinstance(V, Vertex):
             V = set([V])
@@ -30,6 +30,8 @@ class Graph(object):
             else:
                 self.domains[v.get_domain()].add(v)
 
+        self.tau = tau if len(tau) > 0 else self.get_neighbours()
+
 
     def check_edge(self, e):
         if not self.V.issuperset(set(e.get_vertices())):
@@ -42,6 +44,21 @@ class Graph(object):
 
     def get_domain(self, domain):
         return self.domains[domain]
+
+
+    def get_tau(self):
+        return self.tau
+
+
+    def check_neighborhood(self):
+        return self.get_tau() == self.get_neighbours()
+
+
+    def get_neighbours(self):
+        neighbours = set()
+        for e in self.E:
+            neighbours.add(e.get_vertices())
+        return neighbours
 
 
     def prepare(self, semiring=None):
