@@ -67,7 +67,7 @@ class EnergyMinimization(Graph):
 
     def solve(self):
         phi = dict()
-        for gamma in self.__gamma(10):
+        for gamma in self.__gamma():
             self.__iteration(phi, gamma)
             break
         result = dict()
