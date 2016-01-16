@@ -95,6 +95,7 @@ class Graph(object):
         end.remove_input(edge)
         self.E.remove(edge)
 
+
     def prepare(self, semiring=None):
 
         for vertex in self.V:
