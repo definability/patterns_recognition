@@ -17,6 +17,9 @@ class Graph(object):
         elif not isinstance(E, set):
             E = set(E)
 
+        if not isinstance(tau, set):
+            tau = set(tau)
+
         self.V = V
         self.E = E
 
@@ -30,7 +33,9 @@ class Graph(object):
             else:
                 self.domains[v.get_domain()].add(v)
 
-        self.tau = tau if len(tau) > 0 else self.get_neighbours()
+        self.tau = tau if len(tau) > 0 else self.get_neighboring_domains()
+        if self.is_neighborhood_corrupted():
+            raise ValueError("Not all neighbours exist")
 
 
     def check_edge(self, e):
@@ -50,15 +55,22 @@ class Graph(object):
         return self.tau
 
 
-    def check_neighborhood(self):
-        return self.get_tau() == self.get_neighbours()
+    def is_neighborhood_corrupted(self, V=None, E=None):
+        V = self.V if V is None else V
+        E = self.E if E is None else E
+        return self.get_tau() != self.get_neighboring_domains(V, E)
 
 
-    def get_neighbours(self):
-        neighbours = set()
-        for e in self.E:
-            neighbours.add(e.get_vertices())
-        return neighbours
+    def get_neighboring_domains(self, V=None, E=None):
+        V = self.V if V is None else V
+        E = self.E if E is None else E
+        neighboring_domains = set()
+        for e in E:
+            v = e.get_vertices()
+            if v[0] not in self.V or v[1] not in self.V:
+                continue
+            neighboring_domains.add((v[0].get_domain(), v[1].get_domain()))
+        return neighboring_domains
 
 
     def prepare(self, semiring=None):
