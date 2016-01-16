@@ -69,6 +69,33 @@ class TestGraphBasicProperties(TestCase):
         self.assertItemsEqual(g.get_domain((1,1)), set([v_cA, v_cB]))
 
 
+    def test_calculated_neighborhood(self):
+        v_a = Vertex(domain='a')
+        v_b = Vertex(domain='b')
+        v_c = Vertex(domain='c')
+        e = Edge(v_a, v_b)
+        g = Graph([v_a, v_b, v_c], e)
+        self.assertItemsEqual(g.get_neighboring_domains(), [('a', 'b')])
+
+
+    def test_preset_neighborhood(self):
+        v_a = Vertex(domain='a')
+        v_b = Vertex(domain='b')
+        v_c = Vertex(domain='c')
+        e = Edge(v_a, v_b)
+        g = Graph([v_a, v_b, v_c], e, [('a', 'b')])
+        self.assertItemsEqual(g.get_neighboring_domains(), [('a', 'b')])
+
+
+    def test_neighborhood_corrupted(self):
+        v_a = Vertex(domain='a')
+        v_b = Vertex(domain='b')
+        v_c = Vertex(domain='c')
+        e = Edge(v_a, v_b)
+        with self.assertRaises(ValueError):
+            Graph([v_a, v_b, v_c], e, [('a', 'b'), ('a', 'c')])
+
+
     def test_prepare(self):
         start = Vertex('start')
         finish = Vertex('finish')
