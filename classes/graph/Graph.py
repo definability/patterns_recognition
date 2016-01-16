@@ -73,6 +73,28 @@ class Graph(object):
         return neighboring_domains
 
 
+    def delete_vertex(self, vertex, deleted_vertices=set(),
+                                    deleted_edges=set()):
+        for e in vertex.get_outputs().union(vertex.get_inputs()) \
+                                     .difference(deleted_edges):
+            self.delete_edge(e, deleted_vertices.union([vertex]),
+                                deleted_edges.union([e]))
+        self.V.remove(vertex)
+
+
+    def delete_edge(self, edge, deleted_vertices=set(), deleted_edges=set()):
+        start, end = edge.get_vertices()
+        edge_set = set([edge])
+        if start not in deleted_vertices and start.get_outputs() == edge_set:
+            self.delete_vertex(start, deleted_vertices,
+                               deleted_edges.union(edge_set))
+        if end not in deleted_vertices and end.get_inputs() == edge_set:
+            self.delete_vertex(end, deleted_vertices,
+                               deleted_edges.union(edge_set))
+        start.remove_output(edge)
+        end.remove_input(edge)
+        self.E.remove(edge)
+
     def prepare(self, semiring=None):
 
         for vertex in self.V:

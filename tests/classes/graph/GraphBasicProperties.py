@@ -96,6 +96,79 @@ class TestGraphBasicProperties(TestCase):
             Graph([v_a, v_b, v_c], e, [('a', 'b'), ('a', 'c')])
 
 
+    def test_delete_vertex(self):
+        """
+        a - b - c
+        -----
+        A - A - A
+              /
+        B - B
+          \
+            C
+        """
+        v_aA = Vertex(domain='a')
+        v_aB = Vertex(domain='a')
+        v_bA = Vertex(domain='b')
+        v_bB = Vertex(domain='b')
+        v_bC = Vertex(domain='b')
+        v_cA = Vertex(domain='c')
+
+        e_aA_bA = Edge(v_aA, v_bA)
+        e_aB_bB = Edge(v_aB, v_bB)
+        e_aB_bC = Edge(v_aB, v_bC)
+        e_bA_cA = Edge(v_bA, v_cA)
+        e_bB_cA = Edge(v_bB, v_cA)
+
+        g = Graph([v_aA, v_aB, v_bA, v_bB, v_bC, v_cA],
+                  [e_aA_bA, e_aB_bB, e_bA_cA, e_bB_cA, e_aB_bC])
+        g.prepare()
+
+        self.assertItemsEqual(g.E, [e_aA_bA, e_aB_bB, e_aB_bC,
+                                    e_bA_cA, e_bB_cA])
+        self.assertItemsEqual(g.V, [v_aA, v_aB, v_bA, v_bB, v_bC, v_cA])
+        self.assertFalse(g.is_neighborhood_corrupted())
+
+        """
+        a - b - c
+        -----
+        X   x   A
+              /
+        B - B
+          \
+            C
+        """
+        g.delete_vertex(v_aA)
+        self.assertItemsEqual(g.E, [e_aB_bB, e_aB_bC, e_bB_cA])
+        self.assertItemsEqual(g.V, [v_aB, v_bB, v_bC, v_cA])
+        self.assertFalse(g.is_neighborhood_corrupted())
+
+        """
+        a - b - c
+        -----
+                x
+               
+        B   X
+          \
+            C
+        """
+        g.delete_vertex(v_bB)
+        self.assertItemsEqual(g.E, [e_aB_bC])
+        self.assertItemsEqual(g.V, [v_aB, v_bC])
+        self.assertTrue(g.is_neighborhood_corrupted())
+
+        """
+        a - b - c
+        -----
+        x 
+          
+            X
+        """
+        g.delete_vertex(v_bC)
+        self.assertEqual(g.E, set())
+        self.assertEqual(g.V, set())
+        self.assertTrue(g.is_neighborhood_corrupted())
+
+
     def test_prepare(self):
         start = Vertex('start')
         finish = Vertex('finish')

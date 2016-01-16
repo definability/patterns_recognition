@@ -159,4 +159,3 @@ class TestEnergyMinimizationBasicProperties(TestCase):
 #            Edge(v_one_b, v_one_c, 0), Edge(v_two_b, v_three_c, 0)])
 #        self.assertItemsEqual(g.solve(), [v_one_a, v_two_b, v_three_c])
 
-
