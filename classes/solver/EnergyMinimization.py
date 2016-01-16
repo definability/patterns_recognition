@@ -23,7 +23,7 @@ class EnergyMinimization(Graph):
                 for e in v.get_outputs():
                     print e.get_vertices()[0].get_domain(), e.get_vertices()[0].get_value(), e.get_vertices()[1].get_domain(), e.get_vertices()[1].get_value()
                     target_domain = e.get_vertices()[1].domain
-                    if (domain, target_domain) not in max_k:
+                    if target_domain not in max_k:
                         max_k[(domain, target_domain)] = (None, float('-inf'))
                     if e.get_vertices() not in phi:
                         phi[e.get_vertices()] = 0
@@ -50,8 +50,8 @@ class EnergyMinimization(Graph):
             for v in self.get_domain(domain):
                 tmp = v.get_value()
                 for e in v.get_outputs():
-                    if e.get_vertices() not in phi:
-                        phi[e.get_vertices()] = 0
+                    if (v, e[1]) not in phi:
+                        phi[(v, e[1])] = 0
                     else:
                         tmp -= phi[e.get_vertices()]
                 for e in v.get_inputs():
@@ -66,12 +66,11 @@ class EnergyMinimization(Graph):
 
 
     def solve(self):
-        self.prepare()
         phi = dict()
-        for gamma in self.__gamma(1000):
+        for gamma in self.__gamma(10):
             self.__iteration(phi, gamma)
+            break
         result = dict()
-        print
         for domain in self.get_domains():
             result[domain] = (None, float('-inf'))
             for v in self.get_domain(domain):
