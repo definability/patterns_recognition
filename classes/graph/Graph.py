@@ -50,8 +50,8 @@ class Graph(object):
         return self.domains.keys()
 
 
-    def get_domain(self, domain):
-        if len(self.deleted_vertices) == 0:
+    def get_domain(self, domain, with_deleted=False):
+        if len(self.deleted_vertices) == 0 or with_deleted == True:
             return self.domains[domain]
         return set(v for v in self.domains[domain]
                      if v not in self.deleted_vertices)
