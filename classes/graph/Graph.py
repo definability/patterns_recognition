@@ -51,7 +51,10 @@ class Graph(object):
 
 
     def get_domain(self, domain):
-        return self.domains[domain]
+        if len(self.deleted_vertices) == 0:
+            return self.domains[domain]
+        return set(v for v in self.domains[domain]
+                     if v not in self.deleted_vertices)
 
 
     def get_tau(self):
