@@ -125,9 +125,10 @@ class TestGraphBasicProperties(TestCase):
                   [e_aA_bA, e_aB_bB, e_bA_cA, e_bB_cA, e_aB_bC])
         g.prepare()
 
-        self.assertItemsEqual(g.E, [e_aA_bA, e_aB_bB, e_aB_bC,
-                                    e_bA_cA, e_bB_cA])
-        self.assertItemsEqual(g.V, [v_aA, v_aB, v_bA, v_bB, v_bC, v_cA])
+        self.assertItemsEqual(g.get_edges(), [e_aA_bA, e_aB_bB, e_aB_bC,
+                                              e_bA_cA, e_bB_cA])
+        self.assertItemsEqual(g.get_vertices(), [v_aA, v_aB, v_bA,
+                                                 v_bB, v_bC, v_cA])
         self.assertFalse(g.is_neighborhood_corrupted())
 
         """
@@ -140,8 +141,8 @@ class TestGraphBasicProperties(TestCase):
             C
         """
         g.delete_vertex(v_aA)
-        self.assertItemsEqual(g.E, [e_aB_bB, e_aB_bC, e_bB_cA])
-        self.assertItemsEqual(g.V, [v_aB, v_bB, v_bC, v_cA])
+        self.assertItemsEqual(g.get_edges(), [e_aB_bB, e_aB_bC, e_bB_cA])
+        self.assertItemsEqual(g.get_vertices(), [v_aB, v_bB, v_bC, v_cA])
         self.assertFalse(g.is_neighborhood_corrupted())
 
         """
@@ -154,8 +155,8 @@ class TestGraphBasicProperties(TestCase):
             C
         """
         g.delete_vertex(v_bB)
-        self.assertItemsEqual(g.E, [e_aB_bC])
-        self.assertItemsEqual(g.V, [v_aB, v_bC])
+        self.assertItemsEqual(g.get_edges(), [e_aB_bC])
+        self.assertItemsEqual(g.get_vertices(), [v_aB, v_bC])
         self.assertTrue(g.is_neighborhood_corrupted())
 
         """
@@ -166,8 +167,8 @@ class TestGraphBasicProperties(TestCase):
             X
         """
         g.delete_vertex(v_bC)
-        self.assertEqual(g.E, set())
-        self.assertEqual(g.V, set())
+        self.assertEqual(g.get_edges(), set())
+        self.assertEqual(g.get_vertices(), set())
         self.assertTrue(g.is_neighborhood_corrupted())
 
 
@@ -202,7 +203,7 @@ class TestGraphBasicProperties(TestCase):
         g = Graph([v_a, v_b], [e])
         g_copy = deepcopy(g)
         self.assertIsNot(g, g_copy)
-        e = g.E.pop()
+        e = g.get_edges().pop()
         e_copy = g_copy.E.pop()
         self.assertIsNot(e, e_copy)
         self.assertEqual(e.get_value(), e_copy.get_value())
@@ -217,7 +218,7 @@ class TestGraphBasicProperties(TestCase):
         e_copy.set_value(2)
         self.assertEqual(e.get_value(), 1)
         self.assertEqual(e_copy.get_value(), 2)
-        self.assertEqual(len(g.V.intersection(g_copy.V)), 0)
+        self.assertEqual(len(g.get_vertices().intersection(g_copy.V)), 0)
 
 
 if __name__ == '__main__':
