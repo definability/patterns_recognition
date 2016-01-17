@@ -64,9 +64,10 @@ class Graph(object):
 
     def get_neighboring_domains(self):
         neighboring_domains = set()
-        for e in self.E.difference(self.deleted_edges):
+        vertices = self.get_vertices()
+        for e in self.get_edges():
             v = e.get_vertices()
-            if not set(v).issubset(self.V) or set(v).issubset(self.deleted_vertices):
+            if not set(v).issubset(vertices):
                 continue
             neighboring_domains.add((v[0].get_domain(), v[1].get_domain()))
         return neighboring_domains
@@ -125,4 +126,9 @@ class Graph(object):
 
     def get_vertices(self):
         return self.V.difference(self.deleted_vertices)
+
+
+    def restore(self):
+        self.deleted_edges.clear()
+        self.deleted_vertices.clear()
 
