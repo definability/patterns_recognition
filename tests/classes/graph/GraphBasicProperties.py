@@ -144,6 +144,7 @@ class TestGraphBasicProperties(TestCase):
         self.assertItemsEqual(g.get_edges(), [e_aB_bB, e_aB_bC, e_bB_cA])
         self.assertItemsEqual(g.get_vertices(), [v_aB, v_bB, v_bC, v_cA])
         self.assertFalse(g.is_neighborhood_corrupted())
+        self.assertItemsEqual(g.get_domain('b'), [v_bB, v_bC])
 
         """
         a - b - c
@@ -158,6 +159,8 @@ class TestGraphBasicProperties(TestCase):
         self.assertItemsEqual(g.get_edges(), [e_aB_bC])
         self.assertItemsEqual(g.get_vertices(), [v_aB, v_bC])
         self.assertTrue(g.is_neighborhood_corrupted())
+        self.assertItemsEqual(g.get_domain('a'), [v_aB])
+        self.assertItemsEqual(g.get_domain('b'), [v_bC])
 
         """
         a - b - c
