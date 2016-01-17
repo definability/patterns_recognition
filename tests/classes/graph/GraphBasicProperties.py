@@ -1,4 +1,6 @@
 from unittest import TestCase, main
+from copy import deepcopy
+from random import randint
 
 from classes.graph import Graph, Edge, Vertex
 from classes.semiring import SemiringMinPlusElement
@@ -191,6 +193,31 @@ class TestGraphBasicProperties(TestCase):
         self.assertItemsEqual(b.get_inputs(), [a_b])
         self.assertItemsEqual(b.get_outputs(), [b_c])
         self.assertItemsEqual(c.get_inputs(), [b_c, a_c])
+
+
+    def test_deep_copy(self):
+        v_a = Vertex()
+        v_b = Vertex()
+        e = Edge(v_a, v_b)
+        g = Graph([v_a, v_b], [e])
+        g_copy = deepcopy(g)
+        self.assertIsNot(g, g_copy)
+        e = g.E.pop()
+        e_copy = g_copy.E.pop()
+        self.assertIsNot(e, e_copy)
+        self.assertEqual(e.get_value(), e_copy.get_value())
+        self.assertIsNot(e.get_vertices(), e_copy.get_vertices())
+        self.assertEqual([v.get_value() for v in e.get_vertices()],
+                         [v.get_value() for v in e_copy.get_vertices()])
+        [v.set_value(1) for v in e.get_vertices()]
+        [v.set_value(2) for v in e_copy.get_vertices()]
+        self.assertNotEqual([v.get_value() for v in e.get_vertices()],
+                         [v.get_value() for v in e_copy.get_vertices()])
+        e.set_value(1)
+        e_copy.set_value(2)
+        self.assertEqual(e.get_value(), 1)
+        self.assertEqual(e_copy.get_value(), 2)
+        self.assertEqual(len(g.V.intersection(g_copy.V)), 0)
 
 
 if __name__ == '__main__':
