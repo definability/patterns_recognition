@@ -33,6 +33,9 @@ class Graph(object):
             else:
                 self.domains[v.get_domain()].add(v)
 
+        self.deleted_edges = set()
+        self.deleted_vertices = set()
+
         self.tau = tau if len(tau) > 0 else self.get_neighboring_domains()
         if self.is_neighborhood_corrupted():
             raise ValueError("Not all neighbours exist")
@@ -55,45 +58,48 @@ class Graph(object):
         return self.tau
 
 
-    def is_neighborhood_corrupted(self, V=None, E=None):
-        V = self.V if V is None else V
-        E = self.E if E is None else E
-        return self.get_tau() != self.get_neighboring_domains(V, E)
+    def is_neighborhood_corrupted(self):
+        return self.get_tau() != self.get_neighboring_domains()
 
 
-    def get_neighboring_domains(self, V=None, E=None):
-        V = self.V if V is None else V
-        E = self.E if E is None else E
+    def get_neighboring_domains(self):
         neighboring_domains = set()
-        for e in E:
+        vertices = self.get_vertices()
+        for e in self.get_edges():
             v = e.get_vertices()
-            if v[0] not in self.V or v[1] not in self.V:
+            if not set(v).issubset(vertices):
                 continue
             neighboring_domains.add((v[0].get_domain(), v[1].get_domain()))
         return neighboring_domains
 
 
-    def delete_vertex(self, vertex, deleted_vertices=set(),
-                                    deleted_edges=set()):
+    def delete_vertex(self, vertex):
+        if vertex not in self.V:
+            raise ValueError('Edge does not belong to current graph')
+        if vertex in self.deleted_vertices:
+            return
+        self.deleted_vertices.add(vertex)
         for e in vertex.get_outputs().union(vertex.get_inputs()) \
-                                     .difference(deleted_edges):
-            self.delete_edge(e, deleted_vertices.union([vertex]),
-                                deleted_edges.union([e]))
-        self.V.remove(vertex)
+                                     .difference(self.deleted_edges):
+            self.delete_edge(e)
 
 
-    def delete_edge(self, edge, deleted_vertices=set(), deleted_edges=set()):
+    def delete_edge(self, edge):
+        if edge not in self.E:
+            raise ValueError('Edge does not belong to current graph')
+        if edge in self.deleted_edges:
+            return
         start, end = edge.get_vertices()
         edge_set = set([edge])
-        if start not in deleted_vertices and start.get_outputs() == edge_set:
-            self.delete_vertex(start, deleted_vertices,
-                               deleted_edges.union(edge_set))
-        if end not in deleted_vertices and end.get_inputs() == edge_set:
-            self.delete_vertex(end, deleted_vertices,
-                               deleted_edges.union(edge_set))
-        start.remove_output(edge)
-        end.remove_input(edge)
-        self.E.remove(edge)
+        if start not in self.deleted_vertices \
+        and start.get_outputs().difference(self.deleted_edges) == edge_set:
+            self.deleted_edges.add(edge)
+            self.delete_vertex(start)
+        if end not in self.deleted_vertices \
+        and end.get_inputs().difference(self.deleted_edges) == edge_set:
+            self.deleted_edges.add(edge)
+            self.delete_vertex(end)
+        self.deleted_edges.add(edge)
 
 
     def prepare(self, semiring=None):
@@ -112,4 +118,17 @@ class Graph(object):
             if semiring is not None \
                 and not isinstance(edge.get_value(), semiring):
                 edge.set_value(semiring(edge.get_value()))
+
+
+    def get_edges(self):
+        return self.E.difference(self.deleted_edges)
+
+
+    def get_vertices(self):
+        return self.V.difference(self.deleted_vertices)
+
+
+    def restore(self):
+        self.deleted_edges.clear()
+        self.deleted_vertices.clear()
 
