@@ -171,6 +171,13 @@ class TestGraphBasicProperties(TestCase):
         self.assertEqual(g.get_vertices(), set())
         self.assertTrue(g.is_neighborhood_corrupted())
 
+        g.restore()
+        self.assertItemsEqual(g.get_edges(), [e_aA_bA, e_aB_bB, e_aB_bC,
+                                              e_bA_cA, e_bB_cA])
+        self.assertItemsEqual(g.get_vertices(), [v_aA, v_aB, v_bA,
+                                                 v_bB, v_bC, v_cA])
+        self.assertFalse(g.is_neighborhood_corrupted())
+
 
     def test_prepare(self):
         start = Vertex('start')
