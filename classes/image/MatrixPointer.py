@@ -189,3 +189,9 @@ class MatrixPointer:
             current_value = (f(current_value, *v))
         return current_value
 
+
+    def __getitem__(self, index):
+        y, x = index
+        return self.__data[self.__original_size[0] * (self.__offset[1] + y) + \
+                           self.__offset[0] + x]
+
