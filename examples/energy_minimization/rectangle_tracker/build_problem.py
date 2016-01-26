@@ -1,17 +1,21 @@
+from math import sqrt
+
 from classes.image import MatrixPointer
 from classes.solver import EnergyMinimization
 from classes.graph import *
 
 
-def get_penalty(model, raw, index_model, index_raw):
-    return -(model[index_model] - raw[index_raw])**2
+def get_penalty(model, raw, index_model, index_raw, prev_offset):
+    distance = sqrt((index_model[0] + prev_offset[0] - index_raw[0])**2 +
+                    (index_model[1] + prev_offset[1] - index_raw[1])**2)
+    return - (model[index_model] - raw[index_raw])**2 - distance * 10
 
 
 def process_image(model, raw, mask):
     to_visit = [{
         'target': (0,0),
         'penalties': dict(((i,j), Vertex((i,j),
-                          get_penalty(model, raw, (0,0), (i,j)), (0,0)))
+                          get_penalty(model, raw, (0,0), (i,j), (i,j)), (0,0)))
                           for i in xrange(raw.get_size()[0])
                           for j in xrange(raw.get_size()[1]))
     }]
@@ -44,7 +48,8 @@ def process_image(model, raw, mask):
                 penalties = dict()
                 for i in xrange(pixel[0], raw.get_size()[0]):
                     for j in xrange(pixel[1], raw.get_size()[1]):
-                        v = Vertex((i,j), get_penalty(model, raw, n, (i,j)), n)
+                        v = Vertex((i,j), get_penalty(model, raw, n,
+                                                      (i,j), offset), n)
                         penalties[(i,j)] = v
                         vertices.add(v)
                         edges.add(Edge(current_pixel['penalties'][pixel], v, 0))

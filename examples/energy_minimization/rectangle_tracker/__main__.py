@@ -15,6 +15,6 @@ if __name__ == '__main__':
 
     problem = build_problem(model_image_grayscale, raw_image_grayscale,
                             model_image_mask)
-    print [(v.get_name(), v.get_value(), v.get_domain())
-            for v in problem.solve()]
+    print sorted([(v.get_name(), v.get_value(), v.get_domain())
+                  for v in problem.solve()], key=lambda x: x[0][0] * raw_image.size[0] + x[0][1])
 
