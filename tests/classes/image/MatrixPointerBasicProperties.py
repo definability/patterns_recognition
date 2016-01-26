@@ -181,6 +181,31 @@ class TestMatrixPointerBasicProperties(TestCase):
         self.assertEqual(c, 20)
 
 
+    def test_getitem(self):
+        a = MatrixPointer([1, 2, 3, 4], (2, 2))
+        self.assertEqual(a[(0,0)], 1)
+        self.assertEqual(a[(0,1)], 2)
+        self.assertEqual(a[(1,0)], 3)
+        self.assertEqual(a[(1,1)], 4)
+
+
+    def test_getitem_inline_tuple(self):
+        a = MatrixPointer([1, 2, 3, 4], (2, 2))
+        self.assertEqual(a[0, 0], 1)
+        self.assertEqual(a[0, 1], 2)
+        self.assertEqual(a[1, 0], 3)
+        self.assertEqual(a[1, 1], 4)
+
+
+    def test_getitem_splitted(self):
+        for pointer in self.pointers:
+            top, bottom = pointer.split_horizontal(2)
+            top, bottom = top.split_horizontal(1)
+            self.assertEqual(bottom.get_data(), [4, 5, 6])
+            self.assertEqual(bottom[(0,0)], 4)
+            self.assertEqual(bottom[(0,1)], 5)
+            self.assertEqual(bottom[(0,2)], 6)
+
 if __name__ == '__main__':
     main()
 
