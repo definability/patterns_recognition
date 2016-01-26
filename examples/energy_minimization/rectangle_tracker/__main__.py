@@ -13,5 +13,8 @@ if __name__ == '__main__':
     raw_image = Image.open(path.join(path.dirname(__file__), 'rect_raw.png'))
     raw_image_grayscale = raw_image.convert('L')
 
-    build_problem(model_image_grayscale, raw_image_grayscale, model_image_mask)
+    problem = build_problem(model_image_grayscale, raw_image_grayscale,
+                            model_image_mask)
+    print [(v.get_name(), v.get_value(), v.get_domain())
+            for v in problem.solve()]
 
