@@ -4,6 +4,9 @@ from classes.image import MatrixPointer
 from classes.solver import EnergyMinimization
 from classes.graph import *
 
+from cProfile import Profile
+from pstats import Stats
+
 
 def get_penalty(model, raw, index_model, index_raw, prev_offset):
     distance = sqrt((index_model[0] + prev_offset[0] - index_raw[0])**2 +
@@ -58,6 +61,7 @@ def process_image(model, raw, mask):
                     'penalties': penalties
                 })
 
+    print len(vertices), len(edges)
     return (vertices, edges)
 
 
@@ -70,7 +74,11 @@ def build_problem(model_image, raw_image, model_image_mask=None):
                          (model_image.size[0], model_image.size[1]))
     raw   = MatrixPointer(list(raw_image.getdata()),
                          (raw_image.size[0], raw_image.size[1]))
+    profile = Profile()
+    profile.enable()
     vertices, edges = process_image(model, raw, mask)
+    profile.disable()
+    Stats(profile).sort_stats('time').print_stats()
     problem = EnergyMinimization(vertices, edges)
     return problem
 
