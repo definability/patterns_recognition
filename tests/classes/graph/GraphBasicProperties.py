@@ -182,6 +182,35 @@ class TestGraphBasicProperties(TestCase):
         self.assertFalse(g.is_neighborhood_corrupted())
 
 
+    def test_delete_edge(self):
+        """
+        a - b
+        -----
+        B
+          \
+            C
+        """
+        v_aB = Vertex(domain='a')
+        v_bC = Vertex(domain='b')
+
+        e_aB_bC = Edge(v_aB, v_bC)
+
+        g = Graph([v_aB, v_bC],
+                  [e_aB_bC])
+        g.prepare()
+        g.delete_edge(e_aB_bC)
+        self.assertItemsEqual(g.get_edges(), [])
+        self.assertItemsEqual(g.get_vertices(), [])
+        self.assertTrue(g.is_neighborhood_corrupted())
+        """
+        a - b
+        -----
+        x
+          
+            X
+        """
+
+
     def test_prepare(self):
         start = Vertex('start')
         finish = Vertex('finish')
