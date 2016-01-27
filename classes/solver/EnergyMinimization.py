@@ -32,10 +32,15 @@ class EnergyMinimization(Graph):
 
     def __iteration(self, g, gamma):
         for domain in g.get_domains():
-            edges = sum([list(v.get_outputs()) for v in g.get_domain(domain)], [])
-            if len(edges) == 0:
+            max_e = []
+            for v in g.get_domain(domain):
+                outputs = v.get_outputs()
+                if len(outputs) == 0:
+                    continue
+                max_e.append(g.max_edge(outputs))
+            if len(max_e) == 0:
                 continue
-            max_e = g.max_edge(edges)
+            max_e = g.max_edge(max_e)
             max_e.set_value(max_e.get_value() - 2 * gamma)
             x, y = max_e.get_vertices()
             x.set_value(x.get_value() + gamma)
@@ -58,13 +63,19 @@ class EnergyMinimization(Graph):
                 if max_v.get_value() - v.get_value() > treshold:
                     self.delete_vertex(v)
         for domain in self.get_domains():
-            edges = sum([list(v.get_outputs()) for v in self.get_domain(domain, True)], [])
-            if len(edges) == 0:
+            max_e = []
+            for v in self.get_domain(domain):
+                outputs = v.get_outputs()
+                if len(outputs) == 0:
+                    continue
+                max_e.append(self.max_edge(outputs))
+            if len(max_e) == 0:
                 continue
-            max_e = self.max_edge(edges)
-            for e in edges:
-                if max_e.get_value() - e.get_value() > treshold:
-                    self.delete_edge(e)
+            max_e = self.max_edge(max_e)
+            for v in self.get_domain(domain):
+                for e in v.get_outputs():
+                    if max_e.get_value() - e.get_value() > treshold:
+                        self.delete_edge(e)
 
 
     def solve(self):
@@ -72,13 +83,13 @@ class EnergyMinimization(Graph):
         V_map_inv = dict()
         E_map = dict()
         for v in self.V:
-            v_copy = Vertex(deepcopy(v.get_name()), deepcopy(v.get_value()),
+            v_copy = Vertex(v.get_name(), v.get_value(),
                             v.get_domain())
             V_map[v_copy] = v
             V_map_inv[v] = v_copy
         for e in self.E:
             x, y = e.get_vertices()
-            E_map[Edge(V_map_inv[x], V_map_inv[y], deepcopy(e.get_value()))] = e
+            E_map[Edge(V_map_inv[x], V_map_inv[y], e.get_value())] = e
         g = EnergyMinimization(V_map.keys(), E_map.keys(), self.get_tau())
         g.prepare()
         for gamma in self.__gamma():
