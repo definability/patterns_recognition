@@ -24,6 +24,8 @@ def process_image(model, raw, mask):
 
     vertices = set(to_visit[0]['penalties'].values())
     edges = set()
+    domains = dict()
+    eds = set()
 
     while True:
         if len(to_visit) == 0:
@@ -50,62 +52,24 @@ def process_image(model, raw, mask):
                 penalties = dict()
                 for i in xrange(pixel[0], raw.get_size()[0]):
                     for j in xrange(pixel[1], raw.get_size()[1]):
+                        v = None
+                        if n not in domains:
+                            domains[n] = dict()
+                        if (i,j) not in domains[n]:
+                            domains[n][(i,j)] = Vertex((i,j), 0, n)
+                            vertices.add(domains[n][(i,j)])
+                        v = domains[n][(i,j)]
                         penalty = get_penalty(model, raw, n, (i,j), offset)
-                        v = Vertex((i,j), 0, n)
                         penalties[(i,j)] = v
-                        vertices.add(v)
-                        edges.add(Edge(current_pixel['penalties'][pixel], v, penalty))
+                        if (current_pixel['penalties'][pixel],v) not in eds:
+                            edge = Edge(current_pixel['penalties'][pixel], v, penalty)
+                            edges.add(edge)
+                            eds.add((current_pixel['penalties'][pixel],v))
                 to_visit.append({
                     'target': n,
                     'penalties': penalties
                 })
 
-    print 'Original', len(vertices), len(edges)
-    result = dict()
-    domains = dict()
-    verts = dict()
-    to_remove = set()
-    for e in edges:
-        x, y = e.get_vertices()
-        if x.get_domain() not in domains:
-            domains[x.get_domain()] = list()
-        if y.get_domain() not in domains:
-            domains[y.get_domain()] = list()
-        domains[x.get_domain()].append(x.get_name())
-        domains[y.get_domain()].append(y.get_name())
-        x_coord = (x.get_name(), x.get_domain())
-        y_coord = (y.get_name(), y.get_domain())
-        if x_coord not in verts:
-            verts[x_coord] = list()
-        if y_coord not in verts:
-            verts[y_coord] = list()
-        verts[x_coord].append(x.get_value())
-        verts[y_coord].append(y.get_value())
-        result[(x_coord, y_coord)] = e.get_value()
-    print sum(len(set(domains[d])) for d in domains)
-    vertices = set()
-    edges = set()
-    eds = dict()
-    for d in domains:
-        for v in set(domains[d]):
-            if (v,d) in eds:
-                print 'Conflict'
-            vertex = Vertex(v, 0, d)
-            vertices.add(vertex)
-            eds[(v,d)] = vertex
-    for r in result:
-        edges.add(Edge(eds[r[0]], eds[r[1]], result[r]))
-    print len(vertices), len(edges)
-    #edges = edges.difference(to_remove)
-    #print 'Edges', len(result), len(set(result))
-    #for v in verts:
-    #    i = verts[v][0]
-    #    for a in verts[v]:
-    #        if a != i:
-    #            print a, i
-    #print 'Vertices', len(vertices), len(set(verts))
-    #for d in domains:
-    #    print '"' + str(d) + '": ["' + '","'.join(str(a) for a in domains[d]) + '"],'
     return (vertices, edges)
 
 
