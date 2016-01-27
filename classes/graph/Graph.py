@@ -99,7 +99,7 @@ class Graph(object):
             self.deleted_edges.add(edge)
             self.delete_vertex(start)
         if end not in self.deleted_vertices \
-        and end.get_inputs().difference(self.deleted_edges) == edge_set:
+        and end.get_inputs().difference(self.deleted_edges.difference(edge_set)) == edge_set:
             self.deleted_edges.add(edge)
             self.delete_vertex(end)
         self.deleted_edges.add(edge)
