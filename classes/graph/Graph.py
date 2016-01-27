@@ -94,15 +94,17 @@ class Graph(object):
             return
         start, end = edge.get_vertices()
         edge_set = set([edge])
+        start_outputs = start.get_outputs().difference(self.deleted_edges)
+        self.deleted_edges.add(edge)
         if start not in self.deleted_vertices \
-        and start.get_outputs().difference(self.deleted_edges) == edge_set:
-            self.deleted_edges.add(edge)
+        and edge in start.get_outputs()\
+        and start.get_outputs().issubset(self.deleted_edges):
             self.delete_vertex(start)
         if end not in self.deleted_vertices \
-        and end.get_inputs().difference(self.deleted_edges.difference(edge_set)) == edge_set:
+        and edge in end.get_inputs()\
+        and end.get_inputs().issubset(self.deleted_edges):
             self.deleted_edges.add(edge)
             self.delete_vertex(end)
-        self.deleted_edges.add(edge)
 
 
     def prepare(self, semiring=None):
