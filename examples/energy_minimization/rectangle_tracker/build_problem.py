@@ -33,21 +33,17 @@ def process_image(model, raw, mask):
         current_pixel = to_visit.pop()
 
         for pixel in current_pixel['penalties']:
-            offset = (pixel[0] - current_pixel['target'][0],
-                      pixel[1] - current_pixel['target'][1])
-            v = Vertex(offset, current_pixel['penalties'][pixel],
-                               current_pixel['target'])
+            model_pos = current_pixel['target']
+            offset = (pixel[0] - model_pos[0],
+                      pixel[1] - model_pos[1])
+            v = Vertex(offset, current_pixel['penalties'][pixel], model_pos)
             neighbours = []
-            if current_pixel['target'][0] < model.get_size()[0] - 1 \
-                    and mask[current_pixel['target'][0] + 1,
-                             current_pixel['target'][1]]:
-                neighbours.append((current_pixel['target'][0] + 1,
-                                   current_pixel['target'][1]))
-            if current_pixel['target'][1] < model.get_size()[1] - 1 \
-                    and mask[current_pixel['target'][0],
-                             current_pixel['target'][1] + 1]:
-                neighbours.append((current_pixel['target'][0],
-                                   current_pixel['target'][1] + 1))
+            if model_pos[0] < model.get_size()[0] - 1 \
+                    and mask[model_pos[0] + 1, model_pos[1]]:
+                neighbours.append((model_pos[0] + 1, model_pos[1]))
+            if model_pos[1] < model.get_size()[1] - 1 \
+                    and mask[model_pos[0], model_pos[1] + 1]:
+                neighbours.append((model_pos[0], model_pos[1] + 1))
             for n in neighbours:
                 penalties = dict()
                 for i in xrange(pixel[0], raw.get_size()[0]):
