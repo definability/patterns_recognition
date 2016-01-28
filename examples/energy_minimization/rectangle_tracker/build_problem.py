@@ -44,7 +44,7 @@ def process_domain(model, raw, domain, vertex, pixel, offset,
 def process_image(model, raw, mask):
     to_visit = [{
         'domain': (0,0),
-        'lables': dict(((i,j), Vertex((i,j), 0, (0,0)))
+        'lables': dict(((i,j), Vertex((i,j), -(model[0,0]-raw[i,j])**2, (0,0)))
                           for i in xrange(raw.get_size()[0])
                           for j in xrange(raw.get_size()[1]))
     }]
