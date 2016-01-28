@@ -53,7 +53,6 @@ def create_vertices(domain, raw, model):
 
 
 def process_image(model, raw, mask):
-    to_visit = list()
     vertices = set()
     edges = set()
     domains = dict()
@@ -65,19 +64,11 @@ def process_image(model, raw, mask):
                 continue
             domains[(i,j)] = create_vertices((i,j), raw, model)
             vertices.update(domains[(i,j)].values())
-            to_visit.append({
-                'domain': (i,j),
-                'lables': domains[(i,j)]
-            })
 
-    while True:
-        if len(to_visit) == 0:
-            break
-        current_pixel = to_visit.pop()
-        domain = current_pixel['domain']
+    for domain in domains:
         neighbours = get_neighbours(model, domain, mask)
-        for pixel in current_pixel['lables']:
-            vertex = current_pixel['lables'][pixel]
+        for pixel in domains[domain]:
+            vertex = domains[domain][pixel]
             offset = (pixel[0] - domain[0], pixel[1] - domain[1])
             for neighbour_domain in neighbours:
                 process_domain(model, raw, neighbour_domain,
