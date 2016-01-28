@@ -9,9 +9,10 @@ from pstats import Stats
 
 
 def get_penalty(model, raw, index_model, index_raw, prev_offset):
-    distance = sqrt((index_model[0] + prev_offset[0] - index_raw[0])**2 +
-                    (index_model[1] + prev_offset[1] - index_raw[1])**2)
-    return - (model[index_model] - raw[index_raw])**2 - distance * 10
+    deviation = (model[index_model] - raw[index_raw])**2
+    distance = ((index_model[0] + prev_offset[0] - index_raw[0])**2 +
+                (index_model[1] + prev_offset[1] - index_raw[1])**2)
+    return - (deviation + distance)
 
 
 def get_neighbours(model, pos, mask):
@@ -20,49 +21,53 @@ def get_neighbours(model, pos, mask):
     return [r for r in neighbours if r[0] < max_y and r[1] < max_x and mask[r]]
 
 
+def process_domain(model, raw, domain, vertex, pixel, offset,
+                               domains, vertices, edges, links):
+    penalties = dict()
+    if domain not in domains:
+        domains[domain] = dict()
+    for i in xrange(pixel[0], raw.get_size()[0]):
+        for j in xrange(pixel[1], raw.get_size()[1]):
+            if (i,j) not in domains[domain]:
+                domains[domain][(i,j)] = Vertex((i,j), 0, domain)
+                vertices.add(domains[domain][(i,j)])
+            end = domains[domain][(i,j)]
+            penalty = get_penalty(model, raw, domain, (i,j), offset)
+            penalties[(i,j)] = end
+            if (vertex,end) not in links:
+                edge = Edge(vertex, end, penalty)
+                edges.add(edge)
+                links.add((vertex,end))
+    return penalties
+
+
 def process_image(model, raw, mask):
     to_visit = [{
-        'target': (0,0),
-        'penalties': dict(((i,j), Vertex((i,j), 0, (0,0)))
+        'domain': (0,0),
+        'lables': dict(((i,j), Vertex((i,j), 0, (0,0)))
                           for i in xrange(raw.get_size()[0])
                           for j in xrange(raw.get_size()[1]))
     }]
 
-    vertices = set(to_visit[0]['penalties'].values())
+    vertices = set(to_visit[0]['lables'].values())
     edges = set()
     domains = dict()
-    eds = set()
+    links = set()
 
     while True:
         if len(to_visit) == 0:
             break
         current_pixel = to_visit.pop()
-
-        for pixel in current_pixel['penalties']:
-            domain = current_pixel['target']
-            offset = (pixel[0] - domain[0],
-                      pixel[1] - domain[1])
-            vertex = current_pixel['penalties'][pixel]
-            for n in get_neighbours(model, domain, mask):
-                penalties = dict()
-                for i in xrange(pixel[0], raw.get_size()[0]):
-                    for j in xrange(pixel[1], raw.get_size()[1]):
-                        v = None
-                        if n not in domains:
-                            domains[n] = dict()
-                        if (i,j) not in domains[n]:
-                            domains[n][(i,j)] = Vertex((i,j), 0, n)
-                            vertices.add(domains[n][(i,j)])
-                        v = domains[n][(i,j)]
-                        penalty = get_penalty(model, raw, n, (i,j), offset)
-                        penalties[(i,j)] = v
-                        if (vertex,v) not in eds:
-                            edge = Edge(vertex, v, penalty)
-                            edges.add(edge)
-                            eds.add((vertex,v))
+        domain = current_pixel['domain']
+        neighbours = get_neighbours(model, domain, mask)
+        for pixel in current_pixel['lables']:
+            vertex = current_pixel['lables'][pixel]
+            offset = (pixel[0] - domain[0], pixel[1] - domain[1])
+            for neighbour_domain in neighbours:
                 to_visit.append({
-                    'target': n,
-                    'penalties': penalties
+                    'domain': neighbour_domain,
+                    'lables': process_domain(model, raw, neighbour_domain,
+                        vertex, pixel, offset, domains, vertices, edges, links)
                 })
 
     return (vertices, edges)
