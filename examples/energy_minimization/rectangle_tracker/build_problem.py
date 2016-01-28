@@ -39,11 +39,11 @@ def process_image(model, raw, mask):
         current_pixel = to_visit.pop()
 
         for pixel in current_pixel['penalties']:
-            model_pos = current_pixel['target']
-            offset = (pixel[0] - model_pos[0],
-                      pixel[1] - model_pos[1])
-            v = Vertex(offset, current_pixel['penalties'][pixel], model_pos)
-            for n in get_neighbours(model, model_pos, mask):
+            domain = current_pixel['target']
+            offset = (pixel[0] - domain[0],
+                      pixel[1] - domain[1])
+            vertex = current_pixel['penalties'][pixel]
+            for n in get_neighbours(model, domain, mask):
                 penalties = dict()
                 for i in xrange(pixel[0], raw.get_size()[0]):
                     for j in xrange(pixel[1], raw.get_size()[1]):
@@ -56,10 +56,10 @@ def process_image(model, raw, mask):
                         v = domains[n][(i,j)]
                         penalty = get_penalty(model, raw, n, (i,j), offset)
                         penalties[(i,j)] = v
-                        if (current_pixel['penalties'][pixel],v) not in eds:
-                            edge = Edge(current_pixel['penalties'][pixel], v, penalty)
+                        if (vertex,v) not in eds:
+                            edge = Edge(vertex, v, penalty)
                             edges.add(edge)
-                            eds.add((current_pixel['penalties'][pixel],v))
+                            eds.add((vertex,v))
                 to_visit.append({
                     'target': n,
                     'penalties': penalties
