@@ -34,13 +34,6 @@ def process_end(domains, edges, links, domain,
 
 def process_domain(model, raw, domain, start, pixel, offset,
                                domains, vertices, edges, links):
-    penalties = dict()
-    if domain not in domains:
-        new_vertices = create_vertices(domain, raw, model)
-        domains[domain] = new_vertices
-        vertices.update(new_vertices.values())
-        for v in new_vertices.values():
-            penalties[v.get_name()] = v
     needed_offset = (domain[0] - start.get_domain()[0],
                      domain[1] - start.get_domain()[1])
     start_pos = start.get_name()
@@ -50,7 +43,6 @@ def process_domain(model, raw, domain, start, pixel, offset,
         for j in xrange(pixel[1], max_j):
             process_end(domains, edges, links, domain,
                         start, end, start_pos, (i,j), needed_offset)
-    return penalties
 
 
 def create_vertices(domain, raw, model):
@@ -61,18 +53,22 @@ def create_vertices(domain, raw, model):
 
 
 def process_image(model, raw, mask):
-    to_visit = [{
-        'domain': (0,0),
-        #'lables': dict(((i,j), Vertex((i,j), -(model[0,0]-raw[i,j])**2, (0,0)))
-        #                  for i in xrange(raw.get_size()[0])
-        #                  for j in xrange(raw.get_size()[1]))
-        'lables': create_vertices((0,0), raw, model)
-    }]
-
-    vertices = set(to_visit[0]['lables'].values())
+    to_visit = list()
+    vertices = set()
     edges = set()
     domains = dict()
     links = set()
+
+    for i in xrange(model.get_size()[0]):
+        for j in xrange(model.get_size()[1]):
+            if not mask[i,j]:
+                continue
+            domains[(i,j)] = create_vertices((i,j), raw, model)
+            vertices.update(domains[(i,j)].values())
+            to_visit.append({
+                'domain': (i,j),
+                'lables': domains[(i,j)]
+            })
 
     while True:
         if len(to_visit) == 0:
@@ -84,11 +80,8 @@ def process_image(model, raw, mask):
             vertex = current_pixel['lables'][pixel]
             offset = (pixel[0] - domain[0], pixel[1] - domain[1])
             for neighbour_domain in neighbours:
-                to_visit.append({
-                    'domain': neighbour_domain,
-                    'lables': process_domain(model, raw, neighbour_domain,
+                process_domain(model, raw, neighbour_domain,
                         vertex, pixel, offset, domains, vertices, edges, links)
-                })
 
     return (vertices, edges)
 
