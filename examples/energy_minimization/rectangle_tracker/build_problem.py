@@ -14,6 +14,12 @@ def get_penalty(model, raw, index_model, index_raw, prev_offset):
     return - (model[index_model] - raw[index_raw])**2 - distance * 10
 
 
+def get_neighbours(model, pos, mask):
+    max_y, max_x = model.get_size()
+    neighbours = [(pos[0] + 1, pos[1]), (pos[0], pos[1] + 1)]
+    return [r for r in neighbours if r[0] < max_y and r[1] < max_x and mask[r]]
+
+
 def process_image(model, raw, mask):
     to_visit = [{
         'target': (0,0),
@@ -37,14 +43,7 @@ def process_image(model, raw, mask):
             offset = (pixel[0] - model_pos[0],
                       pixel[1] - model_pos[1])
             v = Vertex(offset, current_pixel['penalties'][pixel], model_pos)
-            neighbours = []
-            if model_pos[0] < model.get_size()[0] - 1 \
-                    and mask[model_pos[0] + 1, model_pos[1]]:
-                neighbours.append((model_pos[0] + 1, model_pos[1]))
-            if model_pos[1] < model.get_size()[1] - 1 \
-                    and mask[model_pos[0], model_pos[1] + 1]:
-                neighbours.append((model_pos[0], model_pos[1] + 1))
-            for n in neighbours:
+            for n in get_neighbours(model, model_pos, mask):
                 penalties = dict()
                 for i in xrange(pixel[0], raw.get_size()[0]):
                     for j in xrange(pixel[1], raw.get_size()[1]):
