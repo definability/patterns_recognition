@@ -23,28 +23,24 @@ def get_neighbours(model, pos, mask):
     return [r for r in neighbours if r[0] < max_y and r[1] < max_x and mask[r]]
 
 
-def process_end(model, raw, domains, vertices, edges, links, domain,
-                start, end, start_pos, end_pos, needed_offset, penalties):
-    if end_pos not in domains[domain]:
-        vertex_penalty = get_value_penalty(model[domain], raw[end_pos])
-        end = Vertex(end_pos, vertex_penalty, domain)
-        domains[domain][end_pos] = end
-        vertices.add(end)
-        penalties[end_pos] = end
-    else:
-        end = domains[domain][end_pos]
-    if (start,end) not in links:
-        real_offset = (end_pos[0] - start_pos[0], end_pos[1] - start_pos[1])
-        edge_penalty = get_distance_penalty(needed_offset, real_offset)
-        edge = Edge(start, end, edge_penalty)
-        edges.add(edge)
-        links.add((start,end))
+def process_end(domains, edges, links, domain,
+                start, end, start_pos, end_pos, needed_offset):
+    end = domains[domain][end_pos]
+    real_offset = (end_pos[0] - start_pos[0], end_pos[1] - start_pos[1])
+    edge_penalty = get_distance_penalty(needed_offset, real_offset)
+    edge = Edge(start, end, edge_penalty)
+    edges.add(edge)
+    links.add((start,end))
 
 def process_domain(model, raw, domain, start, pixel, offset,
                                domains, vertices, edges, links):
     penalties = dict()
     if domain not in domains:
-        domains[domain] = dict()
+        new_vertices = create_vertices(domain, raw, model)
+        domains[domain] = new_vertices
+        vertices.update(new_vertices.values())
+        for v in new_vertices.values():
+            penalties[v.get_name()] = v
     needed_offset = (domain[0] - start.get_domain()[0],
                      domain[1] - start.get_domain()[1])
     start_pos = start.get_name()
@@ -52,17 +48,25 @@ def process_domain(model, raw, domain, start, pixel, offset,
     max_i, max_j = raw.get_size()
     for i in xrange(pixel[0], max_i):
         for j in xrange(pixel[1], max_j):
-            process_end(model, raw, domains, vertices, edges, links, domain,
-                        start, end, start_pos, (i,j), needed_offset, penalties)
+            process_end(domains, edges, links, domain,
+                        start, end, start_pos, (i,j), needed_offset)
     return penalties
+
+
+def create_vertices(domain, raw, model):
+    return dict(((i,j), Vertex((i,j),
+                        get_value_penalty(model[domain], raw[i,j]), domain))
+               for i in xrange(raw.get_size()[0])
+               for j in xrange(raw.get_size()[1]))
 
 
 def process_image(model, raw, mask):
     to_visit = [{
         'domain': (0,0),
-        'lables': dict(((i,j), Vertex((i,j), -(model[0,0]-raw[i,j])**2, (0,0)))
-                          for i in xrange(raw.get_size()[0])
-                          for j in xrange(raw.get_size()[1]))
+        #'lables': dict(((i,j), Vertex((i,j), -(model[0,0]-raw[i,j])**2, (0,0)))
+        #                  for i in xrange(raw.get_size()[0])
+        #                  for j in xrange(raw.get_size()[1]))
+        'lables': create_vertices((0,0), raw, model)
     }]
 
     vertices = set(to_visit[0]['lables'].values())
