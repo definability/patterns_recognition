@@ -8,11 +8,13 @@ from cProfile import Profile
 from pstats import Stats
 
 
-def get_penalty(model, raw, index_model, index_raw, prev_offset):
-    deviation = (model[index_model] - raw[index_raw])**2
-    distance = ((index_model[0] + prev_offset[0] - index_raw[0])**2 +
-                (index_model[1] + prev_offset[1] - index_raw[1])**2)
-    return - (deviation + distance)
+def get_distance_penalty(needed_offset, real_offset):
+    return - ((needed_offset[0] - real_offset[0])**2
+           +  (needed_offset[1] - real_offset[1])**2)
+
+
+def get_value_penalty(needed_value, real_value):
+    return - (needed_value - real_value)**2
 
 
 def get_neighbours(model, pos, mask):
@@ -26,16 +28,25 @@ def process_domain(model, raw, domain, vertex, pixel, offset,
     penalties = dict()
     if domain not in domains:
         domains[domain] = dict()
-    for i in xrange(pixel[0], raw.get_size()[0]):
-        for j in xrange(pixel[1], raw.get_size()[1]):
+    needed_offset = (domain[0] - vertex.get_domain()[0],
+                     domain[1] - vertex.get_domain()[1])
+    start = vertex.get_name()
+    end = None
+    max_i, max_j = raw.get_size()
+    for i in xrange(pixel[0], max_i):
+        for j in xrange(pixel[1], max_j):
             if (i,j) not in domains[domain]:
-                domains[domain][(i,j)] = Vertex((i,j), 0, domain)
-                vertices.add(domains[domain][(i,j)])
-            end = domains[domain][(i,j)]
-            penalty = get_penalty(model, raw, domain, (i,j), offset)
+                vertex_penalty = get_value_penalty(model[domain], raw[i,j])
+                end = Vertex((i,j), vertex_penalty, domain)
+                domains[domain][(i,j)] = end
+                vertices.add(end)
+            else:
+                end = domains[domain][(i,j)]
             penalties[(i,j)] = end
+            real_offset = (i - start[0], j - start[1])
             if (vertex,end) not in links:
-                edge = Edge(vertex, end, penalty)
+                edge_penalty = get_distance_penalty(needed_offset, real_offset)
+                edge = Edge(vertex, end, edge_penalty)
                 edges.add(edge)
                 links.add((vertex,end))
     return penalties
