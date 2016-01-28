@@ -23,32 +23,37 @@ def get_neighbours(model, pos, mask):
     return [r for r in neighbours if r[0] < max_y and r[1] < max_x and mask[r]]
 
 
-def process_domain(model, raw, domain, vertex, pixel, offset,
+def process_end(model, raw, domains, vertices, edges, links, domain,
+                start, end, start_pos, end_pos, needed_offset, penalties):
+    if end_pos not in domains[domain]:
+        vertex_penalty = get_value_penalty(model[domain], raw[end_pos])
+        end = Vertex(end_pos, vertex_penalty, domain)
+        domains[domain][end_pos] = end
+        vertices.add(end)
+        penalties[end_pos] = end
+    else:
+        end = domains[domain][end_pos]
+    if (start,end) not in links:
+        real_offset = (end_pos[0] - start_pos[0], end_pos[1] - start_pos[1])
+        edge_penalty = get_distance_penalty(needed_offset, real_offset)
+        edge = Edge(start, end, edge_penalty)
+        edges.add(edge)
+        links.add((start,end))
+
+def process_domain(model, raw, domain, start, pixel, offset,
                                domains, vertices, edges, links):
     penalties = dict()
     if domain not in domains:
         domains[domain] = dict()
-    needed_offset = (domain[0] - vertex.get_domain()[0],
-                     domain[1] - vertex.get_domain()[1])
-    start = vertex.get_name()
+    needed_offset = (domain[0] - start.get_domain()[0],
+                     domain[1] - start.get_domain()[1])
+    start_pos = start.get_name()
     end = None
     max_i, max_j = raw.get_size()
     for i in xrange(pixel[0], max_i):
         for j in xrange(pixel[1], max_j):
-            if (i,j) not in domains[domain]:
-                vertex_penalty = get_value_penalty(model[domain], raw[i,j])
-                end = Vertex((i,j), vertex_penalty, domain)
-                domains[domain][(i,j)] = end
-                vertices.add(end)
-            else:
-                end = domains[domain][(i,j)]
-            penalties[(i,j)] = end
-            real_offset = (i - start[0], j - start[1])
-            if (vertex,end) not in links:
-                edge_penalty = get_distance_penalty(needed_offset, real_offset)
-                edge = Edge(vertex, end, edge_penalty)
-                edges.add(edge)
-                links.add((vertex,end))
+            process_end(model, raw, domains, vertices, edges, links, domain,
+                        start, end, start_pos, (i,j), needed_offset, penalties)
     return penalties
 
 
