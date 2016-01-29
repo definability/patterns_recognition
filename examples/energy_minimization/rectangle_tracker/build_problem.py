@@ -30,7 +30,6 @@ def process_image(model, raw, mask):
     vertices = set()
     edges = set()
     domains = dict()
-    links = set()
 
     for i in xrange(model.get_size()[0]):
         for j in xrange(model.get_size()[1]):
@@ -46,13 +45,13 @@ def process_image(model, raw, mask):
             offset = (pixel[0] - domain[0], pixel[1] - domain[1])
             for neighbour_domain in neighbours:
                 process_domain(model, raw, neighbour_domain,
-                        vertex, pixel, offset, domains, vertices, edges, links)
+                        vertex, pixel, offset, domains, vertices, edges)
 
     return (vertices, edges)
 
 
 def process_domain(model, raw, domain, start, pixel, offset,
-                               domains, vertices, edges, links):
+                               domains, vertices, edges):
     needed_offset = (domain[0] - start.get_domain()[0],
                      domain[1] - start.get_domain()[1])
     start_pos = start.get_name()
@@ -60,18 +59,17 @@ def process_domain(model, raw, domain, start, pixel, offset,
     max_i, max_j = raw.get_size()
     for i in xrange(pixel[0], max_i):
         for j in xrange(pixel[1], max_j):
-            process_end(domains, edges, links, domain,
+            process_end(domains, edges, domain,
                         start, end, start_pos, (i,j), needed_offset)
 
 
-def process_end(domains, edges, links, domain,
+def process_end(domains, edges, domain,
                 start, end, start_pos, end_pos, needed_offset):
     end = domains[domain][end_pos]
     real_offset = (end_pos[0] - start_pos[0], end_pos[1] - start_pos[1])
     edge_penalty = get_distance_penalty(needed_offset, real_offset)
     edge = Edge(start, end, edge_penalty)
     edges.add(edge)
-    links.add((start,end))
 
 
 def create_vertices(domain, raw, model):
