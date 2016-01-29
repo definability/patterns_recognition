@@ -42,16 +42,14 @@ def process_image(model, raw, mask):
         neighbours = get_neighbours(model, domain, mask)
         for pixel in domains[domain]:
             vertex = domains[domain][pixel]
-            offset = (pixel[0] - domain[0], pixel[1] - domain[1])
             for neighbour_domain in neighbours:
                 process_domain(model, raw, neighbour_domain,
-                        vertex, pixel, offset, domains, vertices, edges)
+                               vertex, pixel, domains, vertices, edges)
 
     return (set(vertices), set(edges))
 
 
-def process_domain(model, raw, domain, start, pixel, offset,
-                               domains, vertices, edges):
+def process_domain(model, raw, domain, start, pixel, domains, vertices, edges):
     needed_offset = (domain[0] - start.get_domain()[0],
                      domain[1] - start.get_domain()[1])
     start_pos = start.get_name()
