@@ -36,9 +36,12 @@ class Graph(object):
         self.deleted_edges = set()
         self.deleted_vertices = set()
 
-        self.tau = tau if len(tau) > 0 else self.get_neighboring_domains()
-        if self.is_neighborhood_corrupted():
-            raise ValueError("Not all neighbours exist")
+        if len(tau) > 0:
+            self.tau = tau
+            if self.is_neighborhood_corrupted():
+                raise ValueError("Not all neighbours exist")
+        else:
+            self.tau = self.get_neighboring_domains()
 
 
     def check_edge(self, e):
