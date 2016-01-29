@@ -55,17 +55,15 @@ def process_domain(model, raw, domain, start, pixel, offset,
     needed_offset = (domain[0] - start.get_domain()[0],
                      domain[1] - start.get_domain()[1])
     start_pos = start.get_name()
-    end = None
     max_i, max_j = raw.get_size()
     for i in xrange(pixel[0], max_i):
         for j in xrange(pixel[1], max_j):
-            process_end(domains, edges, domain,
-                        start, end, start_pos, (i,j), needed_offset)
+            end_pos = (i,j)
+            process_end(edges, start, domains[domain][end_pos],
+                        start_pos, end_pos, needed_offset)
 
 
-def process_end(domains, edges, domain,
-                start, end, start_pos, end_pos, needed_offset):
-    end = domains[domain][end_pos]
+def process_end(edges, start, end, start_pos, end_pos, needed_offset):
     real_offset = (end_pos[0] - start_pos[0], end_pos[1] - start_pos[1])
     edge_penalty = get_distance_penalty(needed_offset, real_offset)
     edge = Edge(start, end, edge_penalty)
