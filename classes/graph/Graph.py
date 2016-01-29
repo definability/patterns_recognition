@@ -93,8 +93,6 @@ class Graph(object):
         if edge in self.deleted_edges:
             return
         start, end = edge.get_vertices()
-        edge_set = set([edge])
-        start_outputs = start.get_outputs().difference(self.deleted_edges)
         self.deleted_edges.add(edge)
         if start not in self.deleted_vertices \
         and edge in start.get_outputs()\
@@ -103,7 +101,6 @@ class Graph(object):
         if end not in self.deleted_vertices \
         and edge in end.get_inputs()\
         and end.get_inputs().issubset(self.deleted_edges):
-            self.deleted_edges.add(edge)
             self.delete_vertex(end)
 
 
