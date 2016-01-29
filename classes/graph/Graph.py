@@ -95,11 +95,9 @@ class Graph(object):
         start, end = edge.get_vertices()
         self.deleted_edges.add(edge)
         if start not in self.deleted_vertices \
-        and edge in start.get_outputs()\
         and start.get_outputs().issubset(self.deleted_edges):
             self.delete_vertex(start)
         if end not in self.deleted_vertices \
-        and edge in end.get_inputs()\
         and end.get_inputs().issubset(self.deleted_edges):
             self.delete_vertex(end)
 
