@@ -27,8 +27,8 @@ def build_problem(model_image, raw_image, model_image_mask=None):
 
 
 def process_image(model, raw, mask):
-    vertices = set()
-    edges = set()
+    vertices = list()
+    edges = list()
     domains = dict()
 
     for i in xrange(model.get_size()[0]):
@@ -36,7 +36,7 @@ def process_image(model, raw, mask):
             if not mask[i,j]:
                 continue
             domains[(i,j)] = create_vertices((i,j), raw, model)
-            vertices.update(domains[(i,j)].values())
+            vertices.extend(domains[(i,j)].values())
 
     for domain in domains:
         neighbours = get_neighbours(model, domain, mask)
@@ -47,7 +47,7 @@ def process_image(model, raw, mask):
                 process_domain(model, raw, neighbour_domain,
                         vertex, pixel, offset, domains, vertices, edges)
 
-    return (vertices, edges)
+    return (set(vertices), set(edges))
 
 
 def process_domain(model, raw, domain, start, pixel, offset,
@@ -69,7 +69,7 @@ def process_end(domains, edges, domain,
     real_offset = (end_pos[0] - start_pos[0], end_pos[1] - start_pos[1])
     edge_penalty = get_distance_penalty(needed_offset, real_offset)
     edge = Edge(start, end, edge_penalty)
-    edges.add(edge)
+    edges.append(edge)
 
 
 def create_vertices(domain, raw, model):
