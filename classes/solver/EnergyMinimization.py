@@ -54,6 +54,7 @@ class EnergyMinimization(Graph):
 
 
     def remove_small(self, treshold):
+        remove_after = True
         for domain in self.get_domains():
             vertices = self.get_domain(domain, True)
             if len(vertices) == 0:
@@ -61,7 +62,7 @@ class EnergyMinimization(Graph):
             max_v = self.max_vertex(vertices)
             for v in vertices:
                 if max_v.get_value() - v.get_value() > treshold:
-                    self.delete_vertex(v)
+                    self.delete_vertex(v, remove_after)
         for domain in self.get_domains():
             max_e = []
             for v in self.get_domain(domain):
@@ -75,7 +76,9 @@ class EnergyMinimization(Graph):
             for v in self.get_domain(domain):
                 for e in v.get_outputs():
                     if max_e.get_value() - e.get_value() > treshold:
-                        self.delete_edge(e)
+                        self.delete_edge(e, remove_after)
+        if remove_after:
+            self.delete_corrupted()
 
 
     def get_mapped_copy(self):
