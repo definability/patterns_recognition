@@ -78,7 +78,7 @@ class EnergyMinimization(Graph):
                         self.delete_edge(e)
 
 
-    def solve(self):
+    def get_mapped_copy(self):
         V_map = dict()
         V_map_inv = dict()
         E_map = dict()
@@ -91,6 +91,15 @@ class EnergyMinimization(Graph):
             x, y = e.get_vertices()
             E_map[Edge(V_map_inv[x], V_map_inv[y], e.get_value())] = e
         g = EnergyMinimization(V_map.keys(), E_map.keys(), self.get_tau())
+        return g, V_map, V_map_inv
+
+
+    def solve(self, make_copy=True):
+        g, V_map, E_map = None, None, None
+        if make_copy:
+            g, V_map, E_map = self.get_mapped_copy()
+        else:
+            g = self
         g.prepare()
         for gamma in self.__gamma():
             g.remove_small(0.5)
@@ -115,6 +124,9 @@ class EnergyMinimization(Graph):
                 need_break = False
             if need_break:
                 break
-        #return (set(V_map[v] for v in vertices), set(E_map[e] for e in edges))
-        return set(V_map[v] for v in vertices)
+        if make_copy:
+            #return (set(V_map[v] for v in vertices), set(E_map[e] for e in edges))
+            return set(V_map[v] for v in vertices)
+        else:
+            return vertices
 
