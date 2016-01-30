@@ -73,15 +73,17 @@ class Graph(object):
         vertices = self.get_vertices()
         for e in self.get_edges():
             v = e.get_vertices()
-            if not set(v).issubset(vertices):
+            if v[0] not in vertices or v[1] not in vertices:
                 continue
             neighboring_domains.add((v[0].get_domain(), v[1].get_domain()))
         return neighboring_domains
 
 
-    def delete_vertex(self, vertex):
+    def delete_vertex(self, vertex, mark_only=False):
         if vertex not in self.V:
             raise ValueError('Edge does not belong to current graph')
+        if mark_only:
+            self.deleted_vertices.add(vertex)
         if vertex in self.deleted_vertices:
             return
         self.deleted_vertices.add(vertex)
@@ -90,9 +92,11 @@ class Graph(object):
             self.delete_edge(e)
 
 
-    def delete_edge(self, edge):
+    def delete_edge(self, edge, mark_only=False):
         if edge not in self.E:
             raise ValueError('Edge does not belong to current graph')
+        if mark_only:
+            self.deleted_edges.add(edge)
         if edge in self.deleted_edges:
             return
         start, end = edge.get_vertices()
@@ -103,6 +107,37 @@ class Graph(object):
         if end not in self.deleted_vertices \
         and end.get_inputs().issubset(self.deleted_edges):
             self.delete_vertex(end)
+
+
+    def delete_corrupted(self):
+        vertices_to_delete = self.deleted_vertices.copy()
+        edges_to_delete = self.deleted_edges.copy()
+        modified_outputs = set()
+        modified_inputs = set()
+        while True:
+            if len(vertices_to_delete) == 0 and len(edges_to_delete) == 0:
+                break
+            modified_inputs = set()
+            modified_outputs = set()
+            for e in edges_to_delete:
+                neighbour_in, neighbour_out = e.get_vertices()
+                modified_inputs.add(neighbour_in)
+                modified_outputs.add(neighbour_out)
+            not_needed_vertices = self.deleted_vertices - vertices_to_delete
+            for v in modified_inputs - not_needed_vertices:
+                outputs = v.get_outputs()
+                if len(outputs) > 0 and outputs < self.deleted_edges:
+                    vertices_to_delete.add(v)
+            for v in modified_outputs - not_needed_vertices:
+                inputs = v.get_inputs()
+                if len(inputs) > 0 and inputs < self.deleted_edges:
+                    vertices_to_delete.add(v)
+            for v in vertices_to_delete:
+                edges_to_delete.update(v.get_inputs() | v.get_outputs())
+            vertices_to_delete -= self.deleted_vertices
+            edges_to_delete -= self.deleted_edges
+            self.deleted_vertices |= vertices_to_delete
+            self.deleted_edges |= edges_to_delete
 
 
     def prepare(self, semiring=None):
