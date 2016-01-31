@@ -36,7 +36,7 @@ def process_image(model, raw, mask):
             if not mask[i,j]:
                 continue
             domains[(i,j)] = create_vertices((i,j), raw, model)
-            vertices.extend(domains[(i,j)].values())
+            vertices += domains[(i,j)].values()
 
     for domain in domains:
         neighbours = get_neighbours(model, domain, mask)
