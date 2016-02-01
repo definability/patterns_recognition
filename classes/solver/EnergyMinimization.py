@@ -42,15 +42,6 @@ class EnergyMinimization(Graph):
                     d = end.get_domain()
                     if d not in max_edges or max_edges[d].get_value() < output.get_value():
                         max_edges[d] = output
-            #max_e = []
-            #for v in g.get_domain(domain):
-            #    outputs = v.get_outputs()
-            #    if len(outputs) == 0:
-            #        continue
-            #    max_e.append(g.max_edge(outputs))
-            #if len(max_e) == 0:
-            #    continue
-            #max_e = g.max_edge(max_e)
             for e in max_edges:
                 max_e = max_edges[e]
                 max_e.set_value(max_e.get_value() - 2 * gamma)
