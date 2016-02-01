@@ -98,6 +98,42 @@ class TestGraphBasicProperties(TestCase):
             Graph([v_a, v_b, v_c], e, [('a', 'b'), ('a', 'c')])
 
 
+    def test_get_links(self):
+        """
+        a - b - c
+        -----
+        A - A - A
+              /
+        B - B
+          \
+            C
+        """
+        v_aA = Vertex(domain='a')
+        v_aB = Vertex(domain='a')
+        v_bA = Vertex(domain='b')
+        v_bB = Vertex(domain='b')
+        v_bC = Vertex(domain='b')
+        v_cA = Vertex(domain='c')
+
+        e_aA_bA = Edge(v_aA, v_bA)
+        e_aB_bB = Edge(v_aB, v_bB)
+        e_aB_bC = Edge(v_aB, v_bC)
+        e_bA_cA = Edge(v_bA, v_cA)
+        e_bB_cA = Edge(v_bB, v_cA)
+
+        g = Graph([v_aA, v_aB, v_bA, v_bB, v_bC, v_cA],
+                  [e_aA_bA, e_aB_bB, e_bA_cA, e_bB_cA, e_aB_bC])
+        g.prepare()
+        self.assertItemsEqual(g.get_links(('b', 'c')),
+                              [e_bA_cA, e_bB_cA])
+        self.assertItemsEqual(g.get_links(('a', 'b')),
+                              [e_aA_bA, e_aB_bB, e_aB_bC])
+        self.assertDictEqual(g.get_links(), {
+            ('a', 'b'): set([e_aA_bA, e_aB_bB, e_aB_bC]),
+            ('b', 'c'): set([e_bA_cA, e_bB_cA])
+        })
+
+
     def test_delete_vertex(self):
         """
         a - b - c
