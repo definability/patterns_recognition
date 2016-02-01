@@ -43,6 +43,8 @@ class Graph(object):
         else:
             self.tau = self.get_neighboring_domains()
 
+        self.links = None
+
 
     def check_edge(self, e):
         if not self.V.issuperset(set(e.get_vertices())):
@@ -62,6 +64,13 @@ class Graph(object):
 
     def get_tau(self):
         return self.tau
+
+
+    def get_links(self, neighbours=None):
+        if neighbours is None:
+            return self.links
+        else:
+            return self.links[neighbours]
 
 
     def is_neighborhood_corrupted(self):
@@ -156,6 +165,13 @@ class Graph(object):
             if semiring is not None \
                 and not isinstance(edge.get_value(), semiring):
                 edge.set_value(semiring(edge.get_value()))
+
+        self.links = dict([(neighbour, set()) for neighbour in self.tau])
+        for domain in self.domains:
+            for v in self.domains[domain]:
+                edges = v.get_outputs()
+                for e in edges:
+                    self.links[domain, e.get_vertices()[1].get_domain()].add(e)
 
 
     def get_edges(self):
