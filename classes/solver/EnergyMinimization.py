@@ -11,7 +11,7 @@ class EnergyMinimization(Graph):
 
 
     def __gamma(self, k=None):
-        n = 1.
+        n = .5
         if k is None:
             i = 0
             while True:
@@ -32,19 +32,31 @@ class EnergyMinimization(Graph):
 
     def __iteration(self, g, gamma):
         for domain in g.get_domains():
-            max_e = []
-            for v in g.get_domain(domain):
+            max_edges = dict()
+            for v in self.get_domain(domain):
                 outputs = v.get_outputs()
                 if len(outputs) == 0:
                     continue
-                max_e.append(g.max_edge(outputs))
-            if len(max_e) == 0:
-                continue
-            max_e = g.max_edge(max_e)
-            max_e.set_value(max_e.get_value() - 2 * gamma)
-            x, y = max_e.get_vertices()
-            x.set_value(x.get_value() + gamma)
-            y.set_value(y.get_value() + gamma)
+                for output in outputs:
+                    end = output.get_vertices()[1]
+                    d = end.get_domain()
+                    if d not in max_edges or max_edges[d].get_value() < output.get_value():
+                        max_edges[d] = output
+            #max_e = []
+            #for v in g.get_domain(domain):
+            #    outputs = v.get_outputs()
+            #    if len(outputs) == 0:
+            #        continue
+            #    max_e.append(g.max_edge(outputs))
+            #if len(max_e) == 0:
+            #    continue
+            #max_e = g.max_edge(max_e)
+            for e in max_edges:
+                max_e = max_edges[e]
+                max_e.set_value(max_e.get_value() - 2 * gamma)
+                x, y = max_e.get_vertices()
+                x.set_value(x.get_value() + gamma)
+                y.set_value(y.get_value() + gamma)
         for d in g.get_domains():
             max_v = g.max_vertex(g.get_domain(domain))
             edges = max_v.get_inputs().union(max_v.get_outputs())
@@ -55,30 +67,35 @@ class EnergyMinimization(Graph):
 
     def remove_small(self, treshold):
         remove_after = True
+        nrg = 0
         for domain in self.get_domains():
             vertices = self.get_domain(domain, True)
             if len(vertices) == 0:
                 continue
             max_v = self.max_vertex(vertices)
+            nrg += max_v.get_value()
             for v in vertices:
                 if max_v.get_value() - v.get_value() > treshold:
                     self.delete_vertex(v, remove_after)
         for domain in self.get_domains():
-            max_e = []
+            max_e = dict()
             for v in self.get_domain(domain):
                 outputs = v.get_outputs()
                 if len(outputs) == 0:
                     continue
-                max_e.append(self.max_edge(outputs))
-            if len(max_e) == 0:
-                continue
-            max_e = self.max_edge(max_e)
+                for output in outputs:
+                    end = output.get_vertices()[1]
+                    d = end.get_domain()
+                    if d not in max_e or max_e[d].get_value() < output.get_value():
+                        max_e[d] = output
+            nrg += sum(max_e[e].get_value() for e in max_e)
             for v in self.get_domain(domain):
                 for e in v.get_outputs():
-                    if max_e.get_value() - e.get_value() > treshold:
+                    if max_e[e.get_vertices()[1].get_domain()].get_value() - e.get_value() > treshold:
                         self.delete_edge(e, remove_after)
         if remove_after:
             self.delete_corrupted()
+        return nrg
 
 
     def get_mapped_copy(self):
@@ -104,12 +121,15 @@ class EnergyMinimization(Graph):
         else:
             g = self
         g.prepare()
+        step = 0
         for gamma in self.__gamma():
-            g.remove_small(0.5)
+            nrg = g.remove_small(0.5)
+            print 'step %06d, gamma %f, energy %f'%(step, gamma, nrg)
             if not g.is_neighborhood_corrupted():
                 break
             g.restore()
             self.__iteration(g, gamma)
+            step += 1
         domain = g.get_domains().pop()
         vertices = [g.get_domain(domain).pop()]
         edges = []
