@@ -31,24 +31,13 @@ class EnergyMinimization(Graph):
 
 
     def __iteration(self, g, gamma):
+        for neighbours in g.get_tau():
+            max_e = self.max_edge(g.get_links(neighbours))
+            max_e.set_value(max_e.get_value() - 2 * gamma)
+            x, y = max_e.get_vertices()
+            x.set_value(x.get_value() + gamma)
+            y.set_value(y.get_value() + gamma)
         for domain in g.get_domains():
-            max_edges = dict()
-            for v in self.get_domain(domain):
-                outputs = v.get_outputs()
-                if len(outputs) == 0:
-                    continue
-                for output in outputs:
-                    end = output.get_vertices()[1]
-                    d = end.get_domain()
-                    if d not in max_edges or max_edges[d].get_value() < output.get_value():
-                        max_edges[d] = output
-            for e in max_edges:
-                max_e = max_edges[e]
-                max_e.set_value(max_e.get_value() - 2 * gamma)
-                x, y = max_e.get_vertices()
-                x.set_value(x.get_value() + gamma)
-                y.set_value(y.get_value() + gamma)
-        for d in g.get_domains():
             max_v = g.max_vertex(g.get_domain(domain))
             edges = max_v.get_inputs().union(max_v.get_outputs())
             max_v.set_value(max_v.get_value() - len(edges) * gamma)
@@ -68,22 +57,13 @@ class EnergyMinimization(Graph):
             for v in vertices:
                 if max_v.get_value() - v.get_value() > treshold:
                     self.delete_vertex(v, remove_after)
-        for domain in self.get_domains():
-            max_e = dict()
-            for v in self.get_domain(domain):
-                outputs = v.get_outputs()
-                if len(outputs) == 0:
-                    continue
-                for output in outputs:
-                    end = output.get_vertices()[1]
-                    d = end.get_domain()
-                    if d not in max_e or max_e[d].get_value() < output.get_value():
-                        max_e[d] = output
-            nrg += sum(max_e[e].get_value() for e in max_e)
-            for v in self.get_domain(domain):
-                for e in v.get_outputs():
-                    if max_e[e.get_vertices()[1].get_domain()].get_value() - e.get_value() > treshold:
-                        self.delete_edge(e, remove_after)
+        for neighbours in self.get_tau():
+            edges = self.get_links(neighbours)
+            max_e = self.max_edge(edges)
+            nrg += max_e.get_value()
+            for e in edges:
+                if max_e.get_value() - e.get_value() > treshold:
+                    self.delete_edge(e, remove_after)
         if remove_after:
             self.delete_corrupted()
         return nrg
