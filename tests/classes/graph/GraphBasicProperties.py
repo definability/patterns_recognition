@@ -124,14 +124,10 @@ class TestGraphBasicProperties(TestCase):
         g = Graph([v_aA, v_aB, v_bA, v_bB, v_bC, v_cA],
                   [e_aA_bA, e_aB_bB, e_bA_cA, e_bB_cA, e_aB_bC])
         g.prepare()
-        self.assertItemsEqual(g.get_links(('b', 'c')),
+        self.assertItemsEqual(g.get_link(('b', 'c')),
                               [e_bA_cA, e_bB_cA])
-        self.assertItemsEqual(g.get_links(('a', 'b')),
+        self.assertItemsEqual(g.get_link(('a', 'b')),
                               [e_aA_bA, e_aB_bB, e_aB_bC])
-        self.assertDictEqual(g.get_links(), {
-            ('a', 'b'): set([e_aA_bA, e_aB_bB, e_aB_bC]),
-            ('b', 'c'): set([e_bA_cA, e_bB_cA])
-        })
 
 
     def test_delete_vertex(self):
