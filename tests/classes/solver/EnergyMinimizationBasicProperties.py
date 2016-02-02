@@ -37,7 +37,7 @@ class TestEnergyMinimizationBasicProperties(TestCase):
         v_two_b = Vertex(value=2, domain='b')
 
         e_one_ab = Edge(v_one_a, v_two_b, 1)
-        e_two_ab = Edge(v_one_b, v_two_a, 2)
+        e_two_ab = Edge(v_two_a, v_one_b, 2)
 
         g = EnergyMinimization([v_one_a, v_one_b, v_two_a, v_two_b],
                                [e_one_ab, e_two_ab])
