@@ -7,6 +7,8 @@ class EnergyMinimization(Graph):
 
 
     def __init__(self, V, E, tau=set()):
+        self.max_edges = dict()
+        self.max_vertices = dict()
         super(EnergyMinimization, self).__init__(V, E, tau)
 
 
@@ -30,15 +32,27 @@ class EnergyMinimization(Graph):
         return max(edges, key=lambda e: e.get_value())
 
 
+    def get_max_vertex(self, domain, cached=True):
+        if not cached:
+            self.max_vertices[domain] = self.max_vertex(self.get_domain(domain))
+        return self.max_vertices[domain]
+
+
+    def get_max_edge(self, link, cached=True):
+        if not cached:
+            self.max_edges[link] = self.max_edge(self.get_link(link))
+        return self.max_edges[link]
+
+
     def __iteration(self, g, gamma):
-        for neighbours in g.get_tau():
-            max_e = self.max_edge(g.get_links(neighbours))
+        for link in g.get_tau():
+            max_e = self.get_max_edge(link)
             max_e.set_value(max_e.get_value() - 2 * gamma)
             x, y = max_e.get_vertices()
             x.set_value(x.get_value() + gamma)
             y.set_value(y.get_value() + gamma)
         for domain in g.get_domains():
-            max_v = g.max_vertex(g.get_domain(domain))
+            max_v = g.get_max_vertex(domain)
             edges = max_v.get_inputs().union(max_v.get_outputs())
             max_v.set_value(max_v.get_value() - len(edges) * gamma)
             for e in edges:
@@ -52,17 +66,19 @@ class EnergyMinimization(Graph):
             vertices = self.get_domain(domain, True)
             if len(vertices) == 0:
                 continue
-            max_v = self.max_vertex(vertices)
-            nrg += max_v.get_value()
+            max_v = self.get_max_vertex(domain, False)
+            max_value = max_v.get_value()
+            nrg += max_value
             for v in vertices:
-                if max_v.get_value() - v.get_value() > treshold:
+                if max_value - v.get_value() > treshold:
                     self.delete_vertex(v, remove_after)
-        for neighbours in self.get_tau():
-            edges = self.get_links(neighbours)
-            max_e = self.max_edge(edges)
-            nrg += max_e.get_value()
+        for link in self.get_tau():
+            edges = self.get_link(link)
+            max_e = self.get_max_edge(link, False)
+            max_value = max_e.get_value()
+            nrg += max_value
             for e in edges:
-                if max_e.get_value() - e.get_value() > treshold:
+                if max_value - e.get_value() > treshold:
                     self.delete_edge(e, remove_after)
         if remove_after:
             self.delete_corrupted()
