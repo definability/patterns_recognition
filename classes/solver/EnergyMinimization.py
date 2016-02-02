@@ -44,6 +44,13 @@ class EnergyMinimization(Graph):
         return self.max_edges[link]
 
 
+    def get_energy(self, cached=True):
+        return (sum([self.get_max_vertex(domain, cached).get_value()
+                    for domain in self.get_domains()]) +
+               sum([self.get_max_edge(link, cached).get_value()
+                    for link in self.get_tau()]))
+
+
     def __iteration(self, g, gamma):
         for link in g.get_tau():
             max_e = self.get_max_edge(link)
@@ -61,14 +68,12 @@ class EnergyMinimization(Graph):
 
     def remove_small(self, treshold):
         remove_after = True
-        nrg = 0
         for domain in self.get_domains():
             vertices = self.get_domain(domain, True)
             if len(vertices) == 0:
                 continue
             max_v = self.get_max_vertex(domain, False)
             max_value = max_v.get_value()
-            nrg += max_value
             for v in vertices:
                 if max_value - v.get_value() > treshold:
                     self.delete_vertex(v, remove_after)
@@ -76,13 +81,11 @@ class EnergyMinimization(Graph):
             edges = self.get_link(link)
             max_e = self.get_max_edge(link, False)
             max_value = max_e.get_value()
-            nrg += max_value
             for e in edges:
                 if max_value - e.get_value() > treshold:
                     self.delete_edge(e, remove_after)
         if remove_after:
             self.delete_corrupted()
-        return nrg
 
 
     def get_mapped_copy(self):
@@ -110,8 +113,8 @@ class EnergyMinimization(Graph):
         g.prepare()
         step = 0
         for gamma in self.__gamma():
-            nrg = g.remove_small(0.5)
-            print 'step %06d, gamma %f, energy %f'%(step, gamma, nrg)
+            g.remove_small(0.5)
+            print 'step %06d, gamma %f, energy %f'%(step, gamma, g.get_energy())
             if not g.is_neighborhood_corrupted():
                 break
             g.restore()
