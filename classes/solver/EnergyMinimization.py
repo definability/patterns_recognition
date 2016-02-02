@@ -9,6 +9,7 @@ class EnergyMinimization(Graph):
     def __init__(self, V, E, tau=set()):
         self.max_edges = dict()
         self.max_vertices = dict()
+        self.profile = None
         super(EnergyMinimization, self).__init__(V, E, tau)
 
 
@@ -85,7 +86,9 @@ class EnergyMinimization(Graph):
                 if max_value - e.get_value() > treshold:
                     self.delete_edge(e, remove_after)
         if remove_after:
+            self.profile.enable()
             self.delete_corrupted()
+            self.profile.disable()
 
 
     def get_mapped_copy(self):
@@ -104,7 +107,8 @@ class EnergyMinimization(Graph):
         return g, V_map, V_map_inv
 
 
-    def solve(self, make_copy=True):
+    def solve(self, make_copy=True, profile=None):
+        self.profile = profile
         g, V_map, E_map = None, None, None
         if make_copy:
             g, V_map, E_map = self.get_mapped_copy()
