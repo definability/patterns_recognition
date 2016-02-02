@@ -25,6 +25,71 @@ class TestEnergyMinimizationBasicProperties(TestCase):
         self.assertIsInstance(g, EnergyMinimization)
 
 
+    def test_get_max_vertex(self):
+        """
+        a     b
+        1 -1- 2
+        2 -2- 1
+        """
+        v_one_a = Vertex(value=1, domain='a')
+        v_two_a = Vertex(value=2, domain='a')
+        v_one_b = Vertex(value=1, domain='b')
+        v_two_b = Vertex(value=2, domain='b')
+
+        e_one_ab = Edge(v_one_a, v_two_b, 1)
+        e_two_ab = Edge(v_two_a, v_one_b, 2)
+
+        g = EnergyMinimization([v_one_a, v_one_b, v_two_a, v_two_b],
+                               [e_one_ab, e_two_ab])
+        g.prepare()
+        self.assertEqual(g.get_max_vertex('a', False), v_two_a)
+        self.assertEqual(g.get_max_vertex('a', True), v_two_a)
+        self.assertEqual(g.get_max_vertex('b', False), v_two_b)
+        self.assertEqual(g.get_max_vertex('b', True), v_two_b)
+
+
+    def test_get_max_edge(self):
+        """
+        a     b
+        1 -1- 2
+        2 -2- 1
+        """
+        v_one_a = Vertex(value=1, domain='a')
+        v_two_a = Vertex(value=2, domain='a')
+        v_one_b = Vertex(value=1, domain='b')
+        v_two_b = Vertex(value=2, domain='b')
+
+        e_one_ab = Edge(v_one_a, v_two_b, 1)
+        e_two_ab = Edge(v_two_a, v_one_b, 2)
+
+        g = EnergyMinimization([v_one_a, v_one_b, v_two_a, v_two_b],
+                               [e_one_ab, e_two_ab])
+        g.prepare()
+        self.assertEqual(g.get_max_edge(('a', 'b'), False), e_two_ab)
+        self.assertEqual(g.get_max_edge(('a', 'b'), True), e_two_ab)
+
+
+    def test_get_energy(self):
+        """
+        a     b
+        1 -1- 2
+        2 -2- 1
+        """
+        v_one_a = Vertex(value=1, domain='a')
+        v_two_a = Vertex(value=2, domain='a')
+        v_one_b = Vertex(value=1, domain='b')
+        v_two_b = Vertex(value=2, domain='b')
+
+        e_one_ab = Edge(v_one_a, v_two_b, 1)
+        e_two_ab = Edge(v_two_a, v_one_b, 2)
+
+        g = EnergyMinimization([v_one_a, v_one_b, v_two_a, v_two_b],
+                               [e_one_ab, e_two_ab])
+        g.prepare()
+        self.assertEqual(g.get_energy(False), 6)
+        self.assertEqual(g.get_energy(True), 6)
+
+
     def test_solve_trivial(self):
         """Solve simple problem
 

@@ -32,6 +32,7 @@ class Graph(object):
                 self.domains[v.get_domain()] = set([v])
             else:
                 self.domains[v.get_domain()].add(v)
+        self.domains_list = self.domains.keys()
 
         self.deleted_edges = set()
         self.deleted_vertices = set()
@@ -43,6 +44,8 @@ class Graph(object):
         else:
             self.tau = self.get_neighboring_domains()
 
+        self.links = None
+
 
     def check_edge(self, e):
         if not self.V.issuperset(set(e.get_vertices())):
@@ -50,7 +53,7 @@ class Graph(object):
 
 
     def get_domains(self):
-        return self.domains.keys()
+        return self.domains_list
 
 
     def get_domain(self, domain, with_deleted=False):
@@ -62,6 +65,10 @@ class Graph(object):
 
     def get_tau(self):
         return self.tau
+
+
+    def get_link(self, link):
+        return self.links[link]
 
 
     def is_neighborhood_corrupted(self):
@@ -156,6 +163,15 @@ class Graph(object):
             if semiring is not None \
                 and not isinstance(edge.get_value(), semiring):
                 edge.set_value(semiring(edge.get_value()))
+
+        self.links = dict([(neighbour, set()) for neighbour in self.tau])
+        for domain in self.domains:
+            for v in self.domains[domain]:
+                edges = v.get_outputs()
+                for e in edges:
+                    self.links[domain, e.get_vertices()[1].get_domain()].add(e)
+        for link in self.links:
+            self.links[link] = list(self.links[link])
 
 
     def get_edges(self):
