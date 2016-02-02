@@ -32,6 +32,7 @@ class Graph(object):
                 self.domains[v.get_domain()] = set([v])
             else:
                 self.domains[v.get_domain()].add(v)
+        self.domains_list = self.domains.keys()
 
         self.deleted_edges = set()
         self.deleted_vertices = set()
@@ -52,7 +53,7 @@ class Graph(object):
 
 
     def get_domains(self):
-        return self.domains.keys()
+        return self.domains_list
 
 
     def get_domain(self, domain, with_deleted=False):
@@ -66,11 +67,8 @@ class Graph(object):
         return self.tau
 
 
-    def get_links(self, neighbours=None):
-        if neighbours is None:
-            return self.links
-        else:
-            return self.links[neighbours]
+    def get_link(self, link):
+        return self.links[link]
 
 
     def is_neighborhood_corrupted(self):
@@ -172,6 +170,8 @@ class Graph(object):
                 edges = v.get_outputs()
                 for e in edges:
                     self.links[domain, e.get_vertices()[1].get_domain()].add(e)
+        for link in self.links:
+            self.links[link] = list(self.links[link])
 
 
     def get_edges(self):
