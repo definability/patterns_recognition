@@ -119,32 +119,55 @@ class Graph(object):
     def delete_corrupted(self):
         vertices_to_delete = self.deleted_vertices.copy()
         edges_to_delete = self.deleted_edges.copy()
-        modified_outputs = set()
-        modified_inputs = set()
         while True:
             if len(vertices_to_delete) == 0 and len(edges_to_delete) == 0:
                 break
-            modified_inputs = set()
-            modified_outputs = set()
-            for e in edges_to_delete:
-                neighbour_in, neighbour_out = e.get_vertices()
-                modified_inputs.add(neighbour_in)
-                modified_outputs.add(neighbour_out)
-            not_needed_vertices = self.deleted_vertices - vertices_to_delete
-            for v in modified_inputs - not_needed_vertices:
-                outputs = v.get_outputs()
-                if len(outputs) > 0 and outputs < self.deleted_edges:
-                    vertices_to_delete.add(v)
-            for v in modified_outputs - not_needed_vertices:
-                inputs = v.get_inputs()
-                if len(inputs) > 0 and inputs < self.deleted_edges:
-                    vertices_to_delete.add(v)
-            for v in vertices_to_delete:
-                edges_to_delete.update(v.get_inputs() | v.get_outputs())
-            vertices_to_delete -= self.deleted_vertices
-            edges_to_delete -= self.deleted_edges
-            self.deleted_vertices |= vertices_to_delete
-            self.deleted_edges |= edges_to_delete
+            self.__delete_corrupted_iteration(vertices_to_delete, edges_to_delete)
+
+
+    def __delete_corrupted_iteration(self, vertices_to_delete, edges_to_delete):
+        modified_inputs, modified_outputs = self.__check_edges_endpoints(edges_to_delete)
+        not_needed_vertices = self.deleted_vertices - vertices_to_delete
+        self.__check_inputs(modified_inputs - not_needed_vertices, vertices_to_delete)
+        self.__check_outputs(modified_outputs - not_needed_vertices, vertices_to_delete)
+        self.__check_modified_edges(vertices_to_delete, edges_to_delete)
+        self.__update_deletion_info(vertices_to_delete, edges_to_delete)
+
+
+    def __check_edges_endpoints(self, edges_to_delete):
+        modified_inputs = set()
+        modified_outputs = set()
+        for e in edges_to_delete:
+            neighbour_in, neighbour_out = e.get_vertices()
+            modified_inputs.add(neighbour_in)
+            modified_outputs.add(neighbour_out)
+        return modified_inputs, modified_outputs
+
+
+    def __check_inputs(self, inputs, vertices_to_delete):
+        for v in inputs:
+            outputs = v.get_outputs()
+            if len(outputs) > 0 and outputs < self.deleted_edges:
+                vertices_to_delete.add(v)
+
+
+    def __check_outputs(self, outputs, vertices_to_delete):
+        for v in outputs:
+            inputs = v.get_inputs()
+            if len(inputs) > 0 and inputs < self.deleted_edges:
+                vertices_to_delete.add(v)
+
+
+    def __check_modified_edges(self, vertices_to_delete, edges_to_delete):
+        for v in vertices_to_delete:
+            edges_to_delete.update(v.get_inputs() | v.get_outputs())
+
+
+    def __update_deletion_info(self, vertices_to_delete, edges_to_delete):
+        vertices_to_delete -= self.deleted_vertices
+        edges_to_delete -= self.deleted_edges
+        self.deleted_vertices |= vertices_to_delete
+        self.deleted_edges |= edges_to_delete
 
 
     def prepare(self, semiring=None):
