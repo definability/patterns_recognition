@@ -116,58 +116,42 @@ class Graph(object):
             self.delete_vertex(end)
 
 
-    def delete_corrupted(self):
-        vertices_to_delete = self.deleted_vertices.copy()
-        edges_to_delete = self.deleted_edges.copy()
-        while True:
-            if len(vertices_to_delete) == 0 and len(edges_to_delete) == 0:
-                break
-            self.__delete_corrupted_iteration(vertices_to_delete, edges_to_delete)
+    def get_domained_links(self):
+        domained_links = dict((v, dict()) for v in self.V)
+        for e in self.E:
+            start, end = e.get_vertices()
+
+            domain = end.get_domain()
+            if domain not in domained_links[start]:
+                domained_links[start][domain] = set()
+            domained_links[start][domain].add(e)
+
+            domain = start.get_domain()
+            if domain not in domained_links[end]:
+                domained_links[end][domain] = set()
+            domained_links[end][domain].add(e)
+
+        return domained_links
 
 
-    def __delete_corrupted_iteration(self, vertices_to_delete, edges_to_delete):
-        modified_inputs, modified_outputs = self.__check_edges_endpoints(edges_to_delete)
-        not_needed_vertices = self.deleted_vertices - vertices_to_delete
-        self.__check_inputs(modified_inputs - not_needed_vertices, vertices_to_delete)
-        self.__check_outputs(modified_outputs - not_needed_vertices, vertices_to_delete)
-        self.__check_modified_edges(vertices_to_delete, edges_to_delete)
-        self.__update_deletion_info(vertices_to_delete, edges_to_delete)
-
-
-    def __check_edges_endpoints(self, edges_to_delete):
-        modified_inputs = set()
-        modified_outputs = set()
-        for e in edges_to_delete:
-            neighbour_in, neighbour_out = e.get_vertices()
-            modified_inputs.add(neighbour_in)
-            modified_outputs.add(neighbour_out)
-        return modified_inputs, modified_outputs
-
-
-    def __check_inputs(self, inputs, vertices_to_delete):
-        for v in inputs:
-            outputs = v.get_outputs()
-            if len(outputs) > 0 and outputs < self.deleted_edges:
-                vertices_to_delete.add(v)
-
-
-    def __check_outputs(self, outputs, vertices_to_delete):
-        for v in outputs:
-            inputs = v.get_inputs()
-            if len(inputs) > 0 and inputs < self.deleted_edges:
-                vertices_to_delete.add(v)
-
-
-    def __check_modified_edges(self, vertices_to_delete, edges_to_delete):
-        for v in vertices_to_delete:
-            edges_to_delete.update(v.get_inputs() | v.get_outputs())
-
-
-    def __update_deletion_info(self, vertices_to_delete, edges_to_delete):
-        vertices_to_delete -= self.deleted_vertices
-        edges_to_delete -= self.deleted_edges
-        self.deleted_vertices |= vertices_to_delete
-        self.deleted_edges |= edges_to_delete
+    def delete_corrupted(self, domained_links=None):
+        if domained_links is None:
+            domained_links = self.get_domained_links()
+        deleted = True
+        while deleted:
+            deleted = False
+            for v in self.V - self.deleted_vertices:
+                for d in domained_links[v]:
+                    if domained_links[v][d] <= self.deleted_edges:
+                        self.deleted_vertices.add(v)
+                        deleted = True
+                        break
+            for e in self.E - self.deleted_edges:
+                start, end = e.get_vertices()
+                if start in self.deleted_vertices \
+                or end in self.deleted_vertices:
+                    self.deleted_edges.add(e)
+                    deleted = True
 
 
     def prepare(self, semiring=None):
