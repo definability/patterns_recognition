@@ -86,9 +86,11 @@ class EnergyMinimization(Graph):
                 if max_value - e.get_value() > treshold:
                     self.delete_edge(e, remove_after)
         if remove_after:
-            self.profile.enable()
+            if self.profile is not None:
+                self.profile.enable()
             self.delete_corrupted(domained_links)
-            self.profile.disable()
+            if self.profile is not None:
+                self.profile.disable()
 
 
     def get_mapped_copy(self):
