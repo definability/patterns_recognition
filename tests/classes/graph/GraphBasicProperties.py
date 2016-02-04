@@ -243,6 +243,42 @@ class TestGraphBasicProperties(TestCase):
         """
 
 
+    def test_delete_corrupted(self):
+        """
+            a    b
+             ___
+            / / \
+        1  A,B   C
+           |/    |
+        2  D --- E
+        """
+        A = Vertex(domain=(1,'a'))
+        B = Vertex(domain=(1,'a'))
+        D = Vertex(domain=(2,'a'))
+        C = Vertex(domain=(1,'b'))
+        E = Vertex(domain=(2,'b'))
+
+        AD = Edge(A, D)
+        AC = Edge(A, C)
+        BC = Edge(B, C)
+        BD = Edge(B, D)
+        DE = Edge(D, E)
+        CE = Edge(C, E)
+
+        g = Graph([A, B, C, D, E], [AD, AC, BC, BD, DE, CE])
+        g.prepare()
+        self.assertItemsEqual(g.get_vertices(), [A, B, C, D, E])
+        self.assertItemsEqual(g.get_edges(), [AD, AC, BC, BD, DE, CE])
+
+        g.delete_edge(BD, True)
+        g.delete_corrupted()
+
+        self.assertItemsEqual(g.get_vertices(), [A, C, D, E])
+        self.assertItemsEqual(g.get_edges(), [AD, AC, DE, CE])
+
+        self.assertFalse(g.is_neighborhood_corrupted())
+
+
     def test_prepare(self):
         start = Vertex('start')
         finish = Vertex('finish')

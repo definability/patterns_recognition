@@ -9,6 +9,7 @@ class EnergyMinimization(Graph):
     def __init__(self, V, E, tau=set()):
         self.max_edges = dict()
         self.max_vertices = dict()
+        self.profile = None
         super(EnergyMinimization, self).__init__(V, E, tau)
 
 
@@ -66,7 +67,7 @@ class EnergyMinimization(Graph):
                 e.set_value(e.get_value() + gamma)
 
 
-    def remove_small(self, treshold):
+    def remove_small(self, treshold, domained_links=None):
         remove_after = True
         for domain in self.get_domains():
             vertices = self.get_domain(domain, True)
@@ -85,7 +86,11 @@ class EnergyMinimization(Graph):
                 if max_value - e.get_value() > treshold:
                     self.delete_edge(e, remove_after)
         if remove_after:
-            self.delete_corrupted()
+            if self.profile is not None:
+                self.profile.enable()
+            self.delete_corrupted(domained_links)
+            if self.profile is not None:
+                self.profile.disable()
 
 
     def get_mapped_copy(self):
@@ -104,16 +109,18 @@ class EnergyMinimization(Graph):
         return g, V_map, V_map_inv
 
 
-    def solve(self, make_copy=True):
+    def solve(self, make_copy=True, profile=None):
+        self.profile = profile
         g, V_map, E_map = None, None, None
         if make_copy:
             g, V_map, E_map = self.get_mapped_copy()
         else:
             g = self
         g.prepare()
+        domained_links = g.get_domained_links()
         step = 0
         for gamma in self.__gamma():
-            g.remove_small(0.5)
+            g.remove_small(0.5, domained_links)
             print 'step %06d, gamma %f, energy %f'%(step, gamma, g.get_energy())
             if not g.is_neighborhood_corrupted():
                 break

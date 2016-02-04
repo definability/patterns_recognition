@@ -116,35 +116,42 @@ class Graph(object):
             self.delete_vertex(end)
 
 
-    def delete_corrupted(self):
-        vertices_to_delete = self.deleted_vertices.copy()
-        edges_to_delete = self.deleted_edges.copy()
-        modified_outputs = set()
-        modified_inputs = set()
-        while True:
-            if len(vertices_to_delete) == 0 and len(edges_to_delete) == 0:
-                break
-            modified_inputs = set()
-            modified_outputs = set()
-            for e in edges_to_delete:
-                neighbour_in, neighbour_out = e.get_vertices()
-                modified_inputs.add(neighbour_in)
-                modified_outputs.add(neighbour_out)
-            not_needed_vertices = self.deleted_vertices - vertices_to_delete
-            for v in modified_inputs - not_needed_vertices:
-                outputs = v.get_outputs()
-                if len(outputs) > 0 and outputs < self.deleted_edges:
-                    vertices_to_delete.add(v)
-            for v in modified_outputs - not_needed_vertices:
-                inputs = v.get_inputs()
-                if len(inputs) > 0 and inputs < self.deleted_edges:
-                    vertices_to_delete.add(v)
-            for v in vertices_to_delete:
-                edges_to_delete.update(v.get_inputs() | v.get_outputs())
-            vertices_to_delete -= self.deleted_vertices
-            edges_to_delete -= self.deleted_edges
-            self.deleted_vertices |= vertices_to_delete
-            self.deleted_edges |= edges_to_delete
+    def get_domained_links(self):
+        domained_links = dict((v, dict()) for v in self.V)
+        for e in self.E:
+            start, end = e.get_vertices()
+
+            domain = end.get_domain()
+            if domain not in domained_links[start]:
+                domained_links[start][domain] = set()
+            domained_links[start][domain].add(e)
+
+            domain = start.get_domain()
+            if domain not in domained_links[end]:
+                domained_links[end][domain] = set()
+            domained_links[end][domain].add(e)
+
+        return domained_links
+
+
+    def delete_corrupted(self, domained_links=None):
+        if domained_links is None:
+            domained_links = self.get_domained_links()
+        deleted = True
+        while deleted:
+            deleted = False
+            for v in self.V - self.deleted_vertices:
+                for d in domained_links[v]:
+                    if domained_links[v][d] <= self.deleted_edges:
+                        self.deleted_vertices.add(v)
+                        deleted = True
+                        break
+            for e in self.E - self.deleted_edges:
+                start, end = e.get_vertices()
+                if start in self.deleted_vertices \
+                or end in self.deleted_vertices:
+                    self.deleted_edges.add(e)
+                    deleted = True
 
 
     def prepare(self, semiring=None):
