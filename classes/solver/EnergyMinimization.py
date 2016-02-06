@@ -1,3 +1,5 @@
+import logging
+
 from classes.graph import Graph, Edge, Vertex
 
 
@@ -119,7 +121,7 @@ class EnergyMinimization(Graph):
         step = 0
         for gamma in self.__gamma():
             g.remove_small(0.5, domained_links)
-            print 'step %06d, gamma %f, energy %f'%(step, gamma, g.get_energy())
+            logging.info('step %06d, gamma %f, energy %f'%(step, gamma, g.get_energy()))
             if not g.is_neighborhood_corrupted():
                 break
             g.restore()
