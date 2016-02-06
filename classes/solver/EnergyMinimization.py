@@ -131,17 +131,18 @@ class EnergyMinimization(Graph):
         vertices = list()
         edges = list()
         domains = set(vertices_to_visit[0].get_domain())
+        edges_available = g.get_edges()
         while len(vertices_to_visit) > 0:
             vertex = vertices_to_visit.pop()
             vertices.append(vertex)
-            for e in vertex.get_outputs():
+            for e in vertex.get_outputs().intersection(edges_available):
                 end = e.get_vertices()[1]
                 if end.get_domain() in domains:
                     continue
                 edges.append(e)
                 domains.add(end.get_domain())
                 vertices_to_visit.append(end)
-            for e in vertex.get_inputs():
+            for e in vertex.get_inputs().intersection(edges_available):
                 start = e.get_vertices()[0]
                 if start.get_domain() in domains:
                     continue
