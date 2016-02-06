@@ -1,3 +1,4 @@
+from sys import exit
 from argparse import ArgumentParser
 from cProfile import Profile
 from pstats import Stats
@@ -19,9 +20,11 @@ if __name__ == '__main__':
         profile = Profile()
         profile.enable()
 
-    TextTestRunner().run(TestSuite(tests))
+    exit_status = not TextTestRunner().run(TestSuite(tests)).wasSuccessful()
 
     if args.profile:
         profile.disable()
         Stats(profile).sort_stats('cumulative').print_stats()
+
+    exit(exit_status)
 
