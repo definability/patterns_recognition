@@ -90,6 +90,50 @@ class TestEnergyMinimizationBasicProperties(TestCase):
         self.assertEqual(g.get_energy(True), 6)
 
 
+    def test_solve_trivial_multidomain(self):
+        """Solve simple problem.
+        Every vertex has its own domain.
+
+        A - B
+          \
+            C
+
+        All vertices should be returned.
+        """
+        A = Vertex(value=1, domain='a')
+        B = Vertex(value=1, domain='b')
+        C = Vertex(value=1, domain='c')
+        edges = [Edge(A, B, 0),
+                 Edge(A, C, 0)]
+
+        g = EnergyMinimization([A, B, C], edges)
+        self.assertItemsEqual(g.solve(), [A, B, C])
+
+
+    def test_solve_trivial_multidomain_advanced(self):
+        """Solve simple problem.
+        Vertices B and D have same domain,
+        but different edge weight.
+          __0__
+         /     \
+        A -1- B,D
+          \
+            C
+
+        Right answer is {A, B, C}
+        """
+        A = Vertex(value=1, domain='a')
+        B = Vertex(value=1, domain='b')
+        D = Vertex(value=1, domain='b')
+        C = Vertex(value=1, domain='c')
+        edges = [Edge(A, B, 1),
+                 Edge(A, C, 0),
+                 Edge(A, D, 0)]
+
+        g = EnergyMinimization([A, B, C, D], edges)
+        self.assertItemsEqual(g.solve(), [A, B, C])
+
+
     def test_solve_trivial(self):
         """Solve simple problem
 
