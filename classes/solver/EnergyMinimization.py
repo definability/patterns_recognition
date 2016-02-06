@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 from classes.graph import Graph, Edge, Vertex
 
 
