@@ -1,0 +1,5 @@
+# https://github.com/char-lie/patterns_recognition/
+language: python
+python: 2.7
+script: python -m tests
+
