@@ -127,23 +127,27 @@ class EnergyMinimization(Graph):
             g.restore()
             self.__iteration(g, gamma)
             step += 1
-        domain = g.get_domains().pop()
-        vertices = [g.get_domain(domain).pop()]
-        edges = []
-        while True:
-            need_break = True
-            inputs = vertices[0].get_inputs().intersection(g.get_edges())
-            outputs = vertices[-1].get_outputs().intersection(g.get_edges())
-            if len(inputs) > 0:
-                edges =  [inputs.pop()] + edges
-                vertices = [edges[0].get_vertices()[0]] + vertices
-                need_break = False
-            if len(outputs) > 0:
-                edges =  edges + [outputs.pop()]
-                vertices.append(edges[-1].get_vertices()[1])
-                need_break = False
-            if need_break:
-                break
+        vertices_to_visit = [list(g.get_vertices())[0]]
+        vertices = list()
+        edges = list()
+        domains = set(vertices_to_visit[0].get_domain())
+        while len(vertices_to_visit) > 0:
+            vertex = vertices_to_visit.pop()
+            vertices.append(vertex)
+            for e in vertex.get_outputs():
+                end = e.get_vertices()[1]
+                if end.get_domain() in domains:
+                    continue
+                edges.append(e)
+                domains.add(end.get_domain())
+                vertices_to_visit.append(end)
+            for e in vertex.get_inputs():
+                start = e.get_vertices()[0]
+                if start.get_domain() in domains:
+                    continue
+                edges.append(e)
+                domains.add(start.get_domain())
+                vertices_to_visit.append(start)
         if make_copy:
             #return (set(V_map[v] for v in vertices), set(E_map[e] for e in edges))
             return set(V_map[v] for v in vertices)
