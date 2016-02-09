@@ -120,10 +120,10 @@ def get_bottom_neighbours(i, j, max_vertical_offset, max_horizontal_offset,
 
 
 def get_distance_penalty(needed_offset, real_offset):
-    return - ((needed_offset[0] - real_offset[0])**2
-           +  (needed_offset[1] - real_offset[1])**2)
+    return - 10*(abs(needed_offset[0] - real_offset[0])
+           + abs(needed_offset[1] - real_offset[1]))
 
 
 def get_value_penalty(needed_value, real_value):
-    return - (needed_value - real_value)**2
+    return - abs(needed_value - real_value)
 
