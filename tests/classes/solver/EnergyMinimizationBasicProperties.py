@@ -90,6 +90,19 @@ class TestEnergyMinimizationBasicProperties(TestCase):
         self.assertEqual(g.get_energy(True), 6)
 
 
+    def test_solve_noniterable_domains(self):
+        """Non-iterable and iterable domains should cooperate well.
+        (0, 0)  A
+           |    |
+           0    B
+        """
+        A = Vertex(value=1, domain=(0,0))
+        B = Vertex(value=1, domain=0)
+
+        g = EnergyMinimization([A, B], [Edge(A, B, 0)])
+        self.assertItemsEqual(g.solve(), [A, B])
+
+
     def test_solve_trivial_multidomain(self):
         """Solve simple problem.
         Every vertex has its own domain.
