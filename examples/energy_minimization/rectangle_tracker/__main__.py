@@ -28,9 +28,9 @@ if __name__ == '__main__':
     problem = build_problem(model_image_grayscale, raw_image_grayscale,
                             model_image_mask, 2, 2)
     profile = Profile()
-    #profile.enable()
-    solution = problem.solve(False, profile)
-    #profile.disable()
+    profile.enable()
+    solution = problem.solve(False)
+    profile.disable()
     Stats(profile).sort_stats('time').print_stats()
     result = sorted([(v.get_name(), v.get_domain())
                   for v in solution], key=lambda x: x[1][0] * raw_image.size[0] + x[1][1])
