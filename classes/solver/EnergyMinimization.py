@@ -18,7 +18,7 @@ class EnergyMinimization(Graph):
         if k is None:
             i = 0
             while True:
-                yield n/(i+1)
+                yield n/((i+1)**0.6)
                 i += 1
         else:
             for i in xrange(k):
@@ -69,6 +69,8 @@ class EnergyMinimization(Graph):
 
     def remove_small(self, treshold, domained_links=None):
         remove_after = True
+        needed_vertices = set()
+        v_penalty = 0
         for domain in self.get_domains():
             vertices = self.get_domain(domain, True)
             if len(vertices) == 0:
@@ -77,6 +79,9 @@ class EnergyMinimization(Graph):
             max_value = max_v.get_value()
             for v in vertices:
                 if max_value - v.get_value() > treshold:
+                    if v.get_domain() == v.get_name():
+                        needed_vertices.add(v)
+                        v_penalty += max_value - v.get_value()
                     self.delete_vertex(v, remove_after)
         for link in self.get_tau():
             edges = self.get_link(link)
@@ -91,6 +96,7 @@ class EnergyMinimization(Graph):
             self.delete_corrupted(domained_links)
             if self.profile is not None:
                 self.profile.disable()
+        return (needed_vertices, v_penalty)
 
 
     def get_mapped_copy(self):
@@ -120,8 +126,8 @@ class EnergyMinimization(Graph):
         domained_links = g.get_domained_links()
         step = 0
         for gamma in self.__gamma():
-            g.remove_small(0.5, domained_links)
-            logging.info('step %06d, gamma %f, energy %f'%(step, gamma, g.get_energy()))
+            needed_vertices, v_penalty = g.remove_small(0.5, domained_links)
+            logging.info('step %06d, gamma %f, energy %f, removed %d needed vertices: %f'%(step, gamma, g.get_energy(), len(needed_vertices), v_penalty))
             if not g.is_neighborhood_corrupted():
                 break
             g.restore()
