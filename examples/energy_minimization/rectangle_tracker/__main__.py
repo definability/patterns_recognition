@@ -33,7 +33,7 @@ if __name__ == '__main__':
     #profile.disable()
     Stats(profile).sort_stats('time').print_stats()
     result = sorted([(v.get_name(), v.get_domain())
-                  for v in solution], key=lambda x: x[0][0] * raw_image.size[0] + x[0][1])
+                  for v in solution], key=lambda x: x[1][0] * raw_image.size[0] + x[1][1])
     for r in result:
         print 'Model', r[1], 'to', r[0]
 
