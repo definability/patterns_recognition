@@ -52,13 +52,15 @@ def process_image(model, raw, mask, max_vertical_offset, max_horizontal_offset):
         for pixel in domains[domain]:
             vertex = domains[domain][pixel]
             vertex_pos = vertex.get_name()
-            vertical_to = min(raw_size[0], vertex_pos[0] + max_vertical_offset + 1)
-            horizontal_to = min(raw_size[1], vertex_pos[1] + max_horizontal_offset + 1)
-            for neighbour_domain in neighbours:
+            for neighbour_info in neighbours:
+                neighbour_domain = neighbour_info[0]
+                vertical_range, horizontal_range  = neighbour_info[1](
+                        vertex_pos[0], vertex_pos[1],
+                        max_vertical_offset, max_horizontal_offset,
+                        raw_size[0], raw_size[1])
                 process_domain(model, raw, neighbour_domain, vertex, pixel,
                                domains, vertices, edges,
-                               xrange(pixel[0], vertical_to),
-                               xrange(pixel[1], horizontal_to))
+                               vertical_range, horizontal_range)
 
     return (set(vertices), set(edges))
 
@@ -93,8 +95,28 @@ def create_vertices(domain, raw, model, vertical_range, horizontal_range):
 
 def get_neighbours(model, pos, mask):
     max_y, max_x = model.get_size()
-    neighbours = [(pos[0] + 1, pos[1]), (pos[0], pos[1] + 1)]
-    return [r for r in neighbours if r[0] < max_y and r[1] < max_x and mask[r]]
+    neighbours = [((pos[0] + 1, pos[1]), get_bottom_neighbours),
+                  ((pos[0], pos[1] + 1), get_right_neighbours)]
+    return [r for r in neighbours
+            if r[0][0] < max_y
+            and r[0][1] < max_x
+            and mask[r[0]]]
+
+
+def get_right_neighbours(i, j, max_vertical_offset, max_horizontal_offset,
+                         height, width):
+    return (xrange(max(i - max_vertical_offset, 0),
+                   min(i + max_vertical_offset + 1, height)),
+            xrange(j,
+                   min(j + max_horizontal_offset + 1, width)))
+
+
+def get_bottom_neighbours(i, j, max_vertical_offset, max_horizontal_offset,
+                          height, width):
+    return (xrange(i,
+                   min(i + max_vertical_offset + 1, height)),
+            xrange(max(j - max_horizontal_offset, 0),
+                   min(j + max_horizontal_offset + 1, width)))
 
 
 def get_distance_penalty(needed_offset, real_offset):
