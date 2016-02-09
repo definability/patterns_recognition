@@ -130,7 +130,7 @@ class EnergyMinimization(Graph):
         vertices_to_visit = [list(g.get_vertices())[0]]
         vertices = list()
         edges = list()
-        domains = set(vertices_to_visit[0].get_domain())
+        domains = set([vertices_to_visit[0].get_domain()])
         edges_available = g.get_edges()
         while len(vertices_to_visit) > 0:
             vertex = vertices_to_visit.pop()
