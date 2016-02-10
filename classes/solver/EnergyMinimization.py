@@ -1,5 +1,4 @@
 import logging
-from math import pi, atan
 
 from classes.graph import Graph, Edge, Vertex
 
@@ -26,8 +25,7 @@ class EnergyMinimization(Graph):
         if k is None:
             i = 0
             while True:
-                power = 1.00 - atan(i)/pi
-                divider = (i+1)**power
+                divider = (i+1)**0.6
                 yield n/divider
                 i += 1
         else:
