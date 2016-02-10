@@ -3,6 +3,14 @@ import logging
 from classes.graph import Graph, Edge, Vertex
 
 
+def __get_value(obj):
+    return obj.value
+
+
+def max_graph_entity(objects):
+    return max(objects, key=__get_value)
+
+
 class EnergyMinimization(Graph):
 
 
@@ -24,23 +32,15 @@ class EnergyMinimization(Graph):
                 yield n/(i+1)
 
 
-    def max_vertex(self, vertices):
-        return max(vertices, key=lambda v: v.get_value())
-
-
-    def max_edge(self, edges):
-        return max(edges, key=lambda e: e.get_value())
-
-
     def get_max_vertex(self, domain, cached=True):
         if not cached:
-            self.max_vertices[domain] = self.max_vertex(self.get_domain(domain))
+            self.max_vertices[domain] = max_graph_entity(self.get_domain(domain))
         return self.max_vertices[domain]
 
 
     def get_max_edge(self, link, cached=True):
         if not cached:
-            self.max_edges[link] = self.max_edge(self.get_link(link))
+            self.max_edges[link] = max_graph_entity(self.get_link(link))
         return self.max_edges[link]
 
 
