@@ -19,7 +19,7 @@ def find_basis(normal):
     k = normal.copy()
 
     max_value = normal.max()
-    j_z = (normal.sum() - max_value) / max_value
+    j_z = - (normal.sum() - max_value) / max_value
     j_norm = (1 + j_z**2)**.5
     j = array([1, 1, j_z]) / j_norm
 
