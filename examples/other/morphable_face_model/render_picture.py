@@ -60,3 +60,97 @@ def workflow(points, normal=array([0, 0, 1]), image_size=500):
         im.putpixel((x, y), z_index[i])
     return im
 
+
+def rasterize_triangles(canvas, vertices, z_indices, colors, triangles):
+    for triangle in triangles:
+        current_vertices = vertices[triangle]
+        z_index = z_indices[triangle].mean()
+        color = 255
+        try:
+            flat = prepare_triangle(current_vertices[:,:2])
+        except Exception:
+            flat = None
+        if len(flat) == 3:
+            rasterize_triangle(canvas, flat, z_index, colors)
+        elif flat is None:
+            continue
+        else:
+            rasterize_triangle(canvas, flat[0], z_index, color, down=True)
+            rasterize_triangle(canvas, flat[1], z_index, color, down=False)
+
+
+def prepare_triangle(vertices):
+    top, left, right = None, None, None
+    vertices = vertices[vertices[:,1].argsort()]
+
+    top = vertices[0]
+    if vertices[2][0] > vertices[1][0]:
+        left, right = vertices[1], vertices[2]
+    else:
+        left, right = vertices[2], vertices[1]
+
+    if abs(right[1] - left[1]) < 1:
+        return top, left, right
+
+    k_left, a_left = get_ka(top, left)
+    k_right, a_right = get_ka(top, right)
+
+    middle_left, middle_right, bottom = None, None, None
+    if left[1] > right[1]:
+        middle_left = left
+        middle_right = array([left[0] / k_right - a_right, left[1]])
+        bottom = right
+    else:
+        middle_right = right
+        middle_left = array([right[0] / k_left - a_left, right[1]])
+        bottom = left
+
+    return [
+        [top, middle_left, middle_right],
+        [bottom, middle_left, middle_right]
+    ]
+
+
+def get_ka(vertex_start, vertex_end):
+    divider = vertex_end[0] - vertex_start[0]
+    if abs(divider) < 1E-9:
+        return float('inf'), float('inf')
+    a = (vertex_end[1] - vertex_start[1]) / divider
+    k = vertex_start[0] - a * vertex_start[0]
+    return k, a
+
+
+def rasterize_triangle(canvas, triangle, z_index, color, down=True):
+    top, left, right = triangle[0], triangle[1], triangle[2]
+
+    if down:
+        top_point = int(top[1])
+        down_point = int(left[1])
+        k_left, a_left = get_ka(top, left)
+        k_right, a_right = get_ka(top, right)
+    else:
+        return
+        top_point = int(left[1])
+        down_point = int(top[1])
+        if top[1] < right[1]:
+            k_left, a_left = get_ka(left, top)
+            k_right, a_right = get_ka(left, right)
+        else:
+            k_left, a_left = get_ka(left, right)
+            k_right, a_right = get_ka(left, top)
+
+    for y in xrange(top_point, down_point - 1, -1):
+        for x in xrange(int((y-a_left)/k_left), int((y-a_right)/k_right + 1)):
+            try:
+                if canvas[x][y] is None or canvas[x][y][1] < z_index:
+                    canvas[x][y] = (color, z_index)
+            except Exception as e:
+                print 'From {fr} to {to}, down is {down}'.format(
+                        fr=(top_point, int(y/k_left - a_left)),
+                        to=(down_point-1, int(y/k_right - a_right + 1)),
+                        down=down)
+                print 'x, y are {coord}, k={k}, a={a}'.format(
+                        coord=(x,y), k=(k_left, k_right),
+                        a=(a_left, a_right))
+                break
+
