@@ -1,4 +1,5 @@
-from numpy import cross
+from PIL import Image
+from numpy import cross, array, dot
 from numpy.linalg import norm
 
 
@@ -44,10 +45,10 @@ def get_projection(shape, max_value):
     return shape_prj
 
 
-def workflow(normal, image_size=500):
+def workflow(points, normal=array([0, 0, 1]), image_size=500):
     normal = normal / norm(normal)
     phi = find_basis(normal)
-    rotated = rotate_shape(shape, phi)
+    rotated = rotate_shape(points, phi)
     shp_prj = get_projection(rotated, image_size - 1)
     z_index = get_z_index(rotated)
     im = Image.new('L', (image_size, image_size))
