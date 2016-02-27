@@ -65,92 +65,81 @@ def rasterize_triangles(canvas, vertices, z_indices, colors, triangles):
     for triangle in triangles:
         current_vertices = vertices[triangle]
         z_index = z_indices[triangle].mean()
-        color = 255
+        color = z_index
         try:
-            flat = prepare_triangle(current_vertices[:,:2])
-        except Exception:
-            flat = None
-        if len(flat) == 3:
-            rasterize_triangle(canvas, flat, z_index, colors)
-        elif flat is None:
-            continue
-        else:
-            rasterize_triangle(canvas, flat[0], z_index, color, down=True)
-            rasterize_triangle(canvas, flat[1], z_index, color, down=False)
+            flat = prepare_triangle(canvas, current_vertices[:,:2], color)
+        except Exception as e:
+            print current_vertices[:,:2]
+            raise e
 
 
-def prepare_triangle(vertices):
-    top, left, right = None, None, None
-    vertices = vertices[vertices[:,1].argsort()]
+def prepare_triangle(canvas, vertices, color):
+    vertices = vertices[vertices[:,1].argsort()[::-1]]
+    if int(.5+vertices[1][1]) == int(.5+vertices[2][1]):
+        fill_top_flat_triangle(canvas, vertices, color)
+    elif int(.5+vertices[0][1]) == int(.5+vertices[1][1]):
+        fill_bottom_flat_triangle(canvas, vertices, color)
+    else:
+        middle = array([vertices[0][0] + ((vertices[1][1] - vertices[0][1]) / (vertices[2][1] - vertices[0][1])) * (vertices[2][0] - vertices[0][0]),
+                        vertices[1][1]])
+        tf = array([vertices[0], vertices[1], middle])
+        bf = array([vertices[1], middle, vertices[2]])
+        fill_bottom_flat_triangle(canvas, bf, color)
+        fill_top_flat_triangle(canvas, tf, color)
 
-    top = vertices[0]
-    if vertices[2][0] > vertices[1][0]:
+
+def fill_bottom_flat_triangle(canvas, vertices, color):
+    top = vertices[2]
+    if vertices[0][0] < vertices[1][0]:
+        left, right = vertices[0], vertices[1]
+    else:
+        left, right = vertices[1], vertices[0]
+
+    invslope1 = (left[0] - top[0]) / (left[1] - top[1])
+    invslope2 = (right[0] - top[0]) / (right[1] - top[1])
+
+    curx1 = top[0]
+    curx2 = top[0]
+
+    for scanlineY in xrange(int(.5+top[1]), int(.5+left[1]) + 1):
+        if abs(curx1 - curx2) > 100:
+            print vertices
+            print triangle_area(vertices)
+        draw_scanline(canvas, scanlineY, curx1, curx2, color)
+        curx1 += invslope1
+        curx2 += invslope2
+
+
+def triangle_area(vertices):
+    return abs(vertices[0][0] * (vertices[1][1] - vertices[2][1]) +
+               vertices[1][0] * (vertices[2][1] - vertices[0][1]) +
+               vertices[2][0] * (vertices[0][1] - vertices[1][1])) * .5
+
+
+def fill_top_flat_triangle(canvas, vertices, color):
+    bottom = vertices[0]
+    if vertices[1][0] < vertices[2][0]:
         left, right = vertices[1], vertices[2]
     else:
         left, right = vertices[2], vertices[1]
 
-    if abs(right[1] - left[1]) < 1:
-        return top, left, right
-
-    k_left, a_left = get_ka(top, left)
-    k_right, a_right = get_ka(top, right)
-
-    middle_left, middle_right, bottom = None, None, None
-    if left[1] > right[1]:
-        middle_left = left
-        middle_right = array([left[0] / k_right - a_right, left[1]])
-        bottom = right
-    else:
-        middle_right = right
-        middle_left = array([right[0] / k_left - a_left, right[1]])
-        bottom = left
-
-    return [
-        [top, middle_left, middle_right],
-        [bottom, middle_left, middle_right]
-    ]
+    invslope1 = (left[0] - bottom[0]) / (left[1] - bottom[1])
+    invslope2 = (right[0] - bottom[0]) / (right[1] - bottom[1])
+  
+    curx1 = bottom[0]
+    curx2 = bottom[0]
+  
+    for scanlineY in xrange(int(.5+bottom[1]), int(.5+left[1]) - 1, -1):
+        if abs(curx1 - curx2) > 100:
+            print vertices
+            print triangle_area(vertices)
+        draw_scanline(canvas, scanlineY, curx1, curx2, color)
+        curx1 -= invslope1
+        curx2 -= invslope2
 
 
-def get_ka(vertex_start, vertex_end):
-    divider = vertex_end[0] - vertex_start[0]
-    if abs(divider) < 1E-9:
-        return float('inf'), float('inf')
-    a = (vertex_end[1] - vertex_start[1]) / divider
-    k = vertex_start[0] - a * vertex_start[0]
-    return k, a
-
-
-def rasterize_triangle(canvas, triangle, z_index, color, down=True):
-    top, left, right = triangle[0], triangle[1], triangle[2]
-
-    if down:
-        top_point = int(top[1])
-        down_point = int(left[1])
-        k_left, a_left = get_ka(top, left)
-        k_right, a_right = get_ka(top, right)
-    else:
-        return
-        top_point = int(left[1])
-        down_point = int(top[1])
-        if top[1] < right[1]:
-            k_left, a_left = get_ka(left, top)
-            k_right, a_right = get_ka(left, right)
-        else:
-            k_left, a_left = get_ka(left, right)
-            k_right, a_right = get_ka(left, top)
-
-    for y in xrange(top_point, down_point - 1, -1):
-        for x in xrange(int((y-a_left)/k_left), int((y-a_right)/k_right + 1)):
-            try:
-                if canvas[x][y] is None or canvas[x][y][1] < z_index:
-                    canvas[x][y] = (color, z_index)
-            except Exception as e:
-                print 'From {fr} to {to}, down is {down}'.format(
-                        fr=(top_point, int(y/k_left - a_left)),
-                        to=(down_point-1, int(y/k_right - a_right + 1)),
-                        down=down)
-                print 'x, y are {coord}, k={k}, a={a}'.format(
-                        coord=(x,y), k=(k_left, k_right),
-                        a=(a_left, a_right))
-                break
+def draw_scanline(canvas, y, left_x, right_x, color):
+    for x in xrange(int(.5+left_x), int(.5+right_x) + 1):
+        if canvas[y][x] < color:
+            canvas[y][x] = color
 
