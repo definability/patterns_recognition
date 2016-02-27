@@ -14,16 +14,25 @@ image_size = 500
 normal = normal / norm(normal)
 phi = find_basis(normal)
 rotated = rotate_shape(points, phi)
-shp_prj = get_projection(rotated, image_size - 1)
+shp_prj = get_projection(rotated, image_size - 20)
 z_index = get_z_index(rotated)
-im = Image.new('L', (image_size, image_size))
-for i in xrange(shp_prj.shape[0]):
-    x = int(shp_prj[i][0])
-    y = image_size - 1 - int(shp_prj[i][1])
-    im.putpixel((x, y), z_index[i])
+#im = Image.new('L', (image_size, image_size))
+#for i in xrange(shp_prj.shape[0]):
+#    x = int(shp_prj[i][0])
+#    y = image_size - 1 - int(shp_prj[i][1])
+#    im.putpixel((x, y), z_index[i])
 
 
 #canvas = empty((image_size, image_size))
 canvas = [[None]*image_size for i in xrange(image_size)]
+print 'Start'
 rasterize_triangles(canvas, shp_prj, z_index, [], model['tl'] - 1)
+im = Image.new('L', (image_size, image_size))
+for y in xrange(len(canvas)):
+    for x in xrange(len(canvas[i])):
+        if canvas[y][x] is None:
+            continue
+        #print (i,j), canvas[i][j]
+        im.putpixel((x,y), int(canvas[y][x]))
+im.save('out.png')
 
