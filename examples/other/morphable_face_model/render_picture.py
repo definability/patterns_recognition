@@ -1,6 +1,8 @@
 from PIL import Image
-from numpy import cross, array, dot
+from numpy import cross, array, dot, nditer, apply_along_axis
 from numpy.linalg import norm
+
+from render_triangle import rasterize_triangles
 
 
 def project_vector(v, n):
@@ -59,86 +61,4 @@ def workflow(points, normal=array([0, 0, 1]), image_size=500):
         y = image_size - 1 - int(shp_prj[i][1])
         im.putpixel((x, y), z_index[i])
     return im
-
-
-def rasterize_triangles(canvas, vertices, z_indices, colors, triangles):
-    for triangle in triangles:
-        current_vertices = vertices[triangle]
-        z_index = z_indices[triangle].mean()
-        color = z_index
-        try:
-            flat = prepare_triangle(canvas, current_vertices[:,:2], color)
-        except Exception as e:
-            print current_vertices[:,:2]
-            raise e
-
-
-def prepare_triangle(canvas, vertices, color):
-    vertices = vertices[vertices[:,1].argsort()[::-1]]
-    if int(.5+vertices[1][1]) == int(.5+vertices[2][1]):
-        fill_top_flat_triangle(canvas, vertices, color)
-    elif int(.5+vertices[0][1]) == int(.5+vertices[1][1]):
-        fill_bottom_flat_triangle(canvas, vertices, color)
-    else:
-        middle = array([vertices[0][0] + ((vertices[1][1] - vertices[0][1]) / (vertices[2][1] - vertices[0][1])) * (vertices[2][0] - vertices[0][0]),
-                        vertices[1][1]])
-        tf = array([vertices[0], vertices[1], middle])
-        bf = array([vertices[1], middle, vertices[2]])
-        fill_bottom_flat_triangle(canvas, bf, color)
-        fill_top_flat_triangle(canvas, tf, color)
-
-
-def fill_bottom_flat_triangle(canvas, vertices, color):
-    top = vertices[2]
-    if vertices[0][0] < vertices[1][0]:
-        left, right = vertices[0], vertices[1]
-    else:
-        left, right = vertices[1], vertices[0]
-
-    invslope1 = (left[0] - top[0]) / (left[1] - top[1])
-    invslope2 = (right[0] - top[0]) / (right[1] - top[1])
-
-    curx1 = top[0]
-    curx2 = top[0]
-
-    for scanlineY in xrange(int(.5+top[1]), int(.5+left[1]) + 1):
-        draw_scanline(canvas, scanlineY, max(curx1, left[0]), min(curx2, right[0]), color)
-        curx1 += invslope1
-        curx2 += invslope2
-
-
-def triangle_area(vertices):
-    return abs(vertices[0][0] * (vertices[1][1] - vertices[2][1]) +
-               vertices[1][0] * (vertices[2][1] - vertices[0][1]) +
-               vertices[2][0] * (vertices[0][1] - vertices[1][1])) * .5
-
-
-def draw_vertices(canvas, vertices, color):
-    for v in vertices:
-        canvas[int(.5+v[1])][int(.5+v[0])] = color
-
-
-def fill_top_flat_triangle(canvas, vertices, color):
-    bottom = vertices[0]
-    if vertices[1][0] < vertices[2][0]:
-        left, right = vertices[1], vertices[2]
-    else:
-        left, right = vertices[2], vertices[1]
-
-    invslope1 = (left[0] - bottom[0]) / (left[1] - bottom[1])
-    invslope2 = (right[0] - bottom[0]) / (right[1] - bottom[1])
-  
-    curx1 = bottom[0]
-    curx2 = bottom[0]
-  
-    for scanlineY in xrange(int(.5+bottom[1]), int(.5+left[1]) - 1, -1):
-        draw_scanline(canvas, scanlineY, max(curx1, left[0]), min(curx2, right[0]), color)
-        curx1 -= invslope1
-        curx2 -= invslope2
-
-
-def draw_scanline(canvas, y, left_x, right_x, color):
-    for x in xrange(int(.5+left_x), int(.5+right_x) + 1):
-        if canvas[y][x] < color:
-            canvas[y][x] = color
 
