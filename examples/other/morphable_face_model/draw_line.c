@@ -1,3 +1,5 @@
+#include <memory.h>
+
 #define max(x,y) x >= y? x : y
 #define min(x,y) x <= y? x : y
 
@@ -12,19 +14,12 @@ void draw_scanline(float* canvas, int y, int left_x, int right_x, int color, int
     }
 }
 
-void fill_bottom_flat_triangle(float* canvas, double* vertices, int color, int canvas_width) {
+void fill_bottom_flat_triangle(float* canvas, double* top, double* left, double* right, int color, int canvas_width) {
 
-    double* top = &vertices[4];
-    double* left = 0;
-    double* right = 0;
-
-    if (vertices[0] < vertices[2]) {
-        left = &vertices[0];
-        right = &vertices[2];
-    }
-    else {
-        right = &vertices[0];
-        left = &vertices[2];
+    if (left[0] > right[0]) {
+        double* tmp = left;
+        left = right;
+        right = tmp;
     }
 
     float invslope1 = (left[0] - top[0]) / (left[1] - top[1]);
@@ -43,19 +38,12 @@ void fill_bottom_flat_triangle(float* canvas, double* vertices, int color, int c
     }
 }
 
-void fill_top_flat_triangle(float* canvas, double* vertices, int color, int canvas_width) {
+void fill_top_flat_triangle(float* canvas, double* bottom, double* left, double* right, int color, int canvas_width) {
 
-    double* bottom = &vertices[0];
-    double* left = 0;
-    double* right = 0;
-
-    if (vertices[2] < vertices[4]) {
-        left = &vertices[2];
-        right = &vertices[4];
-    }
-    else {
-        right = &vertices[2];
-        left = &vertices[4];
+    if (left[0] > right[0]) {
+        double* tmp = left;
+        left = right;
+        right = tmp;
     }
 
     float invslope1 = (left[0] - bottom[0]) / (left[1] - bottom[1]);
@@ -72,5 +60,29 @@ void fill_top_flat_triangle(float* canvas, double* vertices, int color, int canv
         curx2 -= invslope2;
         scanlineY--;
     }
+}
+
+void prepare_triangle(float* canvas, double* vertices, int color, int canvas_width) {
+
+    if ((int)(.5+vertices[3]) == (int)(.5+vertices[5])) {
+        fill_top_flat_triangle(canvas, &vertices[0], &vertices[2], &vertices[4],
+                               color, canvas_width);
+        return;
+    }
+    else if((int)(.5+vertices[1]) == (int)(.5+vertices[3])) {
+        fill_bottom_flat_triangle(canvas, &vertices[0], &vertices[2], &vertices[4],
+                                  color, canvas_width);
+        return;
+    }
+    double* middle = (double*)malloc(2 * sizeof(double));
+    middle[0] = vertices[0] + (vertices[3] - vertices[1])
+                            / (vertices[5] - vertices[1])
+                            * (vertices[4] - vertices[0]);
+    middle[1] = vertices[3];
+    fill_bottom_flat_triangle(canvas, middle, &vertices[2], &vertices[4],
+                              color, canvas_width);
+    fill_top_flat_triangle(canvas, &vertices[0], middle, &vertices[2],
+                           color, canvas_width);
+    free(middle);
 }
 
