@@ -43,7 +43,20 @@ void fill_bottom_flat_triangle(float* canvas, double* vertices, int color, int c
     }
 }
 
-void fill_top_flat_triangle(float* canvas, double* bottom, double* left, double* right, int color, int canvas_width) {
+void fill_top_flat_triangle(float* canvas, double* vertices, int color, int canvas_width) {
+
+    double* bottom = &vertices[0];
+    double* left = 0;
+    double* right = 0;
+
+    if (vertices[2] < vertices[4]) {
+        left = &vertices[2];
+        right = &vertices[4];
+    }
+    else {
+        right = &vertices[2];
+        left = &vertices[4];
+    }
 
     float invslope1 = (left[0] - bottom[0]) / (left[1] - bottom[1]);
     float invslope2 = (right[0] - bottom[0]) / (right[1] - bottom[1]);
