@@ -16,7 +16,7 @@ points = coorinates.reshape(coorinates.shape[0]/3, 3)
 
 
 normal = array([0, 0, 1])
-image_size = 500
+image_size = 2000
 normal = normal / norm(normal)
 phi = find_basis(normal)
 rotated = rotate_shape(points, phi)
@@ -30,7 +30,7 @@ z_index = get_z_index(rotated)
 
 
 #canvas = empty((image_size, image_size))
-canvas = array([[0]*image_size for i in xrange(image_size)], dtype='f')
+canvas = array([[0]*image_size for i in xrange(image_size)], dtype='d')
 #canvas = [[0]*image_size for i in xrange(image_size)]
 print 'Start'
 profile = Profile()

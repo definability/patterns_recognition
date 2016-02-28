@@ -4,7 +4,7 @@
 #define max(x,y) x >= y? x : y
 #define min(x,y) x <= y? x : y
 
-void draw_scanline(float* canvas, int y, int left_x, int right_x, int color, int canvas_width) {
+void draw_scanline(double* canvas, int y, int left_x, int right_x, int color, int canvas_width) {
     left_x += y*canvas_width;
     right_x += y*canvas_width;
     while (left_x <= right_x) {
@@ -15,7 +15,7 @@ void draw_scanline(float* canvas, int y, int left_x, int right_x, int color, int
     }
 }
 
-void fill_bottom_flat_triangle(float* canvas, double* top, double* left, double* right, int color, int canvas_width) {
+void fill_bottom_flat_triangle(double* canvas, double* top, double* left, double* right, int color, int canvas_width) {
 
     if (left[0] > right[0]) {
         double* tmp = left;
@@ -23,11 +23,11 @@ void fill_bottom_flat_triangle(float* canvas, double* top, double* left, double*
         right = tmp;
     }
 
-    float invslope1 = (left[0] - top[0]) / (left[1] - top[1]);
-    float invslope2 = (right[0] - top[0]) / (right[1] - top[1]);
+    double invslope1 = (left[0] - top[0]) / (left[1] - top[1]);
+    double invslope2 = (right[0] - top[0]) / (right[1] - top[1]);
 
-    float curx1 = top[0];
-    float curx2 = top[0];
+    double curx1 = top[0];
+    double curx2 = top[0];
 
     int scanlineY = (int)(.5+top[1]);
 
@@ -39,7 +39,7 @@ void fill_bottom_flat_triangle(float* canvas, double* top, double* left, double*
     }
 }
 
-void fill_top_flat_triangle(float* canvas, double* bottom, double* left, double* right, int color, int canvas_width) {
+void fill_top_flat_triangle(double* canvas, double* bottom, double* left, double* right, int color, int canvas_width) {
 
     if (left[0] > right[0]) {
         double* tmp = left;
@@ -47,11 +47,11 @@ void fill_top_flat_triangle(float* canvas, double* bottom, double* left, double*
         right = tmp;
     }
 
-    float invslope1 = (left[0] - bottom[0]) / (left[1] - bottom[1]);
-    float invslope2 = (right[0] - bottom[0]) / (right[1] - bottom[1]);
+    double invslope1 = (left[0] - bottom[0]) / (left[1] - bottom[1]);
+    double invslope2 = (right[0] - bottom[0]) / (right[1] - bottom[1]);
 
-    float curx1 = bottom[0];
-    float curx2 = bottom[0];
+    double curx1 = bottom[0];
+    double curx2 = bottom[0];
 
     int scanlineY = (int)(.5+bottom[1]);
 
@@ -64,7 +64,7 @@ void fill_top_flat_triangle(float* canvas, double* bottom, double* left, double*
     }
 }
 
-void prepare_triangle(float* canvas, double* vertices, int color, int canvas_width) {
+void prepare_triangle(double* canvas, double* vertices, int color, int canvas_width) {
     double* v1 = &vertices[0];
     double* v2 = &vertices[2];
     double* v3 = &vertices[4];
