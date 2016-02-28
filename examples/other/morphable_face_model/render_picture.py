@@ -102,10 +102,7 @@ def fill_bottom_flat_triangle(canvas, vertices, color):
     curx2 = top[0]
 
     for scanlineY in xrange(int(.5+top[1]), int(.5+left[1]) + 1):
-        if abs(curx1 - curx2) > 100:
-            print vertices
-            print triangle_area(vertices)
-        draw_scanline(canvas, scanlineY, curx1, curx2, color)
+        draw_scanline(canvas, scanlineY, max(curx1, left[0]), min(curx2, right[0]), color)
         curx1 += invslope1
         curx2 += invslope2
 
@@ -114,6 +111,11 @@ def triangle_area(vertices):
     return abs(vertices[0][0] * (vertices[1][1] - vertices[2][1]) +
                vertices[1][0] * (vertices[2][1] - vertices[0][1]) +
                vertices[2][0] * (vertices[0][1] - vertices[1][1])) * .5
+
+
+def draw_vertices(canvas, vertices, color):
+    for v in vertices:
+        canvas[int(.5+v[1])][int(.5+v[0])] = color
 
 
 def fill_top_flat_triangle(canvas, vertices, color):
@@ -130,10 +132,7 @@ def fill_top_flat_triangle(canvas, vertices, color):
     curx2 = bottom[0]
   
     for scanlineY in xrange(int(.5+bottom[1]), int(.5+left[1]) - 1, -1):
-        if abs(curx1 - curx2) > 100:
-            print vertices
-            print triangle_area(vertices)
-        draw_scanline(canvas, scanlineY, curx1, curx2, color)
+        draw_scanline(canvas, scanlineY, max(curx1, left[0]), min(curx2, right[0]), color)
         curx1 -= invslope1
         curx2 -= invslope2
 
