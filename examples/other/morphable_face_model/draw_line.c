@@ -4,7 +4,7 @@
 void draw_scanline(float* canvas, int y, int left_x, int right_x, int color, int canvas_width) {
     left_x += y*canvas_width;
     right_x += y*canvas_width;
-    while (left_x < right_x) {
+    while (left_x <= right_x) {
         if (canvas[left_x] < color) {
             canvas[left_x] = color;
         }
