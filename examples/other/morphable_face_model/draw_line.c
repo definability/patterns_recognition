@@ -95,13 +95,13 @@ void prepare_triangle(float* canvas, double* vertices, int color, int canvas_wid
         return;
     }
     else if((int)(.5+v1[1]) == (int)(.5+v2[1])) {
-        fill_top_flat_triangle(canvas, v1, v2, v3, color, canvas_width);
+        fill_bottom_flat_triangle(canvas, v1, v2, v3, color, canvas_width);
         return;
     }
     double* middle = (double*)malloc(2 * sizeof(double));
     middle[0] = v1[0] + ((v2[1] - v1[1]) / (v3[1] - v1[1])) * (v3[0] - v1[0]);
     middle[1] = v2[1];
-    fill_bottom_flat_triangle(canvas, middle, v2, v3, color, canvas_width);
+    fill_bottom_flat_triangle(canvas, v3, middle, v2, color, canvas_width);
     fill_top_flat_triangle(canvas, v1, middle, v2, color, canvas_width);
     free(middle);
 }
