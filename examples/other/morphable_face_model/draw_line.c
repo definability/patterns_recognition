@@ -1,4 +1,5 @@
 #include <memory.h>
+#include <assert.h>
 
 #define max(x,y) x >= y? x : y
 #define min(x,y) x <= y? x : y
@@ -84,18 +85,13 @@ void prepare_triangle(float* canvas, double* vertices, int color, int canvas_wid
         v1 = v2;
         v2 = tmp;
     }
-    if (v1[1] < v2[1]) {
-        tmp = v1;
-        v1 = v2;
-        v2 = tmp;
-    }
 
     if ((int)(.5+v2[1]) == (int)(.5+v3[1])) {
         fill_top_flat_triangle(canvas, v1, v2, v3, color, canvas_width);
         return;
     }
     else if((int)(.5+v1[1]) == (int)(.5+v2[1])) {
-        fill_bottom_flat_triangle(canvas, v1, v2, v3, color, canvas_width);
+        fill_bottom_flat_triangle(canvas, v3, v2, v1, color, canvas_width);
         return;
     }
     double* middle = (double*)malloc(2 * sizeof(double));
