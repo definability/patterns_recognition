@@ -11,4 +11,3 @@ def rasterize_triangles(canvas, vertices, z_indices, colors, triangles):
                              current_vertices.ctypes.get_as_parameter(),
                              int(color), canvas.shape[1])
 
-
