@@ -1,6 +1,7 @@
 #include <GLFW/glfw3.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
 
 float rx = 0.f, ry = 0.f, rz = 0.f, last_rotated = 0.f;
 static void refresh_rotation() {
@@ -51,7 +52,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
         last_rotated = 0.f;
     }
 }
-void render_face(float* vertices, unsigned short* triangles, int amount) {
+void render_face(float* vertices, uint16_t* triangles, int amount) {
     GLFWwindow* window;
     glfwSetErrorCallback(error_callback);
     if (!glfwInit())
@@ -66,7 +67,6 @@ void render_face(float* vertices, unsigned short* triangles, int amount) {
     glfwSwapInterval(1);
     glfwSetKeyCallback(window, key_callback);
     refresh_rotation();
-    printf("amount %u\n", amount);
     while (!glfwWindowShouldClose(window))
     {
         float ratio;
@@ -82,16 +82,20 @@ void render_face(float* vertices, unsigned short* triangles, int amount) {
         glLoadIdentity();
         glRotatef(last_rotated, rx, ry, rz);
         glBegin(GL_TRIANGLES);
-        size_t i = 0, j;
+        size_t i = 0;
+        unsigned short j = 0;
         float r, g, b;
         while (i < amount) {
-            //j = triangles[i];
-            j = i;
+            j = triangles[i];
+            //j = i;
             r = vertices[3*j];
             g = vertices[3*j + 1];
             b = vertices[3*j + 2];
-            glColor3f(r, g, b);
-            //glColor3f(1.f, 1.f, 1.f);
+            if (vertices[3*j+2] > .95f) {
+                glColor3f(1.f, 0.f, 0.f);
+            } else {
+                glColor3f(r, g, b);
+            }
             glVertex3f(vertices[3*j], vertices[3*j+1], vertices[3*j+2]);
             i++;
         }
