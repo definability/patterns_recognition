@@ -1,11 +1,10 @@
 from load_model import *
 from render_triangle import rasterize_triangles
-from numpy import empty
 
 from PIL import Image
-from numpy import cross, array, dot
-from numpy.linalg import norm
+from numpy import array
 
+from calculations import get_normals, set_light
 
 model = load_model()
 
@@ -13,5 +12,8 @@ coorinates = model['shapeMU']
 points = coorinates.reshape(coorinates.shape[0]/3, 3)
 triangles = model['tl'] - 1
 
-rasterize_triangles(points, triangles.flatten())
+normals = get_normals(points, triangles)
+light_direction = array([0, 0, 1])
+lights = set_light(normals, light_direction).astype('f')
+rasterize_triangles(points, triangles.flatten(), lights)
 
