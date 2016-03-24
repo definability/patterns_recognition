@@ -74,7 +74,12 @@ void render_face(float* vertices, float* colors, uint16_t* triangles, int amount
         glfwGetFramebufferSize(window, &width, &height);
         ratio = width / (float) height;
         glViewport(0, 0, width, height);
-        glClear(GL_COLOR_BUFFER_BIT);
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
+        glDepthMask(GL_TRUE);
+        glClearColor(1.f, 1.f, 1.f, 1.f);
+
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         glOrtho(-2.f, 2.f, -2.f, 2.f, -2.f, 2.f);
