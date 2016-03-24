@@ -13,7 +13,7 @@ points = coorinates.reshape(coorinates.shape[0]/3, 3)
 triangles = model['tl'] - 1
 
 normals = get_normals(points, triangles)
-light_direction = array([0, 0, 1])
+light_direction = array([-1, 0, -1])/(2**.5)
 lights = set_light(normals, light_direction).astype('f')
 rasterize_triangles(points, triangles.flatten(), lights)
 
