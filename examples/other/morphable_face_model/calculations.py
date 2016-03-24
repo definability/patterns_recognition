@@ -20,7 +20,7 @@ def get_normals(points, triangles):
         for neighbours in get_neighbours(len(points), triangles)]
 
 def set_light(normals, n):
-    result = -dot(normals, n)
+    result = dot(normals, n)
     result -= result.min()
     result /= result.max()
     return result
