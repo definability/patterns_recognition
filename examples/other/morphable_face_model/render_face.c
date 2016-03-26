@@ -19,12 +19,12 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
         glfwSetWindowShouldClose(window, GL_TRUE);
     if (key == GLFW_KEY_LEFT && action != GLFW_RELEASE) {
         refresh_rotation();
-        ry = -1.f;
+        ry = 1.f;
         last_rotated += 1.f;
     }
     if (key == GLFW_KEY_RIGHT && action != GLFW_RELEASE) {
         refresh_rotation();
-        ry = 1.f;
+        ry = -1.f;
         last_rotated += 1.f;
     }
     if (key == GLFW_KEY_DOWN && action != GLFW_RELEASE) {
