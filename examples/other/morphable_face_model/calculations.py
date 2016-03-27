@@ -8,14 +8,15 @@ def get_neighbours(vertices_amount, triangles):
             result[v].append(triangle)
     return [array(r) for r in result]
 
-def get_normal(triangle):
-    a = (triangle[1] - triangle[0]).astype('d')
-    b = (triangle[2] - triangle[0]).astype('d')
+def get_normal(a, b):
     result = cross(a, b)
     return result / norm(result)
 
 def get_normals(points, triangles):
-    normals = array([get_normal(triangle) for triangle in points[triangles]])
+    vertices = points[triangles]
+    first_edges = vertices[:,1] - vertices[:,0]
+    second_edges = vertices[:,2] - vertices[:,0]
+    normals = array([get_normal(f, s) for f, s in zip(first_edges, second_edges)])
     return [sum(normals[neighbours]) / len(neighbours)
         for neighbours in get_neighbours(len(points), triangles)]
 
