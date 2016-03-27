@@ -1,4 +1,4 @@
-from numpy import array, cross, dot
+from numpy import array, cross, dot, apply_along_axis
 from numpy.linalg import norm
 
 def get_neighbours(vertices_amount, triangles):
@@ -8,17 +8,15 @@ def get_neighbours(vertices_amount, triangles):
             result[v].append(triangle)
     return [array(r) for r in result]
 
-def get_normal(a, b):
-    result = cross(a, b)
-    return result / norm(result)
-
 def get_normals(points, triangles):
     vertices = points[triangles]
     first_edges = vertices[:,1] - vertices[:,0]
     second_edges = vertices[:,2] - vertices[:,0]
-    normals = array([get_normal(f, s) for f, s in zip(first_edges, second_edges)])
-    return [sum(normals[neighbours]) / len(neighbours)
-        for neighbours in get_neighbours(len(points), triangles)]
+    normal_vectors = cross(first_edges, second_edges)
+    normals = array([sum(normal_vectors[neighbours])
+                    for neighbours in get_neighbours(len(points), triangles)])
+    lengths = apply_along_axis(norm, 1, normals)
+    return normals / lengths[:,None]
 
 def set_light(normals, n):
     result = dot(normals, n)
