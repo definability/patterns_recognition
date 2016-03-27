@@ -3,9 +3,9 @@ from numpy.linalg import norm
 
 def get_neighbours(vertices_amount, triangles):
     result = [[] for i in xrange(vertices_amount)]
-    for tr in triangles:
-        for v in tr:
-            result[v].append(tr)
+    for triangle, vertices in enumerate(triangles):
+        for v in vertices:
+            result[v].append(triangle)
     return [array(r) for r in result]
 
 def get_normal(triangle):
@@ -15,8 +15,8 @@ def get_normal(triangle):
     return result / norm(result)
 
 def get_normals(points, triangles):
-    return [sum(get_normal(triangle)
-        for triangle in points[neighbours]) / len(neighbours)
+    normals = array([get_normal(triangle) for triangle in points[triangles]])
+    return [sum(normals[neighbours]) / len(neighbours)
         for neighbours in get_neighbours(len(points), triangles)]
 
 def set_light(normals, n):
