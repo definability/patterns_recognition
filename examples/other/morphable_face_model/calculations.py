@@ -27,5 +27,5 @@ def set_light(normals, n):
 
 def get_normal_map(normals):
     result = normals - apply_along_axis(np_min, 0, normals)
-    return result / apply_along_axis(np_max, 0, normals)
+    return result / apply_along_axis(np_max, 0, result)
 
