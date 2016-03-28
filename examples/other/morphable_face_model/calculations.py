@@ -1,5 +1,6 @@
 from numpy import array, cross, dot, apply_along_axis
 from numpy.linalg import norm
+from numpy import min as np_min, max as np_max
 
 def get_neighbours(vertices_amount, triangles):
     result = [[] for i in xrange(vertices_amount)]
@@ -23,4 +24,8 @@ def set_light(normals, n):
     result -= result.min()
     result /= result.max()
     return result
+
+def get_normal_map(normals):
+    result = normals - apply_along_axis(np_min, 0, normals)
+    return result / apply_along_axis(np_max, 0, normals)
 
