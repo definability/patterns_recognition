@@ -8,7 +8,7 @@ def get_neighbours(vertices_amount, triangles):
             result[v].append(triangle)
     return [array(r) for r in result]
 
-def get_normals(points, triangles):
+def get_normals(points, triangles, neighbour_triangles):
     vertices = points[triangles]
     first_edges = vertices[:,1] - vertices[:,0]
     second_edges = vertices[:,2] - vertices[:,0]
