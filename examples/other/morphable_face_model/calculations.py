@@ -13,8 +13,8 @@ def get_normals(points, triangles, neighbour_triangles):
     first_edges = vertices[:,1] - vertices[:,0]
     second_edges = vertices[:,2] - vertices[:,0]
     normal_vectors = cross(first_edges, second_edges)
-    normals = array([sum(normal_vectors[neighbours])
-                    for neighbours in get_neighbours(len(points), triangles)])
+    normals = array([normal_vectors[neighbours].sum(axis=0)
+                    for neighbours in neighbour_triangles])
     lengths = apply_along_axis(norm, 1, normals)
     return normals / lengths[:,None]
 
