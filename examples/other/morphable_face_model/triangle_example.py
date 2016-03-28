@@ -22,9 +22,11 @@ neighbour_triangles = get_neighbours(len(points), triangles)
 normals = get_normals(points, triangles, neighbour_triangles)
 light_direction = array([-1, 0, -1])/(2**.5)
 lights = set_light(normals, light_direction).astype('f')
+normal_map = get_normal_map(normals).astype('f')
 
 profile.disable()
 Stats(profile).sort_stats('tottime').print_stats()
 
-rasterize_triangles(points, triangles.flatten(), lights)
+colors = normal_map
+rasterize_triangles(points, triangles.flatten(), colors)
 
