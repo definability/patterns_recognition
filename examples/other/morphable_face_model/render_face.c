@@ -92,22 +92,9 @@ void render_face(float* vertices, float* colors, uint16_t* triangles, int amount
         float r, g, b;
         while (i < amount) {
             j = triangles[i];
-            //j = i;
-            /*
-            r = vertices[3*j];
-            g = vertices[3*j + 1];
-            b = vertices[3*j + 2];
-            */
-            r = colors[j];
-            g = colors[j];
-            b = colors[j];
-            /*
-            if (vertices[3*j+2] > .95f) {
-                glColor3f(1.f, 0.f, 0.f);
-            } else {
-                glColor3f(r, g, b);
-            }
-            */
+            r = colors[3*j];
+            g = colors[3*j+1];
+            b = colors[3*j+2];
             glColor3f(r, g, b);
             glVertex3f(vertices[3*j], vertices[3*j+1], vertices[3*j+2]);
             i++;
