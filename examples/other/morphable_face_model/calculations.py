@@ -1,23 +1,31 @@
-from numpy import array, cross, dot, apply_along_axis
+from numpy import array, cross, dot, apply_along_axis, zeros_like
 from numpy.linalg import norm
 from numpy import min as np_min, max as np_max
 
-def get_neighbours(vertices_amount, triangles):
-    result = [[] for i in xrange(vertices_amount)]
-    for triangle, vertices in enumerate(triangles):
-        for v in vertices:
-            result[v].append(triangle)
-    return [array(r) for r in result]
+import ctypes
 
-def get_normals(points, triangles, neighbour_triangles):
+c_cross = ctypes.cdll.LoadLibrary('./lib_cross.so')
+
+def get_normals(points, triangles):
     vertices = points[triangles]
+
     first_edges = vertices[:,1] - vertices[:,0]
     second_edges = vertices[:,2] - vertices[:,0]
-    normal_vectors = cross(first_edges, second_edges)
-    normals = array([normal_vectors[neighbours].sum(axis=0)
-                    for neighbours in neighbour_triangles])
-    lengths = apply_along_axis(norm, 1, normals)
-    return normals / lengths[:,None]
+
+    normal_vectors = cross(first_edges, second_edges).astype('f')
+
+    result = zeros_like(points)
+
+    nv = normal_vectors.flatten()
+    tr = triangles.flatten()
+
+    c_cross.normals(nv.ctypes.get_as_parameter(),
+                    tr.ctypes.get_as_parameter(),
+                    result.ctypes.get_as_parameter(),
+                    len(triangles))
+    c_cross.normalize(result.ctypes.get_as_parameter(), len(result))
+
+    return result
 
 def set_light(normals, n):
     result = dot(normals, n)
