@@ -4,7 +4,7 @@ from render_triangle import rasterize_triangles
 from PIL import Image
 from numpy import array
 
-from calculations import get_normals, set_light, get_normal_map
+from calculations import get_normals, set_light, get_normal_map, centralize
 
 from cProfile import Profile
 from pstats import Stats
@@ -15,7 +15,7 @@ profile.enable()
 model = load_model()
 
 coorinates = model['shapeMU']
-points = coorinates.reshape(coorinates.shape[0]/3, 3)
+points = centralize(coorinates.reshape(coorinates.shape[0]/3, 3))
 triangles = model['tl'] - 1
 
 normals = get_normals(points, triangles)
