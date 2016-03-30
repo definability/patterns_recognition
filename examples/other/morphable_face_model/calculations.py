@@ -1,4 +1,4 @@
-from numpy import array, cross, dot, apply_along_axis, zeros_like
+from numpy import array, cross, dot, apply_along_axis, zeros_like, mean
 from numpy.linalg import norm
 from numpy import min as np_min, max as np_max
 
@@ -36,4 +36,10 @@ def set_light(normals, n):
 def get_normal_map(normals):
     result = normals - apply_along_axis(np_min, 0, normals)
     return result / apply_along_axis(np_max, 0, result)
+
+def get_center(points):
+    return apply_along_axis(mean, 0, points)
+
+def centralize(points):
+    return points - get_center(points)
 
