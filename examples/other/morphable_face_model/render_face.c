@@ -7,8 +7,7 @@ float rotation[] = {0.f, 0.f, 0.f};
 int forward_rotation_keys[] = {GLFW_KEY_DOWN, GLFW_KEY_LEFT, GLFW_KEY_Z};
 int back_rotation_keys[] = {GLFW_KEY_UP, GLFW_KEY_RIGHT, GLFW_KEY_A};
 
-static void error_callback(int error, const char* description)
-{
+static void error_callback(int error, const char* description) {
     fputs(description, stderr);
 }
 
@@ -25,23 +24,29 @@ static void key_callback(GLFWwindow* window, int key, int scancode,
             rotation[i] = 1.f;
         } else if (key == back_rotation_keys[i] && action != GLFW_RELEASE) {
             rotation[i] = -1.f;
-        } else if (key == back_rotation_keys[i] || key == forward_rotation_keys[i]) {
+        } else if (key == back_rotation_keys[i]
+                || key == forward_rotation_keys[i]) {
             rotation[i] = 0.f;
         }
     } while (++i < sizeof(rotation) / sizeof(*rotation));
 }
 
-void render_face(float* vertices, float* colors, uint16_t* triangles, int amount) {
+void render_face(float* vertices, float* colors,
+                 uint16_t* triangles, int amount) {
     GLFWwindow* window;
     glfwSetErrorCallback(error_callback);
-    if (!glfwInit())
+
+    if (!glfwInit()) {
         exit(EXIT_FAILURE);
+    }
+
     window = glfwCreateWindow(640, 480, "Simple example", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
+
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
     glfwSetKeyCallback(window, key_callback);
@@ -51,6 +56,7 @@ void render_face(float* vertices, float* colors, uint16_t* triangles, int amount
     glOrtho(-1.5f, 1.5f, -1.5f, 1.5f, -1.5f, 1.5f);
     glEnable(GL_DEPTH_TEST);
     glDepthMask(GL_TRUE);
+
     while (!glfwWindowShouldClose(window))
     {
         float ratio;
@@ -80,6 +86,7 @@ void render_face(float* vertices, float* colors, uint16_t* triangles, int amount
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
     glfwDestroyWindow(window);
     glfwTerminate();
     exit(EXIT_SUCCESS);
