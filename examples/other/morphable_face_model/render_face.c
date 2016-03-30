@@ -66,7 +66,12 @@ void render_face(float* vertices, float* colors, uint16_t* triangles, int amount
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
     glfwSetKeyCallback(window, key_callback);
-    refresh_rotation();
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glOrtho(-1.5f, 1.5f, -1.5f, 1.5f, -1.5f, 1.5f);
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
     while (!glfwWindowShouldClose(window))
     {
         float ratio;
@@ -76,15 +81,8 @@ void render_face(float* vertices, float* colors, uint16_t* triangles, int amount
         glViewport(0, 0, width, height);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glEnable(GL_DEPTH_TEST);
-        glDepthMask(GL_TRUE);
-        glClearColor(1.f, 1.f, 1.f, 1.f);
+        glClearColor(1.f, 1.f, 1.f, 0.f);
 
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(-2.f, 2.f, -2.f, 2.f, -2.f, 2.f);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
         glRotatef(last_rotated, rx, ry, rz);
         glBegin(GL_TRIANGLES);
         size_t i = 0;
