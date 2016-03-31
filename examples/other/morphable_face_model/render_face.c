@@ -17,6 +17,13 @@ static void key_callback(GLFWwindow* window, int key, int scancode,
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GL_TRUE);
+        status = 1;
+    } else if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, GL_TRUE);
+        status = 0;
+    } else if (key == GLFW_KEY_N && action == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, GL_TRUE);
+        status = 2;
     }
 
     int i = 0;
