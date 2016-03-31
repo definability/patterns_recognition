@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
+int status = -1;
 float rotation[] = {0.f, 0.f, 0.f};
 int forward_rotation_keys[] = {GLFW_KEY_DOWN, GLFW_KEY_LEFT, GLFW_KEY_Z};
 int back_rotation_keys[] = {GLFW_KEY_UP, GLFW_KEY_RIGHT, GLFW_KEY_A};
@@ -31,7 +32,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode,
     } while (++i < sizeof(rotation) / sizeof(*rotation));
 }
 
-void render_face(float* vertices, float* colors,
+int render_face(float* vertices, float* colors,
                  uint16_t* triangles, int amount) {
     GLFWwindow* window;
     glfwSetErrorCallback(error_callback);
@@ -89,6 +90,6 @@ void render_face(float* vertices, float* colors,
 
     glfwDestroyWindow(window);
     glfwTerminate();
-    exit(EXIT_SUCCESS);
+    return status;
 }
 
