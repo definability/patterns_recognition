@@ -1,4 +1,4 @@
-from numpy import array, cross, dot, apply_along_axis, zeros_like, mean
+from numpy import array, cross, dot, apply_along_axis, zeros_like, mean, column_stack
 from numpy.linalg import norm
 from numpy import min as np_min, max as np_max
 
@@ -31,7 +31,7 @@ def set_light(normals, n):
     result = dot(normals, n)
     result -= result.min()
     result /= result.max()
-    return result
+    return column_stack((result, result, result))
 
 def get_normal_map(normals):
     result = normals - apply_along_axis(np_min, 0, normals)
