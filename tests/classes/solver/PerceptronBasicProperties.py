@@ -31,7 +31,7 @@ class TestPerceptronBasicProperties(TestCase):
         right = [[1]]
         for process in self.processors:
             perceptron = Perceptron(1)
-            perceptron.setup(process(left), process(right))
+            self.assertTrue(perceptron.setup(process(left), process(right)))
 
 
     def test_setup_plane(self):
@@ -40,7 +40,7 @@ class TestPerceptronBasicProperties(TestCase):
 
         for process in self.processors:
             perceptron = Perceptron(2)
-            perceptron.setup(process(left), process(right))
+            self.assertTrue(perceptron.setup(process(left), process(right)))
 
 
     def test_classify_line_zero(self):
@@ -51,7 +51,7 @@ class TestPerceptronBasicProperties(TestCase):
         right_test = [[5], [10]]
         for process in self.processors:
             perceptron = Perceptron(1)
-            perceptron.setup(process(left), process(right))
+            self.assertTrue(perceptron.setup(process(left), process(right)))
             for l in process(left_test):
                 self.assertEqual(perceptron.classify_vertex(l), -1)
             for r in process(right_test):
@@ -66,7 +66,7 @@ class TestPerceptronBasicProperties(TestCase):
         right_test = [[-1, 1], [0, 1]]
         for process in self.processors:
             perceptron = Perceptron(2)
-            perceptron.setup(process(left), process(right))
+            self.assertTrue(perceptron.setup(process(left), process(right)))
             for l in process(left + left_test):
                 self.assertEqual(perceptron.classify_vertex(l), -1)
             for r in process(right + right_test):
