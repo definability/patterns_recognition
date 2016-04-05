@@ -1,5 +1,5 @@
 class Perceptron:
-    
+
 
     def __init__(self, dimensions, epsilon=0, D=float('inf')):
         self.dimensions = dimensions
