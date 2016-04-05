@@ -73,6 +73,24 @@ class TestPerceptronBasicProperties(TestCase):
                 self.assertEqual(perceptron.classify_vertex(r), 1)
 
 
+    def test_wrong_setup_without_offset(self):
+        left = [[-2]]
+        right = [[-1]]
+
+        for process in self.processors:
+            perceptron = Perceptron(1, .5, 2)
+            self.assertFalse(perceptron.setup(process(left), process(right)))
+
+
+    def test_unclassifiable_setup(self):
+        left = [[-1], [1]]
+        right = [[0]]
+
+        for process in self.processors:
+            perceptron = Perceptron(1, .5, 2)
+            self.assertFalse(perceptron.setup(process(left), process(right)))
+
+
 if __name__ == '__main__':
     main()
 
