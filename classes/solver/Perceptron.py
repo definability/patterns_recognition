@@ -3,15 +3,22 @@ class Perceptron:
 
     def __init__(self, dimensions, epsilon=0):
         self.dimensions = dimensions
-        self.left = []
-        self.right = []
+        self.left = None
+        self.right = None
         self.alpha = [0]*dimensions
         self.__epsilon = epsilon
 
 
-    def setup(self, left, right):
-        self.left.extend(list(left))
-        self.right.extend(list(right))
+    def setup(self, left=None, right=None):
+        if self.left is None:
+            self.left = left
+        else:
+            self.left += left
+        if self.right is None:
+            self.right = right
+        else:
+            self.right += right
+
         while self.__setup_loop():
             continue
 
