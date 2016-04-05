@@ -67,9 +67,9 @@ class TestPerceptronBasicProperties(TestCase):
         for process in self.processors:
             perceptron = Perceptron(2)
             perceptron.setup(process(left), process(right))
-            for l in process(left_test):
+            for l in process(left + left_test):
                 self.assertEqual(perceptron.classify_vertex(l), -1)
-            for r in process(right_test):
+            for r in process(right + right_test):
                 self.assertEqual(perceptron.classify_vertex(r), 1)
 
 
