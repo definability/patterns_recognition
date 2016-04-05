@@ -55,13 +55,13 @@ class Perceptron:
 
     def classify_vertex(self, vertex):
         result = sum([a * x for a, x in zip(self.alpha, vertex)])
-        if abs(result) <= self.__epsilon:
+        if float(result) == 0.0:
             return 0
         return 1 if result > 0 else -1
 
 
     def __calculate_max_steps_count(self):
-        if float(self.__epsilon) == float(0) or self.__D == float('inf'):
+        if float(self.__epsilon) == 0.0 or self.__D == float('inf'):
             self.__steps = float('inf')
             return
         self.__steps = (self.__D/self.__epsilon)**2
