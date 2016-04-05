@@ -19,11 +19,11 @@ class Perceptron:
     def __setup_loop(self):
         wrong = False
         for l in self.left:
-            if self.__vertex_side(l) >= 0:
+            if self.classify_vertex(l) >= 0:
                 self.__setup_iteration(l, -1)
                 wrong = True
         for r in self.right:
-            if self.__vertex_side(r) <= 0:
+            if self.classify_vertex(r) <= 0:
                 self.__setup_iteration(r, 1)
                 wrong = True
         return wrong
@@ -33,7 +33,7 @@ class Perceptron:
         self.alpha = [a + sign * x for a, x in zip(self.alpha, wrong)]
 
 
-    def __vertex_side(self, vertex):
+    def classify_vertex(self, vertex):
         result = sum([a * x for a, x in zip(self.alpha, vertex)])
         if abs(result) <= self.__epsilon:
             return 0
