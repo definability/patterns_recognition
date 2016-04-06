@@ -9,9 +9,9 @@ fig = plt.figure()
 
 ax = plt.axes(xlim=(0, 10), ylim=(0, 10))
 
-R = (random() + 1) * 2.5
-x0 = randint(2,8)
-y0 = randint(2,8)
+R = random() * 1 + 2
+x0 = random() * 5 + 3
+y0 = random() * 5 + 3
 patch = plt.Circle((x0, y0), R, color='r', fill=False)
 
 inside_x_points = []
