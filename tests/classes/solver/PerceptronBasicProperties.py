@@ -34,6 +34,16 @@ class TestPerceptronBasicProperties(TestCase):
             self.assertTrue(perceptron.setup(process(left), process(right)))
 
 
+    def test_setup_one_by_one(self):
+        left = [[-1]]
+        right = [[1]]
+        for process in self.processors:
+            perceptron = Perceptron(1)
+            self.assertTrue(perceptron.setup(left=process(left)))
+            self.assertTrue(perceptron.setup(right=process(right)))
+
+
+
     def test_setup_plane(self):
         left = [[-1, 1], [-2, 1]]
         right = [[1, 1], [2, 1]]
