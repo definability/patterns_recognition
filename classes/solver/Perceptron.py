@@ -12,13 +12,13 @@ class Perceptron:
 
 
     def setup(self, left=None, right=None):
-        if self.left is None:
+        if self.left is None and left is not None:
             self.left = left
-        else:
+        elif self.left is not None and left is not None:
             self.left += left
-        if self.right is None:
+        if self.right is None and right is not None:
             self.right = right
-        else:
+        elif self.right is not None and right is not None:
             self.right += right
 
         success = False
@@ -38,13 +38,18 @@ class Perceptron:
 
     def __setup_loop(self):
         corrections = 0
-        for l in self.left:
-            if self.classify_vertex(l) >= 0:
-                self.__setup_iteration(l, -1)
-                corrections += 1
-        for r in self.right:
-            if self.classify_vertex(r) <= 0:
-                self.__setup_iteration(r, 1)
+        if self.left is not None:
+            corrections += self.__setup_class(self.left, -1)
+        if self.right is not None:
+            corrections += self.__setup_class(self.right, 1)
+        return corrections
+
+
+    def __setup_class(self, sample, sign):
+        corrections = 0
+        for s in sample:
+            if sign * self.classify_vertex(s) <= 0:
+                self.__setup_iteration(s, sign)
                 corrections += 1
         return corrections
 
