@@ -84,6 +84,23 @@ class TestPerceptronBasicProperties(TestCase):
                 self.assertEqual(perceptron.classify_vertex(r), 1)
 
 
+    def test_classify_line_zero_one_by_one(self):
+        left = [[-1]]
+        right = [[1]]
+
+        left_test = [[-5], [-10]]
+        right_test = [[5], [10]]
+        for process in self.processors:
+            perceptron = Perceptron(1)
+            self.assertTrue(perceptron.setup())
+            self.assertTrue(perceptron.setup(left=process(left)))
+            self.assertTrue(perceptron.setup(right=process(right)))
+            for l in process(left_test):
+                self.assertEqual(perceptron.classify_vertex(l), -1)
+            for r in process(right_test):
+                self.assertEqual(perceptron.classify_vertex(r), 1)
+
+
     def test_wrong_setup_without_offset(self):
         left = [[-2]]
         right = [[-1]]
