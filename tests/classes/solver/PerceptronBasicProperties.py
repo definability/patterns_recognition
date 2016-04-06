@@ -39,6 +39,7 @@ class TestPerceptronBasicProperties(TestCase):
         right = [[1]]
         for process in self.processors:
             perceptron = Perceptron(1)
+            self.assertTrue(perceptron.setup())
             self.assertTrue(perceptron.setup(left=process(left)))
             self.assertTrue(perceptron.setup(right=process(right)))
 
