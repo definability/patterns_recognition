@@ -25,7 +25,6 @@ outside, = ax.plot([], [], 'bo')
 calculated = plt.Circle((0, 0), 0, color='b', fill=False)
 
 perceptron = Perceptron(4)
-perceptron.setup([], [])
 
 def Y2X(x, y):
     return (1, x, y, x**2 + y**2)
