@@ -65,8 +65,8 @@ def animate(i):
     corrected = False
     while need_correction:
         alpha = perceptron.alpha
-        points = zip([1] * n, inside_x_points, inside_y_points) + \
-                 zip([1] * n, outside_x_points, outside_y_points)
+        points = zip(inside_x_points, inside_y_points) + \
+                 zip(outside_x_points, outside_y_points)
         correction = get_correction_point(alpha, R, points)
         if correction is None:
             need_correction = False
