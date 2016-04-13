@@ -7,7 +7,7 @@ from matplotlib.patches import Ellipse
 
 from classes.solver import Perceptron
 from examples.perceptron.ellipsoid_positive_definite.ellipsoid_calculations import Y2X_ellipsoid, get_ellipse
-from examples.perceptron.ellipsoid_positive_definite.matrix_calculations import is_positive_definite
+from examples.perceptron.ellipsoid_positive_definite.matrix_calculations import is_positive_definite, get_wrong_vector, Y2X_eigenvector
 
 
 X0 = 0
@@ -88,13 +88,18 @@ def process_perceptron_output(previous_data):
         return previous_data
     print 'Calculated: a={}, b={}, angle={}'.format(*data)
     print 'Real: a={}, b={}, angle={}'.format(a, b, angle)
-    print 'Positive definite:', is_positive_definite(perceptron.alpha)
     calculated.center = (X0, Y0)
     calculated.width = 2 * data[0]
     calculated.height = 2 * data[1]
     calculated.angle = 180 * data[2] / pi
     return data
 
+def correct_posive_definite():
+    while not is_positive_definite(perceptron.alpha):
+        wrong = get_wrong_vector(perceptron.alpha)
+        check = Y2X_eigenvector(wrong[0], wrong[1])
+        perceptron.setup(right=[check])
+        print 'Corrected positive definite'
 
 perceptron_output = {
     'data': (0, 0, 0)
@@ -110,6 +115,10 @@ def animate(i):
         add_new_point(new_x, new_y, outside_x_points, outside_y_points, outside, 1)
     else:
         return calculated, inside, outside
+    if len(inside_x_points) == 0 or len(outside_x_points) == 0:
+        return calculated, inside, outside
+
+    correct_posive_definite()
     perceptron_output['data'] = process_perceptron_output(perceptron_output['data'])
 
     return calculated, inside, outside
@@ -117,7 +126,7 @@ def animate(i):
 anim = animation.FuncAnimation(fig, animate, 
                                init_func=init, 
                                frames=360, 
-                               interval=2000,
+                               interval=200,
                                blit=True)
 
 plt.show()
