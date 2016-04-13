@@ -6,6 +6,7 @@ from matplotlib import animation
 from matplotlib.patches import Ellipse
 
 from classes.solver import Perceptron
+from examples.perceptron.ellipsoid_positive_definite.ellipsoid_calculations import Y2X_ellipsoid, get_ellipse
 
 
 X0 = 0
@@ -68,41 +69,46 @@ def get_point_class(new_x, new_y):
     return 0
 
 
-def add_new_point(new_x, new_y, x_list, y_list, plot):
+def add_new_point(new_x, new_y, x_list, y_list, plot, side):
     x_list.append(new_x)
     y_list.append(new_y)
     plot.set_data(x_list, y_list)
-    #perceptron.setup(left=[Y2X(new_x, new_y)])
+    if side == -1:
+        perceptron.setup(left=[Y2X_ellipsoid(new_x, new_y)])
+    if side == 1:
+        perceptron.setup(right=[Y2X_ellipsoid(new_x, new_y)])
+
+def process_perceptron_output(previous_data):
+    try:
+        data = get_ellipse(perceptron.alpha)
+    except:
+        return previous_data
+    if previous_data == data:
+        return previous_data
+    print 'Calculated: a={}, b={}, angle={}'.format(*data)
+    print 'Real: a={}, b={}, angle={}'.format(a, b, angle)
+    calculated.center = (X0, Y0)
+    calculated.width = 2 * data[0]
+    calculated.height = 2 * data[1]
+    calculated.angle = 180 * data[2] / pi
+    return data
 
 
-def process_perceptron_output():
-    alpha = perceptron.alpha
-    k = sum((beta**2) / (4 * gamma) for beta, gamma in zip(alpha[1:3], alpha[3:])) - alpha[0]
-    prediction = {
-        'x': -.5 * alpha[1]/alpha[3],
-        'y': -.5 * alpha[2]/alpha[4],
-        'a': k/alpha[3],
-        'b': k/alpha[4]
-    }
-    print 'Calculated: x0={}, y0={}, a={}, b={}'.format(prediction['x'], prediction['y'], prediction['a'], prediction['b'])
-    print 'Real: x0={}, y0={}, a={}, b={}'.format(x0, y0, a**2, b**2)
-    calculated.center = (prediction['x'], prediction['y'])
-    calculated.width = 2 * abs(prediction['a'])**.5
-    calculated.height = 2 * abs(prediction['b'])**.5
-
-
+perceptron_output = {
+    'data': (0, 0, 0)
+}
 def animate(i):
     new_x = (random() - .5) * 2
     new_y = (random() - .5) * 2
 
     point_class = get_point_class(new_x, new_y)
     if point_class == -1:
-        add_new_point(new_x, new_y, inside_x_points, inside_y_points, inside)
+        add_new_point(new_x, new_y, inside_x_points, inside_y_points, inside, -1)
     elif point_class == 1:
-        add_new_point(new_x, new_y, outside_x_points, outside_y_points, outside)
+        add_new_point(new_x, new_y, outside_x_points, outside_y_points, outside, 1)
     else:
         return calculated, inside, outside
-    #process_perceptron_output()
+    perceptron_output['data'] = process_perceptron_output(perceptron_output['data'])
 
     return calculated, inside, outside
 
