@@ -7,6 +7,7 @@ from matplotlib.patches import Ellipse
 
 from classes.solver import Perceptron
 from examples.perceptron.ellipsoid_positive_definite.ellipsoid_calculations import Y2X_ellipsoid, get_ellipse
+from examples.perceptron.ellipsoid_positive_definite.matrix_calculations import is_positive_definite
 
 
 X0 = 0
@@ -87,6 +88,7 @@ def process_perceptron_output(previous_data):
         return previous_data
     print 'Calculated: a={}, b={}, angle={}'.format(*data)
     print 'Real: a={}, b={}, angle={}'.format(a, b, angle)
+    print 'Positive definite:', is_positive_definite(perceptron.alpha)
     calculated.center = (X0, Y0)
     calculated.width = 2 * data[0]
     calculated.height = 2 * data[1]
@@ -115,7 +117,7 @@ def animate(i):
 anim = animation.FuncAnimation(fig, animate, 
                                init_func=init, 
                                frames=360, 
-                               interval=20,
+                               interval=2000,
                                blit=True)
 
 plt.show()
