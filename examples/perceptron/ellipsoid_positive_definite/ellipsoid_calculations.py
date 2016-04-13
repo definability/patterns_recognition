@@ -17,7 +17,7 @@ def get_ellipse(alpha):
     c = c_dividend / c_divisor
 
     a = abs((sin(double_angle) * (c - 1)) / (c * xy))**.5
-    b = a * c
+    b = a * (c**.5)
 
     return (a, b, double_angle/2)
 
