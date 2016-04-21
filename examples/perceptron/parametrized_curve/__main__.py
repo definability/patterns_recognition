@@ -8,7 +8,7 @@ from draw import run_animation
 from matrices_management import *
 from CurveExample import CurveExample
 
-SCALE = 2
+SCALE = 1
 
 LEFT_X = -1 * SCALE
 RIGHT_X = 1 * SCALE
