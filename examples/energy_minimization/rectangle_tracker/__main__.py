@@ -18,15 +18,15 @@ if __name__ == '__main__':
 
     logging.basicConfig(level=getattr(logging, args.log))
 
-    model_image = Image.open(path.join(path.dirname(__file__), 'rect_model_10x10.png'))
+    model_image = Image.open(path.join(path.dirname(__file__), '11.png'))
     model_image_mask = [p[3] > 0 for p in list(model_image.getdata())]
     model_image_grayscale = model_image.convert('L')
 
-    raw_image = Image.open(path.join(path.dirname(__file__), 'rect_big_10x10_colorized.png'))
+    raw_image = Image.open(path.join(path.dirname(__file__), '13.png'))
     raw_image_grayscale = raw_image.convert('L')
 
     problem = build_problem(model_image_grayscale, raw_image_grayscale,
-                            model_image_mask, 2, 2)
+                            model_image_mask, 3, 3)
     profile = Profile()
     profile.enable()
     solution = problem.solve(False)
@@ -36,4 +36,5 @@ if __name__ == '__main__':
                   for v in solution], key=lambda x: x[1][0] * raw_image.size[0] + x[1][1])
     for r in result:
         print 'Model', r[1], 'to', r[0]
+    print [(r[1], r[0]) for r in result]
 
