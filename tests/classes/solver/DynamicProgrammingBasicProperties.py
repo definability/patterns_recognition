@@ -39,7 +39,7 @@ class TestDynamicProgrammingBasicProperties(TestCase):
         with self.assertRaises(ValueError):
             g.set_finish(vertex)
 
-        
+
     def test_solve_simple(self):
         """Solve simple problem
 

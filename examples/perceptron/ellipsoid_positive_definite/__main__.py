@@ -60,7 +60,7 @@ outside_y_points = []
 inside, = ax.plot([], [], 'ro')
 outside, = ax.plot([], [], 'bo')
 calculated = Ellipse((0, 0), 0, 0, color='b', fill=False)
-            
+
 perceptron = Perceptron(5)
 
 

@@ -42,7 +42,7 @@ class MatrixPointer:
 
     def __flatten(self, lst):
         """Convert lst to one-dimensional list.
-        
+
         Works with non-lists, lists and matrices.
         """
         if type(lst) is not list:
@@ -61,7 +61,7 @@ class MatrixPointer:
 
     def get_data(self, source=False):
         """Get list with data, current pointer points to.
-        
+
         Keyword arguments:
         source -- whether you need the source data (True),
             or cropped fragment (False); default is False.
@@ -91,7 +91,7 @@ class MatrixPointer:
 
     def get_offset(self, initial_offset=(0,0), y=0):
         """Get current pointer offset and add new offset to it.
-        
+
         Useful for the case, when you create new pointer
         on the basis of existing one.
 
@@ -162,7 +162,7 @@ class MatrixPointer:
 
     def map(self, f, *matrices):
         """Apply function to matrices and return list with processed values.
-        
+
         Keyword arguments:
         f -- function to apply;
 
