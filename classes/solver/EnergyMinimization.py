@@ -11,6 +11,10 @@ def max_graph_entity(objects):
     return max(objects, key=__get_value)
 
 
+def premax_value(objects, max_value, treshold=.5):
+    return max(o.value for o in objects if max_value - o.value > treshold)
+
+
 class EnergyMinimization(Graph):
 
 
@@ -53,6 +57,28 @@ class EnergyMinimization(Graph):
 
 
     def __iteration(self, g, gamma):
+        #edge_diff, vertex_diff = float('inf'), float('inf')
+        #treshold = .5
+        #for link in g.get_tau():
+        #    max_e = self.get_max_edge(link)
+        #    try:
+        #        edge_diff = min(edge_diff, (max_e.get_value() - premax_value(self.get_link(link), max_e.get_value(), treshold=treshold))*.5)
+        #    except Exception:
+        #        pass
+        #    #logging.debug('E: %f'%edge_diff)
+        #for domain in g.get_domains():
+        #    max_v = g.get_max_vertex(domain)
+        #    try:
+        #        vertex_diff = min(vertex_diff, (max_v.get_value() - premax_value(self.get_domain(domain), max_v.get_value(), treshold=treshold))/(1.*len(max_v.get_inputs())+len(max_v.get_outputs())))
+        #    except Exception:
+        #        pass
+        #    #logging.debug('V: %f'%vertex_diff)
+
+        #logging.debug('Premax delta vertex=%f, edge=%f'%(vertex_diff, edge_diff))
+        #gamma = vertex_diff if vertex_diff > 1E-9 else edge_diff
+        #if gamma < 1E-9:
+        #    raise Exception()
+
         for link in g.get_tau():
             max_e = self.get_max_edge(link)
             max_e.set_value(max_e.get_value() - 2 * gamma)
@@ -121,11 +147,18 @@ class EnergyMinimization(Graph):
         domained_links = g.get_domained_links()
         step = 0
         for gamma in self.__gamma():
-            needed_vertices, v_penalty = g.remove_small(0.5, domained_links)
-            logging.info('step %06d, gamma %f, energy %f, removed %d needed vertices: %f'%(step, gamma, g.get_energy(), len(needed_vertices), v_penalty))
-            if not g.is_neighborhood_corrupted():
-                break
-            g.restore()
+            if step % 100 == 0:
+                needed_vertices, v_penalty = g.remove_small(0.5, domained_links)
+                logging.info('step %06d, gamma %f, energy %f, removed %d needed vertices: %f'%(step, gamma, g.get_energy(), len(needed_vertices), v_penalty))
+                if not g.is_neighborhood_corrupted():
+                    break
+                g.restore()
+            else:
+                for domain in g.get_domains():
+                    g.get_max_vertex(domain, False)
+                for link in g.get_tau():
+                    g.get_max_edge(link, False)
+            logging.info('step %06d, gamma %f'%(step, gamma))
             self.__iteration(g, gamma)
             step += 1
         vertices_to_visit = [list(g.get_vertices())[0]]
