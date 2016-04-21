@@ -6,6 +6,7 @@ from classes.graph import *
 
 from cProfile import Profile
 from pstats import Stats
+from guppy import hpy
 
 
 def build_problem(model_image, raw_image, model_image_mask=None,
@@ -20,8 +21,10 @@ def build_problem(model_image, raw_image, model_image_mask=None,
                          (raw_image.size[0], raw_image.size[1]))
     profile = Profile()
     profile.enable()
+    #hp = hpy()
     vertices, edges = process_image(model, raw, mask, max_vertical_offset,
                                     max_horizontal_offset)
+    #print hp.heap()
     profile.disable()
     Stats(profile).sort_stats('time').print_stats()
     problem = EnergyMinimization(vertices, edges)
@@ -120,7 +123,7 @@ def get_bottom_neighbours(i, j, max_vertical_offset, max_horizontal_offset,
 
 
 def get_distance_penalty(needed_offset, real_offset):
-    return - 10*(abs(needed_offset[0] - real_offset[0])
+    return - 2*(abs(needed_offset[0] - real_offset[0])
            + abs(needed_offset[1] - real_offset[1]))
 
 
