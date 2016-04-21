@@ -2,9 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Changed
+- Refactored CHANGELOG
+
 ## [0.1.0] - 2016-04-21
 ### Added
-- Changelog
+- CHANGELOG
 - [travis-ci](https://travis-ci.org/char-lie/patterns_recognition)
 - [coveralls](https://coveralls.io/github/char-lie/patterns_recognition?branch=master)
 - Method for removal of not connected vertices and edges from Graph
@@ -47,7 +51,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Increased speed of basic example with letters string recognition
 
-## [0.0.1] - 2015-09-22
+## 0.0.1 - 2015-09-22
 ### Added
 - Added basic example with letters string recognition
+
+[Unreleased]: https://github.com/char-lie/patterns_recognition/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/char-lie/patterns_recognition/compare/v0.0.3...v0.1.0
+[0.0.3]: https://github.com/char-lie/patterns_recognition/compare/v0.0.2...v0.0.3
+[0.0.2]: https://github.com/char-lie/patterns_recognition/compare/v0.0.1...v0.0.2
 
