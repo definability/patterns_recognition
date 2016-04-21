@@ -182,7 +182,7 @@ class TestGraphBasicProperties(TestCase):
         a - b - c
         -----
                 x
-               
+
         B   X
           \
             C
@@ -197,8 +197,8 @@ class TestGraphBasicProperties(TestCase):
         """
         a - b - c
         -----
-        x 
-          
+        x
+
             X
         """
         g.delete_vertex(v_bC)
@@ -238,7 +238,7 @@ class TestGraphBasicProperties(TestCase):
         a - b
         -----
         x
-          
+
             X
         """
 

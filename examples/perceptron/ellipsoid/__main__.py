@@ -27,7 +27,7 @@ outside_y_points = []
 inside, = ax.plot([], [], 'ro')
 outside, = ax.plot([], [], 'bo')
 calculated = Ellipse((0, 0), 0, 0, color='b', fill=False)
-            
+
 perceptron = Perceptron(5)
 
 def Y2X(x, y):
@@ -70,9 +70,9 @@ def animate(i):
 
     return calculated, inside, outside
 
-anim = animation.FuncAnimation(fig, animate, 
-                               init_func=init, 
-                               frames=360, 
+anim = animation.FuncAnimation(fig, animate,
+                               init_func=init,
+                               frames=360,
                                interval=200,
                                blit=True)
 

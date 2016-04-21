@@ -137,9 +137,9 @@ def animate(i):
 
     return inside, outside, calculated, inside_corrections, outside_corrections
 
-anim = animation.FuncAnimation(fig, animate, 
-                               init_func=init, 
-                               frames=360, 
+anim = animation.FuncAnimation(fig, animate,
+                               init_func=init,
+                               frames=360,
                                interval=interval,
                                blit=False)
 

@@ -61,7 +61,7 @@ class Recognizer:
         for i, domain in enumerate(domains):
             domains[i] = self.process_domain(domains, i, add, mul, zero, one,
                                              get_penalty)
-            
+
         penalties = self.gather_penalties(domains, len(domains)-1, add, zero, one)
         return (domains, penalties)
 

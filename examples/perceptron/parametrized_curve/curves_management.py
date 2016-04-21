@@ -32,5 +32,5 @@ def get_componentwise_products(v):
 
 
 def get_point_class(point, A, order):
-    return sign_treshold(get_point_projection(point[0], point[1], A, order)) 
+    return sign_treshold(get_point_projection(point[0], point[1], A, order))
 
