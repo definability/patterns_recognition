@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Changed
-- Refactored CHANGELOG
+- Refactored CHANGELOG.
 
 ## [0.1.0] - 2016-04-21
 ### Added
@@ -39,7 +39,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - (min, +) on R &mdash; to find length of minimal path;
   - (min, +) on R<sup>2</sup> &mdash; to find length of minimal path;
       represented by two numbers;
-  - (+, ×) on R &mdash; to find probability of all paths;
+  - (+, ×) on R &mdash; to find probability of all paths.
 - Image class for images processing.
 - Matrix Pointer class for lower memory and time cost images processing.
 - Covered each class by **unit tests**.
