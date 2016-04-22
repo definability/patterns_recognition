@@ -74,9 +74,11 @@ class LinearSeparator:
 
 
     def __setup_iteration(self, wrong, side):
+        value = self.__get_projection(self.planes[side], wrong)
+        self.planes[side] = self.__move_plane(self.planes[side], wrong, 1)
         for i, plane in self.__planes():
-            sign = 1 if i == side else -1
-            self.planes[i] = self.__move_plane(plane, wrong, sign)
+            if self.__get_projection(plane, wrong) >= value and i != side:
+                self.planes[i] = self.__move_plane(plane, wrong, -1)
 
 
     def classify_vertex(self, vertex):
