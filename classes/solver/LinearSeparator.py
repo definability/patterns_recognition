@@ -4,7 +4,7 @@ class LinearSeparator:
     def __init__(self, dimensions, classes=2, max_iterations=float('inf')):
         self.dimensions = dimensions
         if type(classes) is int:
-            self.classes = [[]] * classes
+            self.classes = [[] for i in xrange(classes)]
             self.planes = [[0] * dimensions for i in xrange(len(self.classes))]
         else:
             self.classes = {}
