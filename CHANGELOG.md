@@ -6,6 +6,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Refactored CHANGELOG.
 
+### Removed
+- Removed redundant `Image` class.
+
 ## [0.1.0] - 2016-04-21
 ### Added
 - CHANGELOG.
