@@ -1,6 +1,5 @@
-from ImageBasicProperties import TestImageBasicProperties
 from MatrixPointerBasicProperties import TestMatrixPointerBasicProperties
 
-test_cases = [TestImageBasicProperties, TestMatrixPointerBasicProperties]
+test_cases = [TestMatrixPointerBasicProperties]
 
 
