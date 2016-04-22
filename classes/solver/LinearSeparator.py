@@ -93,7 +93,7 @@ class LinearSeparator:
 
 
     def __get_projection(self, plane, vertex):
-        return sum([a * x for a, x in zip(plane, vertex)])
+        return sum(a * x for a, x in zip(plane, vertex))
 
 
     def __move_plane(self, plane, vertex, sign):
