@@ -68,6 +68,31 @@ class TestLinearSeparatorBasicProperties(TestCase):
                 self.assertEqual(separator.classify_vertex(r), 'right')
 
 
+    def test_classify_quadrant(self):
+        left_top = [(-1, .1), (-.1, 1)]
+        right_top = [(1, .1), (.1, 1)]
+        left_bottom = [(-1, -.1), (-.1, -1)]
+        right_bottom = [(1, -.1), (.1, -1)]
+        sides = [right_top, left_top, left_bottom, right_bottom]
+
+        check_left_top = [(-1, 1)]
+        check_right_top = [(1, 1)]
+        check_left_bottom = [(-1, -1)]
+        check_right_bottom = [(1, -1)]
+        check_sides = [check_right_top, check_left_top,
+                       check_left_bottom, check_right_bottom]
+
+        for process in self.processors:
+            separator = LinearSeparator(2, len(sides))
+            self.assertTrue(separator.setup([process(side) for side in sides]))
+            for i, data in enumerate(zip(sides, check_sides)):
+                s, c = data
+                for vertex in process(s):
+                    self.assertEqual(separator.classify_vertex(vertex), i)
+                for vertex in process(c):
+                    self.assertEqual(separator.classify_vertex(vertex), i)
+
+
     def test_classify_line_offset(self):
         left = [[-3, 1], [-2, 1]]
         right = [[-1, 1], [10, 1]]
