@@ -4,7 +4,7 @@ from classes.solver import LinearSeparator
 class Texture:
 
     def __init__(self, neighborhoods, colors, textures=2):
-        self.dimensions = neighborhoods * (colors) * (colors) + 1
+        self.dimensions = neighborhoods * (colors * colors) + 1
         self.colors = colors
         self.neighborhoods = neighborhoods
         self.__separator = LinearSeparator(self.dimensions, classes=textures)
