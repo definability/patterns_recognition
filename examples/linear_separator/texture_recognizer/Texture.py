@@ -11,7 +11,6 @@ class Texture:
 
 
     def pick_texture_sample(self, params, texture):
-        print self.__get_vector(params)
         return self.__separator.setup({texture: [self.__get_vector(params)]})
 
 
