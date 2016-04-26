@@ -1,61 +1,99 @@
-from Texture import Texture
 from os.path import join as pjoin, dirname
+from sys import argv
+from random import randint
 
 from PIL import Image
 
+from Texture import Texture
+from neighbourhood import neighbourhoods
+
+from cProfile import Profile
+from pstats import Stats
 
 if __name__ == '__main__':
-    texture = Texture(2, 2, 2)
-    image = Image.open(pjoin(dirname(__file__), 'stripes.png')).convert('L')
-    mask = Image.open(pjoin(dirname(__file__), 'mask.png'))
+    image_name = argv[1]
+    mask_name = argv[2]
+    test_name = argv[3]
+    result_name = argv[4]
+    colors = int(argv[5])
+    textures = int(argv[6])
+    neighbourhood_class = int(argv[7])
+
+    cur_neighbourhood = neighbourhoods[neighbourhood_class]
+
+    texture = Texture(len(cur_neighbourhood), colors, textures)
+    image = Image.open(pjoin(dirname(__file__), image_name))
+    mask = Image.open(pjoin(dirname(__file__), mask_name))
     width, height = image.size
 
     data = list(image.getdata())
     mask_data = list(mask.getdata())
-    for x in xrange(height-1):
-        for y in xrange(width-1):
-            cur = data[x*width+y]
-            cur = 0 if cur == 0 else 1
+    known_classes = []
+    border = neighbourhood_class - 1 if neighbourhood_class > 1 else 0
+
+    profile = Profile()
+    profile.enable()
+    for x in xrange(border, height-border-1):
+        for y in xrange(border, width-border-1):
+            d = data[x*width+y]
+            rgb = (d[0] * (2**8) + d[1]) * (2**8) + d[2]
+            cur = ((colors-1) * (rgb + 1)) / (2**24)
 
             params = {}
 
-            r = data[x*width+(y+1)]
-            r = 0 if r == 0 else 1
-            params[0] = (cur, r)
+            for key, n in enumerate(cur_neighbourhood):
+                i, j = n(x, y)
+                d = data[i*width+j]
+                rgb = (d[0] * (2**8) + d[1]) * (2**8) + d[2]
+                p = ((colors-1) * (rgb + 1)) / (2**24)
+                params[key] = (cur, p)
 
-            b = data[(x+1)*width+y]
-            b = 0 if b == 0 else 1
-            params[1] = (cur, b)
+            cur_mask = mask_data[x*width+y]
+            if sum(cur_mask) == 0:
+                continue
+            if cur_mask not in known_classes:
+                known_classes.append(cur_mask)
 
-            current_class = 0 if mask_data[x*width+y][0] == 255 else 1
-            texture.pick_texture_sample(params, current_class)
+            print 'Pick {}: ({}, {})'.format(known_classes.index(cur_mask), x, y)
+            texture.pick_texture_sample(params, known_classes.index(cur_mask))
+    print 'Finished'
+    profile.disable()
+    Stats(profile).sort_stats('cumulative').print_stats()
 
-    test_image = Image.open(pjoin(dirname(__file__), 'test.png')).convert('L')
+    test_image = Image.open(pjoin(dirname(__file__), test_name)).convert('L')
     test_width, test_height = test_image.size
     test_data = list(test_image.getdata())
     results = []
+
+    profile = Profile()
+    profile.enable()
     for x in xrange(test_height):
         row = []
         for y in xrange(test_width):
-            cur = test_data[x*test_width+y]
-            cur = 0 if cur == 0 else 1
+            cur = ((colors-1) * (test_data[x*test_width+y] + 1)) / 256
 
             params = {}
-            if y < test_width-1:
-                r = test_data[x*test_width+(y+1)]
-                r = 0 if r == 0 else 1
-                params[0] = (cur, r)
-            if x < test_height-1:
-                b = test_data[(x+1)*test_width+y]
-                b = 0 if b == 0 else 1
-                params[1] = (cur, b)
+            for key, n in enumerate(cur_neighbourhood):
+                i, j = n(x, y)
+                if i < test_height and j < test_width and i>0 and j>0:
+                    p = ((colors-1) * (test_data[i*test_width+j] + 1)) / 256
+                params[key] = (cur, p)
 
             t = texture.recognize_texture(params)
+            print 'Recognized {}: ({}, {})'.format(t, x, y)
             row.append(t)
         results += row
+    profile.disable()
+    Stats(profile).sort_stats('cumulative').print_stats()
 
-    results = [((200, 50, 50) if r == 0 else (50, 50, 200)) for r in results]
+    result_colors = {}
+    result_colors[None] = (0, 0, 0)
+    for i in xrange(len(cur_neighbourhood)):
+        result_colors[i] = (randint(0, 255), randint(0, 255), randint(0, 255))
+    print results
+    results = [result_colors[r] for r in results]
     result = Image.new('RGB', test_image.size)
     result.putdata(results)
-    result.save(pjoin(dirname(__file__), 'result.png'))
+    result.save(pjoin(dirname(__file__), result_name))
+    Stats(profile).sort_stats('cumulative').print_stats()
 
