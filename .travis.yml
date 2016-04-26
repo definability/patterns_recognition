@@ -1,7 +1,9 @@
 # https://github.com/char-lie/patterns_recognition
 language: python
 python: 2.7
-install: pip install coveralls
+install:
+  - apt-get install -y python-numpy
+  - pip install coveralls
 script: coverage run --source=classes -m tests
 after_success: coveralls
 
