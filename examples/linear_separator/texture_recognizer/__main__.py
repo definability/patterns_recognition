@@ -56,9 +56,8 @@ if __name__ == '__main__':
 
             print 'Pick {}: ({}, {})'.format(known_classes.index(cur_mask), x, y)
             texture.pick_texture_sample(params, known_classes.index(cur_mask))
-    print 'Finished'
     profile.disable()
-    Stats(profile).sort_stats('cumulative').print_stats()
+    Stats(profile).sort_stats('time').print_stats()
 
     test_image = Image.open(pjoin(dirname(__file__), test_name)).convert('L')
     test_width, test_height = test_image.size
@@ -80,20 +79,17 @@ if __name__ == '__main__':
                 params[key] = (cur, p)
 
             t = texture.recognize_texture(params)
-            print 'Recognized {}: ({}, {})'.format(t, x, y)
             row.append(t)
         results += row
     profile.disable()
-    Stats(profile).sort_stats('cumulative').print_stats()
+    Stats(profile).sort_stats('time').print_stats()
 
     result_colors = {}
     result_colors[None] = (0, 0, 0)
     for i in xrange(len(cur_neighbourhood)):
         result_colors[i] = (randint(0, 255), randint(0, 255), randint(0, 255))
-    print results
     results = [result_colors[r] for r in results]
     result = Image.new('RGB', test_image.size)
     result.putdata(results)
     result.save(pjoin(dirname(__file__), result_name))
-    Stats(profile).sort_stats('cumulative').print_stats()
 

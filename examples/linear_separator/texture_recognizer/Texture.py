@@ -1,3 +1,5 @@
+from numpy import array, zeros
+
 from classes.solver import LinearSeparator
 
 
@@ -15,7 +17,7 @@ class Texture:
 
 
     def __get_vector(self, params):
-        x = [0] * self.dimensions
+        x = zeros(self.dimensions)
         x[-1] = 1
         for key, value in params.items():
             x[self.__get_element_number(key, value)] = 1

@@ -1,3 +1,6 @@
+from numpy import array, zeros
+
+
 class LinearSeparator:
 
 
@@ -5,13 +8,13 @@ class LinearSeparator:
         self.dimensions = dimensions
         if type(classes) is int:
             self.classes = [[] for i in xrange(classes)]
-            self.planes = [[0] * dimensions for i in xrange(len(self.classes))]
+            self.planes = [zeros(dimensions) for i in xrange(len(self.classes))]
         else:
             self.classes = {}
             self.planes = {}
             for c in classes:
                 self.classes[c] = []
-                self.planes[c] = [0] * dimensions
+                self.planes[c] = zeros(dimensions)
         self.__max_iterations = max_iterations
         self.passed_iterations = 0
 
@@ -41,7 +44,7 @@ class LinearSeparator:
             return None
 
         for key, value in gen:
-            self.classes[key] += value
+            self.classes[key] += [array(v) for v in value]
 
         success = False
         while True:
@@ -84,6 +87,7 @@ class LinearSeparator:
     def classify_vertex(self, vertex):
         value = float('-inf')
         side = None
+        vertex = array(vertex)
         for i, plane in self.__planes():
             current = self.__get_projection(plane, vertex)
             if value < current:
@@ -95,9 +99,11 @@ class LinearSeparator:
 
 
     def __get_projection(self, plane, vertex):
-        return sum(a * x for a, x in zip(plane, vertex))
+        return plane.dot(vertex)
+        #return sum(a * x for a, x in zip(plane, vertex))
 
 
     def __move_plane(self, plane, vertex, sign):
-        return [a + sign * x for a, x in zip(plane, vertex)]
+        return plane + vertex * sign
+        #return [a + sign * x for a, x in zip(plane, vertex)]
 
