@@ -6,24 +6,24 @@ from classes.solver import LinearSeparator
 class Texture:
 
     def __init__(self, neighborhoods, colors, textures=2):
-        self.dimensions = neighborhoods * (colors * colors) + 1
-        self.colors = colors
-        self.neighborhoods = neighborhoods
-        self.textures = {}
-        self.__separator = LinearSeparator(self.dimensions, classes=textures,
-                                           binary=True)
+        self.__colors = colors
+        self.__neighborhoods = neighborhoods
+        self.__dimensions = self.__neighborhoods * (self.__colors**2) + 1
+        self.__textures = {}
+        self.__separator = LinearSeparator(self.__dimensions,
+                                           classes=self.__textures, binary=True)
 
 
     def pick_texture_sample(self, params, texture):
-        if texture not in self.textures:
-            self.textures[texture] = [self.__get_vector(params)]
+        if texture not in self.__textures:
+            self.__textures[texture] = [self.__get_vector(params)]
         else:
-            self.textures[texture].append(self.__get_vector(params))
+            self.__textures[texture].append(self.__get_vector(params))
 
 
     def setup(self):
-        result = self.__separator.setup(self.textures)
-        self.textures = {}
+        result = self.__separator.setup(self.__textures)
+        self.__textures = {}
         return result
 
 
@@ -34,8 +34,8 @@ class Texture:
 
     def __get_element_number(self, neighbourhood, colors):
         assert(len(colors) == 2)
-        return neighbourhood * self.colors * self.colors + \
-               (colors[0] * self.colors + colors[1])
+        return neighbourhood * self.__colors * self.__colors + \
+               (colors[0] * self.__colors + colors[1])
 
 
     def recognize_texture(self, params):
