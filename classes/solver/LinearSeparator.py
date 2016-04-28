@@ -6,21 +6,21 @@ class LinearSeparator:
 
     def __init__(self, dimensions, classes=2, max_iterations=float('inf'),
                        binary=False):
-        self.dimensions = dimensions
+        self.__dimensions = dimensions
         self.__class_to_number = None
         self.__number_to_class = None
         if type(classes) is int:
-            self.classes = [[] for i in xrange(classes)]
+            self.__classes = [[] for i in xrange(classes)]
         else:
-            self.classes = [[] for c in classes]
+            self.__classes = [[] for c in classes]
             self.__class_to_number = {}
             self.__number_to_class = []
             for i, c in enumerate(classes):
                 self.__class_to_number[c] = i
                 self.__number_to_class.append(c)
-        self.planes = zeros((len(self.classes), dimensions))
+        self.__planes = zeros((len(self.__classes), self.__dimensions))
         self.__max_iterations = max_iterations
-        self.passed_iterations = 0
+        self.__passed_iterations = 0
         self.__binary = binary
 
 
@@ -35,8 +35,8 @@ class LinearSeparator:
                 success = True
                 break
 
-            self.passed_iterations += corrections
-            if self.passed_iterations > self.__max_iterations:
+            self.__passed_iterations += corrections
+            if self.__passed_iterations > self.__max_iterations:
                 break
         return success
 
@@ -51,17 +51,17 @@ class LinearSeparator:
 
         if self.__class_to_number is not None:
             for key, value in gen:
-                self.classes[self.__class_to_number[key]] += map(array, value)
+                self.__classes[self.__class_to_number[key]] += map(array, value)
         else:
             for key, value in gen:
-                self.classes[key] += map(array, value)
+                self.__classes[key] += map(array, value)
 
         return True
 
 
     def __setup_loop(self):
         corrections = 0
-        for (i, c) in enumerate(self.classes):
+        for (i, c) in enumerate(self.__classes):
             corrections += self.__setup_class(c, i)
         return corrections
 
@@ -80,13 +80,13 @@ class LinearSeparator:
         if indices.sum() == 1:
             return 0
         if self.__binary:
-            self.planes[side][wrong] += 1
+            self.__planes[side][wrong] += 1
             indices[side] = False
-            self.planes[indices][:,wrong] -= 1
+            self.__planes[indices][:,wrong] -= 1
         else:
-            self.planes[side] += wrong
+            self.__planes[side] += wrong
             indices[side] = False
-            self.planes[indices] -= wrong
+            self.__planes[indices] -= wrong
         return 1
 
 
@@ -103,7 +103,7 @@ class LinearSeparator:
 
     def __get_projections(self, vertex):
         if self.__binary:
-            return self.planes[:,vertex].sum(axis=1)
+            return self.__planes[:,vertex].sum(axis=1)
         else:
-            return self.planes.dot(vertex)
+            return self.__planes.dot(vertex)
 
