@@ -41,7 +41,8 @@ class LinearSeparator:
 
 
     def setup(self, inputs=None):
-        self.__append_setup_set(inputs)
+        if not self.__append_setup_set(inputs):
+            return None
         success = False
         while True:
             corrections = self.__setup_loop()
@@ -62,7 +63,7 @@ class LinearSeparator:
         elif type(inputs) is list:
             gen = enumerate(inputs)
         else:
-            return None
+            return False
 
         if self.__class_to_number is not None:
             for key, value in gen:
@@ -70,6 +71,8 @@ class LinearSeparator:
         else:
             for key, value in gen:
                 self.classes[key] += map(array, value)
+
+        return True
 
 
     def __setup_loop(self):
