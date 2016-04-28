@@ -77,6 +77,10 @@ class TestLinearSeparatorBasicProperties(TestCase):
             self.assertTrue(separator.setup({'left': process(left), 'right': process(right)}))
 
 
+    def test_unclassified(self):
+        separator = LinearSeparator(1, 2)
+        self.assertIsNone(separator.classify_vertex([0]))
+
     def test_classify_line_zero(self):
         left = [[-1]]
         right = [[1]]
@@ -90,6 +94,16 @@ class TestLinearSeparatorBasicProperties(TestCase):
                 self.assertEqual(separator.classify_vertex(l), 'left')
             for r in process(right_test):
                 self.assertEqual(separator.classify_vertex(r), 'right')
+
+
+    def test_classify_binary(self):
+        left = [[0, -1]]
+        right = [[1, -1]]
+        for process in self.processors:
+            separator = LinearSeparator(3, ['left', 'right'], binary=True)
+            self.assertTrue(separator.setup({'left': process(left), 'right': process(right)}))
+            self.assertEqual(separator.classify_vertex(left[0]), 'left')
+            self.assertEqual(separator.classify_vertex(right[0]), 'right')
 
 
     def test_classify_quadrant(self):
