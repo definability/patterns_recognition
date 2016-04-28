@@ -34,6 +34,22 @@ class TestLinearSeparatorBasicProperties(TestCase):
             self.assertTrue(separator.setup({'left': process(left), 'right': process(right)}))
 
 
+    def test_construct_list_setup_dict(self):
+        left = [[-1]]
+        right = [[1]]
+        for process in self.processors:
+            separator = LinearSeparator(1, 2)
+            self.assertTrue(separator.setup({0: process(left), 1: process(right)}))
+
+
+    def test_construct_dict_setup_list(self):
+        left = [[-1]]
+        right = [[1]]
+        for process in self.processors:
+            separator = LinearSeparator(1, [0, 1])
+            self.assertTrue(separator.setup([process(left), process(right)]))
+
+
     def test_setup_one_by_one(self):
         left = [[-1]]
         right = [[1]]
