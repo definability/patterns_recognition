@@ -11,13 +11,18 @@ from cProfile import Profile
 from pstats import Stats
 
 
-def process_colors(pixel, colors):
+def process_colors(pixel, colors, colors_dictionary=None):
     if type(pixel) is tuple or type(pixel) is list:
         d = tuple(colors * (d + 1) / 256 for d in pixel)
         p = reduce(lambda x, y: x*colors+y, d, 0)
     else:
         p = colors * (pixel + 1) / 256
-    return p
+    if colors_dictionary is None:
+        return p
+    elif p in colors_dictionary:
+        return colors_dictionary[p]
+    else:
+        return None
 
 
 if __name__ == '__main__':
@@ -32,7 +37,6 @@ if __name__ == '__main__':
     RGB_MODE=False
     cur_neighbourhood = neighbourhoods[neighbourhood_class]
 
-    texture = Texture(len(cur_neighbourhood), colors**3 if RGB_MODE else colors, textures)
     image = Image.open(pjoin(dirname(__file__), image_name))
     if not RGB_MODE:
         image = Image.open(pjoin(dirname(__file__), image_name)).convert('L')
@@ -44,24 +48,27 @@ if __name__ == '__main__':
     known_classes = []
     border = neighbourhood_class - 1 if neighbourhood_class > 1 else 0
 
-    #pixels = dict()
-    #count = 0
-    #for x in xrange(height):
-    #    for y in xrange(width):
-    #        cur = process_colors(data[x*width+y], colors)
-    #        if cur not in pixels:
-    #            pixels[cur] = count
-    #            count += 1
-    #print len(pixels), colors**3
+    colors_dictionary = dict()
+    count = 0
+    for x in xrange(height):
+        for y in xrange(width):
+            cur = process_colors(data[x*width+y], colors)
+            if cur not in colors_dictionary:
+                colors_dictionary[cur] = count
+                count += 1
+
+    texture = Texture(len(cur_neighbourhood), len(colors_dictionary), textures)
     for x in xrange(border, height-border-1):
         for y in xrange(border, width-border-1):
-            cur = process_colors(data[x*width+y], colors)
+            cur = process_colors(data[x*width+y], colors, colors_dictionary)
 
             params = {}
 
             for key, n in enumerate(cur_neighbourhood):
                 i, j = n(x, y)
-                params[key] = (cur, process_colors(data[i*width+j], colors))
+                neighbour_color = process_colors(data[i*width+j], colors,
+                                                 colors_dictionary)
+                params[key] = (cur, neighbour_color)
 
             cur_mask = mask_data[x*width+y]
             if sum(cur_mask) == 0:
@@ -89,13 +96,16 @@ if __name__ == '__main__':
     for x in xrange(test_height):
         row = []
         for y in xrange(test_width):
-            cur = process_colors(data[x*test_width+y], colors)
+            cur = process_colors(data[x*test_width+y], colors,
+                                 colors_dictionary)
 
             params = {}
             for key, n in enumerate(cur_neighbourhood):
                 i, j = n(x, y)
                 if i < test_height and j < test_width and i>0 and j>0:
-                    params[key] = (cur, process_colors(test_data[i*test_width+j], colors))
+                    neighbour_color = process_colors(test_data[i*test_width+j],
+                                                     colors, colors_dictionary)
+                    params[key] = (cur, neighbour_color)
 
             t = texture.recognize_texture(params)
             row.append(t)
@@ -103,7 +113,8 @@ if __name__ == '__main__':
     profile.disable()
     Stats(profile).sort_stats('time').print_stats()
 
-    results = [known_classes[r] if r is not None else (0, 0, 0) for r in results]
+    results = [known_classes[r] if r is not None else (0, 0, 0)
+                                for r in results]
     result = Image.new('RGB', test_image.size)
     result.putdata(results)
     result.save(pjoin(dirname(__file__), result_name))
