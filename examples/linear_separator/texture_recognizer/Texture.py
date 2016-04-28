@@ -10,10 +10,20 @@ class Texture:
         self.colors = colors
         self.neighborhoods = neighborhoods
         self.__separator = LinearSeparator(self.dimensions, classes=textures)
+        self.textures = {}
 
 
     def pick_texture_sample(self, params, texture):
-        return self.__separator.setup({texture: [self.__get_vector(params)]})
+        if texture not in self.textures:
+            self.textures[texture] = [self.__get_vector(params)]
+        else:
+            self.textures[texture].append(self.__get_vector(params))
+
+
+    def setup(self):
+        result = self.__separator.setup(self.textures)
+        self.textures = {}
+        return result
 
 
     def __get_vector(self, params):

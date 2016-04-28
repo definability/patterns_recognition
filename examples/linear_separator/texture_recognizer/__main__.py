@@ -70,6 +70,10 @@ if __name__ == '__main__':
                 known_classes.append(cur_mask)
 
             texture.pick_texture_sample(params, known_classes.index(cur_mask))
+    print 'Setup'
+    profile = Profile()
+    profile.enable()
+    texture.setup()
     profile.disable()
     Stats(profile).sort_stats('time').print_stats()
 
