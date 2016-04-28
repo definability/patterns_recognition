@@ -24,22 +24,6 @@ class LinearSeparator:
         self.__binary = binary
 
 
-    def __classes(self):
-        if type(self.classes) is dict:
-            return self.classes.items()
-        elif type(self.classes) is list:
-            return enumerate(self.classes)
-        return None
-
-
-    def __planes(self):
-        if type(self.planes) is dict:
-            return self.planes.items()
-        elif type(self.planes) is list:
-            return enumerate(self.planes)
-        return None
-
-
     def setup(self, inputs=None):
         if not self.__append_setup_set(inputs):
             return None
@@ -77,7 +61,7 @@ class LinearSeparator:
 
     def __setup_loop(self):
         corrections = 0
-        for (i, c) in self.__classes():
+        for (i, c) in enumerate(self.classes):
             corrections += self.__setup_class(c, i)
         return corrections
 
