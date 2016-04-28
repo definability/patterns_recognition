@@ -1,22 +1,27 @@
-from numpy import array, zeros
+from numpy import array, zeros, ndenumerate, ones
 
 
 class LinearSeparator:
 
 
-    def __init__(self, dimensions, classes=2, max_iterations=float('inf')):
+    def __init__(self, dimensions, classes=2, max_iterations=float('inf'),
+                       binary=False):
         self.dimensions = dimensions
+        self.__class_to_number = None
+        self.__number_to_class = None
         if type(classes) is int:
             self.classes = [[] for i in xrange(classes)]
-            self.planes = [zeros(dimensions) for i in xrange(len(self.classes))]
         else:
-            self.classes = {}
-            self.planes = {}
-            for c in classes:
-                self.classes[c] = []
-                self.planes[c] = zeros(dimensions)
+            self.classes = [[] for c in classes]
+            self.__class_to_number = {}
+            self.__number_to_class = []
+            for i, c in enumerate(classes):
+                self.__class_to_number[c] = i
+                self.__number_to_class.append(c)
+        self.planes = zeros((len(self.classes), dimensions))
         self.__max_iterations = max_iterations
         self.passed_iterations = 0
+        self.__binary = binary
 
 
     def __classes(self):
@@ -36,16 +41,7 @@ class LinearSeparator:
 
 
     def setup(self, inputs=None):
-        if type(inputs) is dict:
-            gen = inputs.items()
-        elif type(inputs) is list:
-            gen = enumerate(inputs)
-        else:
-            return None
-
-        for key, value in gen:
-            self.classes[key] += [array(v) for v in value]
-
+        self.__append_setup_set(inputs)
         success = False
         while True:
             corrections = self.__setup_loop()
@@ -60,6 +56,22 @@ class LinearSeparator:
         return success
 
 
+    def __append_setup_set(self, inputs):
+        if type(inputs) is dict:
+            gen = inputs.items()
+        elif type(inputs) is list:
+            gen = enumerate(inputs)
+        else:
+            return None
+
+        if self.__class_to_number is not None:
+            for key, value in gen:
+                self.classes[self.__class_to_number[key]] += map(array, value)
+        else:
+            for key, value in gen:
+                self.classes[key] += map(array, value)
+
+
     def __setup_loop(self):
         corrections = 0
         for (i, c) in self.__classes():
@@ -70,40 +82,41 @@ class LinearSeparator:
     def __setup_class(self, sample, side):
         corrections = 0
         for s in sample:
-            if self.classify_vertex(s) != side:
-                self.__setup_iteration(s, side)
-                corrections += 1
+            corrections += self.__setup_iteration(s, side)
         return corrections
 
 
     def __setup_iteration(self, wrong, side):
-        value = self.__get_projection(self.planes[side], wrong)
-        self.planes[side] = self.__move_plane(self.planes[side], wrong, 1)
-        for i, plane in self.__planes():
-            if self.__get_projection(plane, wrong) >= value and i != side:
-                self.planes[i] = self.__move_plane(plane, wrong, -1)
+        products = self.__get_projections(wrong)
+        value = products[side]
+        indices = (products >= value)
+        if indices.sum() == 1:
+            return 0
+        if self.__binary:
+            self.planes[side][wrong] += 1
+            indices[side] = False
+            self.planes[indices][:,wrong] -= 1
+        else:
+            self.planes[side] += wrong
+            indices[side] = False
+            self.planes[indices] -= wrong
+        return 1
 
 
     def classify_vertex(self, vertex):
-        value = float('-inf')
-        side = None
-        vertex = array(vertex)
-        for i, plane in self.__planes():
-            current = self.__get_projection(plane, vertex)
-            if value < current:
-                value = current
-                side = i
-            elif value == current:
-                side = None
-        return side
+        products = self.__get_projections(vertex)
+        side = products.argmax()
+        if (products==products[side]).sum() != 1:
+            return None
+        elif self.__number_to_class is None:
+            return side
+        else:
+            return self.__number_to_class[side]
 
 
-    def __get_projection(self, plane, vertex):
-        return plane.dot(vertex)
-        #return sum(a * x for a, x in zip(plane, vertex))
-
-
-    def __move_plane(self, plane, vertex, sign):
-        return plane + vertex * sign
-        #return [a + sign * x for a, x in zip(plane, vertex)]
+    def __get_projections(self, vertex):
+        if self.__binary:
+            return self.planes[:,vertex].sum(axis=1)
+        else:
+            return self.planes.dot(vertex)
 
