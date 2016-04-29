@@ -41,6 +41,29 @@ class ConditionalProbabilityBasicProperties(TestCase):
             p.add_sample(process(sampleB))
 
 
+    def test_get_probabilities(self):
+        sample = [[0, 0], [0, 1]]
+        for process in self.processors:
+            p = ConditionalProbability()
+            p.add_sample(process(sample))
+
+            self.assertAlmostEqual(p.get_probabilities(0, [0])[0], 1.)
+            self.assertAlmostEqual(p.get_probabilities(0, [1])[0], 1.)
+
+            self.assertAlmostEqual(p.get_probabilities(1, [0])[0], .5)
+            self.assertAlmostEqual(p.get_probabilities(1, [0])[1], .5)
+
+
+    def test_unknown_values(self):
+        sample = [[0, 0], [0, 1]]
+        for process in self.processors:
+            p = ConditionalProbability()
+            p.add_sample(process(sample))
+
+            self.assertEqual(p.get_probabilities(0, [2]), {})
+            self.assertEqual(p.get_probabilities(1, [1]), {})
+
+
 if __name__ == '__main__':
     main()
 
