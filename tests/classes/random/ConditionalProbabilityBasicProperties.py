@@ -14,6 +14,11 @@ class ConditionalProbabilityBasicProperties(TestCase):
         pass
 
 
+    def test_constructor(self):
+        p = ConditionalProbability()
+        self.assertIsInstance(p, ConditionalProbability)
+
+
 if __name__ == '__main__':
     main()
 
