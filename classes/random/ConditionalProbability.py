@@ -1,3 +1,6 @@
 class ConditionalProbability:
-    pass
+
+
+    def __init__(self):
+        self.__sample = None
 
