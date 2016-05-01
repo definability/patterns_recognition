@@ -1,4 +1,5 @@
 from numpy import array, concatenate, unique, histogram, full
+from scipy.stats.mstats import mode
 from itertools import izip
 
 
@@ -42,4 +43,9 @@ class ConditionalProbability:
         hist, _ = histogram(occurences, concatenate((values, [values[-1]])))
 
         return dict(izip(values, hist/hist.sum().astype('float')))
+
+
+    def get_mode(self, i):
+        occurences = self.__sample[:,i]
+        return mode(occurences)[0][0]
 
