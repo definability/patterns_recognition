@@ -1,4 +1,5 @@
 from numpy import array, concatenate, unique, histogram, full
+from numpy.random import choice
 from scipy.stats.mstats import mode
 from itertools import izip
 
@@ -31,6 +32,15 @@ class ConditionalProbability:
         hist, _ = histogram(occurences, concatenate((values, [values[-1]])))
 
         return dict(izip(values, hist/hist.sum().astype('float')))
+
+
+    def get_random(self, i, values=None, exclude=None, default=None):
+        masked_sample = self.__masked_sample(i, values, exclude)
+        if masked_sample is None:
+            return default
+
+        occurences = masked_sample[:,i]
+        return choice(occurences)
 
 
     def __masked_sample(self, i, values=None, exclude=None):
