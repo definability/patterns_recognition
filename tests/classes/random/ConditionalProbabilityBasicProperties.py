@@ -96,6 +96,16 @@ class ConditionalProbabilityBasicProperties(TestCase):
             self.assertEqual(p.get_probabilities(1, [1]), {})
 
 
+    def test_get_mode(self):
+        sample = [[0, 0], [0, 1]]
+        for process in self.processors:
+            p = ConditionalProbability()
+            p.add_sample(process(sample))
+
+            self.assertEqual(p.get_mode(0), 0)
+            self.assertIn(p.get_mode(1), [0, 1])
+
+
 if __name__ == '__main__':
     main()
 
