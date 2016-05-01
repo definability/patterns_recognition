@@ -5,3 +5,5 @@ export PATH="$HOME/miniconda/bin:$PATH"
 #conda config --set always_yes yes --set changeps1 no
 conda update --yes conda
 
+conda install --yes python=$TRAVIS_PYTHON_VERSION numpy scipy
+
