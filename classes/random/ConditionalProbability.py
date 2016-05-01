@@ -21,28 +21,34 @@ class ConditionalProbability:
 
 
     def get_probabilities(self, i, values=None, exclude=None):
-        if exclude is None:
-            exclude = [i]
-        else:
-            exclude.append([i])
-
-        if values is not None:
-            mask = full(self.__sample.shape[1], True, dtype=bool)
-            mask[exclude] = False
-            indices = (self.__sample[:,mask] == values).all(axis=1)
-            samples = self.__sample[indices]
-        else:
-            samples = self.__sample
-
-        occurences = samples[:,i]
-        if occurences.size == 0:
+        masked_sample = self.__masked_sample(i, values, exclude)
+        if masked_sample is None:
             return {}
+        occurences = self.__masked_sample(i, values, exclude)[:,i]
 
         values = unique(occurences)
         values.sort()
         hist, _ = histogram(occurences, concatenate((values, [values[-1]])))
 
         return dict(izip(values, hist/hist.sum().astype('float')))
+
+
+    def __masked_sample(self, i, values=None, exclude=None):
+        if exclude is None:
+            exclude = [i]
+        else:
+            exclude.append([i])
+
+        masked_sample = None
+        if values is not None:
+            mask = full(self.__sample.shape[1], True, dtype=bool)
+            mask[exclude] = False
+            indices = (self.__sample[:,mask] == values).all(axis=1)
+            masked_sample = self.__sample[indices]
+        else:
+            masked_sample = self.__sample
+
+        return masked_sample if masked_sample.size > 0 else None
 
 
     def get_mode(self, i):
