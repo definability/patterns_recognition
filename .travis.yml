@@ -2,10 +2,14 @@
 language: python
 python: 2.7
 before_install:
-  - sudo apt-get update
-  - sh install-conda.sh
+  - wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - ./miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - conda update --yes conda
 install:
-  - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy scipy
+  - conda create --yes -n testenv python=$TRAVIS_PYTHON_VERSION numpy scipy
+  - source activate testenv
   - pip install coveralls
 script: coverage run --source=classes -m tests
 after_success: coveralls
