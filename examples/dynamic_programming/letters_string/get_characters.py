@@ -13,7 +13,7 @@ def get_characters(characters, size):
         draw = ImageDraw.Draw(image)
         draw.text((-o_width, -o_height), c, 'black', font=font)
         if c == ' ':
-            images[' '] = Image.new('RGBA', (size/2, space_height), (255,255,255,0))
+            images[' '] = Image.new('RGBA', (size//2, space_height), (255,255,255,0))
         else:
             images[c] = image.crop(image.getbbox())
     return images
