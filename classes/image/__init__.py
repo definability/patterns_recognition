@@ -1,4 +1,4 @@
-from MatrixPointer import MatrixPointer
+from .MatrixPointer import MatrixPointer
 
 __all__ = ['MatrixPointer']
 

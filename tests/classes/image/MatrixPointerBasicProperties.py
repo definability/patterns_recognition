@@ -51,7 +51,7 @@ class TestMatrixPointerBasicProperties(TestCase):
 
     def test_get_generator_empty(self):
         with self.assertRaises(StopIteration):
-            MatrixPointer([[]]).get_generator().next()
+            next(MatrixPointer([[]]).get_generator())
 
 
     def test_get_data(self):

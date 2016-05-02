@@ -1,4 +1,4 @@
-from SemiringElement import SemiringElement
+from .SemiringElement import SemiringElement
 
 
 class SemiringMaxPlusElement(SemiringElement):
