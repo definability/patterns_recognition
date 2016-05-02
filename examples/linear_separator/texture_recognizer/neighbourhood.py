@@ -15,7 +15,7 @@ def generate_layer(r):
     #right = [((x+r, y-r+i)) for i in range(2*r+1)]
     #top = [((x-r+1+i, y+r)) for i in range(2*r-1)]
     #bottom = [((x-r+1+i, y-r)) for i in range(2*r-1)]
-    #print left+top+right+bottom
+    ##pring left+top+right+bottom
     return left+right+top+bottom
 
 neighbourhoods[0] = [lambda x, y: (x+1, y), lambda x, y: (x, y+1)]

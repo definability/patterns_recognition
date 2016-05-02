@@ -62,8 +62,8 @@ def animate(i):
         'a': k/alpha[3],
         'b': k/alpha[4]
     }
-    print 'Calculated: x0={}, y0={}, a={}, b={}'.format(prediction['x'], prediction['y'], prediction['a'], prediction['b'])
-    print 'Real: x0={}, y0={}, a={}, b={}'.format(x0, y0, a**2, b**2)
+    #pring 'Calculated: x0={}, y0={}, a={}, b={}'.format(prediction['x'], prediction['y'], prediction['a'], prediction['b'])
+    #pring 'Real: x0={}, y0={}, a={}, b={}'.format(x0, y0, a**2, b**2)
     calculated.center = (prediction['x'], prediction['y'])
     calculated.width = 2 * abs(prediction['a'])**.5
     calculated.height = 2 * abs(prediction['b'])**.5

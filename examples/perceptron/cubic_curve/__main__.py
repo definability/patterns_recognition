@@ -85,10 +85,10 @@ def process_perceptron_output(previous_data):
         return previous_data
     if previous_data == data:
         return previous_data
-    print 'Calculated data={}'.format(data)
-    print 'Real data={}'.format(a.tolist() + b.tolist() + [c])
-    #print 'Calculated: a={}, b={}, angle={}'.format(*data)
-    #print 'Real: a={}, b={}, angle={}'.format(a, b, angle)
+    #pring 'Calculated data={}'.format(data)
+    #pring 'Real data={}'.format(a.tolist() + b.tolist() + [c])
+    ##pring 'Calculated: a={}, b={}, angle={}'.format(*data)
+    ##pring 'Real: a={}, b={}, angle={}'.format(a, b, angle)
     #calculated.center = (X0, Y0)
     #calculated.width = 2 * data[0]
     #calculated.height = 2 * data[1]
