@@ -7,6 +7,8 @@ python:
   - "3.5"
 before_install:
   - sh install-conda.sh
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - conda update --yes conda
 install:
   - conda create --yes -n testenv python=$TRAVIS_PYTHON_VERSION numpy scipy
   - source activate testenv
