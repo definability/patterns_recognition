@@ -1,4 +1,4 @@
-from curves_management import *
+from .curves_management import *
 
 def add_new_point(point, x_list, y_list, plot, side, order, perceptron):
     x_list.append(point[0])
@@ -18,7 +18,7 @@ def process_perceptron_output(perceptron, previous_data):
         return previous_data
     if previous_data == data:
         return previous_data
-    print 'Calculated data={}'.format(data)
-    #print 'Real data={}'.format(A)
+    #pring 'Calculated data={}'.format(data)
+    ##pring 'Real data={}'.format(A)
     return data
 
