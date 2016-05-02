@@ -6,7 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.3.0] - 2016-05-02
 ### Added
-- Support for Python 3.3 and 3.4
+- Support for Python 3.3 and 3.4.
 
 ## [0.2.0] - 2016-04-28
 ### Added
