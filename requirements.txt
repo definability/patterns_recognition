@@ -1,0 +1,2 @@
+cffi==1.5.2
+coverage==4.0
