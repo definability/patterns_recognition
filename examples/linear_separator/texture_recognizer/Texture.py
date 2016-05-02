@@ -11,7 +11,7 @@ class Texture:
         self.__dimensions = self.__neighborhoods * (self.__colors**2) + 1
         self.__textures = {}
         self.__separator = LinearSeparator(self.__dimensions,
-                                           classes=self.__textures, binary=True)
+                                           self.__neighborhoods, binary=True)
 
 
     def pick_texture_sample(self, params, texture):

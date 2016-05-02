@@ -4,8 +4,8 @@ from random import randint
 
 from PIL import Image
 
-from Texture import Texture
-from neighbourhood import neighbourhoods
+from .Texture import Texture
+from .neighbourhood import neighbourhoods
 
 from cProfile import Profile
 from pstats import Stats
@@ -81,7 +81,7 @@ if __name__ == '__main__':
                 known_classes.append(cur_mask)
 
             texture.pick_texture_sample(params, known_classes.index(cur_mask))
-    print 'Setup'
+    #pring 'Setup'
     profile = Profile()
     profile.enable()
     texture.setup()
