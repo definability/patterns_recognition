@@ -1,7 +1,6 @@
 # https://github.com/char-lie/patterns_recognition
 language: python
 python:
-  - "2.6"
   - "2.7"
   - "3.3"
   - "3.4"
