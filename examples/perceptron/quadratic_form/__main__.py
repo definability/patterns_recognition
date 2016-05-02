@@ -7,6 +7,10 @@ from matplotlib import pyplot as plt
 from matplotlib import animation
 
 from classes.solver import Perceptron
+try:
+    range = xrange
+except NameError:
+    pass
 
 
 LEFT_X = -2
@@ -34,7 +38,7 @@ outside_y_points = []
 A = random_matrix(POLY_ORDER*2, POLY_ORDER*2) - .5
 
 def get_poly(x):
-    return ([1] + [x**i for i in xrange(1, POLY_ORDER)])[::-1]
+    return ([1] + [x**i for i in range(1, POLY_ORDER)])[::-1]
 
 def get_vector(x, y):
     return array(get_poly(x) + get_poly(y))

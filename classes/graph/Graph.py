@@ -1,5 +1,5 @@
-from Edge import Edge
-from Vertex import Vertex
+from .Edge import Edge
+from .Vertex import Vertex
 
 
 class Graph(object):
@@ -32,7 +32,7 @@ class Graph(object):
                 self.domains[v.get_domain()] = set([v])
             else:
                 self.domains[v.get_domain()].add(v)
-        self.domains_list = self.domains.keys()
+        self.domains_list = list(self.domains.keys())
 
         self.deleted_edges = set()
         self.deleted_vertices = set()
