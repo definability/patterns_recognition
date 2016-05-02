@@ -4,6 +4,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.1] - 2016-05-02
+### Added
+- Testing in travis-ci with Python 3.5.
+
+## [0.3.0] - 2016-05-02
+### Added
+- Support for Python 3.3 and 3.4.
+
 ## [0.2.0] - 2016-04-28
 ### Added
 - Linear Separator class.
@@ -64,7 +72,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Added basic example with letters string recognition.
 
-[Unreleased]: https://github.com/char-lie/patterns_recognition/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/char-lie/patterns_recognition/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/char-lie/patterns_recognition/compare/v0.3.0...v0.3.1
+[0.3.0]: https://github.com/char-lie/patterns_recognition/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/char-lie/patterns_recognition/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/char-lie/patterns_recognition/compare/v0.0.3...v0.1.0
 [0.0.3]: https://github.com/char-lie/patterns_recognition/compare/v0.0.2...v0.0.3

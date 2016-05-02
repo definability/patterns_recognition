@@ -1,8 +1,8 @@
 from matplotlib import pyplot as plt
 from matplotlib import animation
 
-from curves_management import *
-from perceptron_management import *
+from .curves_management import *
+from .perceptron_management import *
 
 def get_canvas(xlim, ylim):
     fig = plt.figure()
@@ -70,8 +70,8 @@ def run_animation(curve, interval):
     animate_closure = lambda i: animate(curve, ax, (inside, outside), i)
     #anim = animation.FuncAnimation(fig, animate_closure, interval=interval)
     def onclick(event):
-        print 'button=%d, x=%d, y=%d, xdata=%f, ydata=%f'%(
-        event.button, event.x, event.y, event.xdata, event.ydata)
+        #pring 'button=%d, x=%d, y=%d, xdata=%f, ydata=%f'%(
+        #event.button, event.x, event.y, event.xdata, event.ydata)
         animate(curve, ax, (inside, outside), (event.xdata, event.ydata), event.button - 2)
 
     cid = fig.canvas.mpl_connect('button_press_event', onclick)

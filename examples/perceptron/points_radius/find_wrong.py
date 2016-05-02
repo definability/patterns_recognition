@@ -21,10 +21,10 @@ def find_wrong(alpha, r, points):
     intersecting_direction = distances[intersecting][0] * alpha
     intersecting_direction /= norm(intersecting_direction)
     intersecting_border = intersecting_center + r * intersecting_direction
-    print 'R={}'.format(r),
-    print 'Direction={}, norm={}'.format(intersecting_direction, norm(intersecting_direction)),
-    print 'Center proj={}, border proj={}'.format(source_alpha.dot([1] + intersecting_center.tolist()), source_alpha.dot([1] + intersecting_border.tolist()))
-    print 'Center pred={}, border pred={}'.format(gamma - alpha.dot(intersecting_center), gamma - alpha.dot(intersecting_border))
+    #pring 'R={}'.format(r),
+    #pring 'Direction={}, norm={}'.format(intersecting_direction, norm(intersecting_direction)),
+    #pring 'Center proj={}, border proj={}'.format(source_alpha.dot([1] + intersecting_center.tolist()), source_alpha.dot([1] + intersecting_border.tolist()))
+    #pring 'Center pred={}, border pred={}'.format(gamma - alpha.dot(intersecting_center), gamma - alpha.dot(intersecting_border))
     return intersecting_border
 
 
