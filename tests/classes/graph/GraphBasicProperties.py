@@ -10,7 +10,8 @@ class TestGraphBasicProperties(TestCase):
 
 
     def setUp(self):
-        pass
+        if 'assertItemsEqual' not in dir(self):
+            self.assertItemsEqual = self.assertCountEqual
 
 
     def tearDown(self):
@@ -45,7 +46,7 @@ class TestGraphBasicProperties(TestCase):
         v_bB = Vertex('B', None, 'b')
         v_bC = Vertex('C', None, 'b')
         g = Graph([v_aA, v_aB, v_bA, v_bB, v_bC], Edge(v_aA, v_bB))
-        self.assertEqual(g.get_domains(), ['a', 'b'])
+        self.assertItemsEqual(g.get_domains(), ['a', 'b'])
 
 
     def test_get_domain(self):
@@ -55,8 +56,8 @@ class TestGraphBasicProperties(TestCase):
         v_bB = Vertex('B', None, 'b')
         v_bC = Vertex('C', None, 'b')
         g = Graph([v_aA, v_aB, v_bA, v_bB, v_bC], Edge(v_aA, v_bB))
-        self.assertItemsEqual(g.get_domain('a'), set([v_aA, v_aB]))
-        self.assertItemsEqual(g.get_domain('b'), set([v_bA, v_bB, v_bC]))
+        self.assertItemsEqual(g.get_domain('a'), [v_aA, v_aB])
+        self.assertItemsEqual(g.get_domain('b'), [v_bA, v_bB, v_bC])
 
 
     def test_get_domain_tuple(self):
@@ -66,9 +67,9 @@ class TestGraphBasicProperties(TestCase):
         v_cA = Vertex('A', None, (1,1))
         v_cB = Vertex('B', None, (1,1))
         g = Graph([v_aA, v_aB, v_bA, v_cA, v_cB], Edge(v_aA, v_bA))
-        self.assertItemsEqual(g.get_domain((0,1)), set([v_aA, v_aB]))
-        self.assertItemsEqual(g.get_domain((0,2)), set([v_bA]))
-        self.assertItemsEqual(g.get_domain((1,1)), set([v_cA, v_cB]))
+        self.assertItemsEqual(g.get_domain((0,1)), [v_aA, v_aB])
+        self.assertItemsEqual(g.get_domain((0,2)), [v_bA])
+        self.assertItemsEqual(g.get_domain((1,1)), [v_cA, v_cB])
 
 
     def test_calculated_neighborhood(self):

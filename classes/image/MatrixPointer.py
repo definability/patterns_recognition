@@ -1,3 +1,9 @@
+try:
+    range = xrange
+except NameError:
+    pass
+
+
 class MatrixPointer:
 
 
@@ -75,7 +81,7 @@ class MatrixPointer:
 
     def __get_generator(self):
         return (e
-            for y in xrange(self.__offset[1], self.__offset[1]+self.__size[1])
+            for y in range(self.__offset[1], self.__offset[1]+self.__size[1])
             for e in self.__data[self.__original_size[0]*y+self.__offset[0]:
                      self.__original_size[0]*y+self.__offset[0]+self.__size[0]])
 
@@ -153,11 +159,11 @@ class MatrixPointer:
         if len(matrices) == 1:
             g = matrices[0].get_generator()
             for v in self.get_generator():
-                yield [v, g.next()]
+                yield [v, next(g)]
             raise StopIteration
         generators = [m.get_generator() for m in matrices]
         for v in self.get_generator():
-            yield [v]+[g.next() for g in generators]
+            yield [v]+[next(g) for g in generators]
 
 
     def map(self, f, *matrices):

@@ -1,4 +1,8 @@
 from numpy import array, zeros, ndenumerate, ones
+try:
+    range = xrange
+except NameError:
+    pass
 
 
 class LinearSeparator:
@@ -10,7 +14,7 @@ class LinearSeparator:
         self.__class_to_number = None
         self.__number_to_class = None
         if type(classes) is int:
-            self.__classes = [[] for i in xrange(classes)]
+            self.__classes = [[] for i in range(classes)]
         else:
             self.__classes = [[] for c in classes]
             self.__class_to_number = {}
