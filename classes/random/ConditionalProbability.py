@@ -1,7 +1,10 @@
 from numpy import array, concatenate, unique, histogram, full
 from numpy.random import choice
 from scipy.stats.mstats import mode
-from itertools import izip
+try:
+    from itertools import izip as zip
+except ImportError:
+    pass
 
 
 class ConditionalProbability:
@@ -31,7 +34,7 @@ class ConditionalProbability:
         values.sort()
         hist, _ = histogram(occurences, concatenate((values, [values[-1]])))
 
-        return dict(izip(values, hist/hist.sum().astype('float')))
+        return dict(zip(values, hist/hist.sum().astype('float')))
 
 
     def get_random(self, i, values=None, exclude=None, default=None):
