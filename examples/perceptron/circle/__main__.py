@@ -67,8 +67,8 @@ def animate(i):
         'y': -a[2]/(2 * a[3]),
     }
     prediction['r'] = abs(a[0]/a[3] - prediction['x']**2 - prediction['y']**2)**.5
-    print 'Calculated: x0={}, y0={}, R={}'.format(prediction['x'], prediction['y'], prediction['r'])
-    print 'Real: x0={}, y0={}, R={}'.format(x0, y0, R)
+    #pring 'Calculated: x0={}, y0={}, R={}'.format(prediction['x'], prediction['y'], prediction['r'])
+    #pring 'Real: x0={}, y0={}, R={}'.format(x0, y0, R)
     calculated.center = (prediction['x'], prediction['y'])
     calculated.radius = prediction['r']
 

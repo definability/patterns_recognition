@@ -1,8 +1,8 @@
 from matplotlib import pyplot as plt
 from matplotlib import animation
 
-from curves_management import *
-from perceptron_management import *
+from .curves_management import *
+from .perceptron_management import *
 
 def get_canvas(xlim, ylim):
     fig = plt.figure()

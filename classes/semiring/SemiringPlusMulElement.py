@@ -1,6 +1,6 @@
 from copy import copy
 
-from SemiringElement import SemiringElement
+from .SemiringElement import SemiringElement
 
 
 class SemiringPlusMulElement(SemiringElement):

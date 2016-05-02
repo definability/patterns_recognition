@@ -1,10 +1,19 @@
 # https://github.com/char-lie/patterns_recognition
 language: python
-python: 2.7
+python:
+  - "2.7"
+  - "3.3"
+  - "3.4"
+  - "3.5"
 before_install:
-  - sudo apt-get install -y python-numpy
+  - sh install-conda.sh
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - conda update --yes conda
 install:
-  - pip install coveralls
+  - export CONDA_PACKAGES="numpy scipy matplotlib"
+  - conda create --yes -n testenv python=$TRAVIS_PYTHON_VERSION $CONDA_PACKAGES
+  - source activate testenv
+  - pip install -U -r requirements.txt
 script: coverage run --source=classes -m tests
 after_success: coveralls
 

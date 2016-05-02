@@ -102,8 +102,8 @@ def process_perceptron_output(previous_data):
         return previous_data
     if previous_data == data:
         return previous_data
-    print 'Calculated: a={}, b={}, angle={}'.format(*data)
-    print 'Real: a={}, b={}, angle={}'.format(a, b, angle)
+    #pring 'Calculated: a={}, b={}, angle={}'.format(*data)
+    #pring 'Real: a={}, b={}, angle={}'.format(a, b, angle)
     calculated.center = (X0, Y0)
     calculated.width = 2 * data[0]
     calculated.height = 2 * data[1]
@@ -115,7 +115,7 @@ def correct_posive_definite():
         wrong = get_wrong_vector(perceptron.alpha)
         check = Y2X_eigenvector(wrong[0], wrong[1])
         perceptron.setup(right=[check])
-        print 'Corrected positive definite'
+        #pring 'Corrected positive definite'
 
 perceptron_output = {
     'data': (0, 0, 0)
