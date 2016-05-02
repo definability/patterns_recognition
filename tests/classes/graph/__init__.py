@@ -1,4 +1,4 @@
-from GraphBasicProperties import TestGraphBasicProperties
+from .GraphBasicProperties import TestGraphBasicProperties
 
 test_cases = [TestGraphBasicProperties]
 

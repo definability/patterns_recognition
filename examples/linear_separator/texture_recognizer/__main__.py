@@ -9,6 +9,10 @@ from neighbourhood import neighbourhoods
 
 from cProfile import Profile
 from pstats import Stats
+try:
+    range = xrange
+except NameError:
+    pass
 
 
 def process_colors(pixel, colors, colors_dictionary=None):
@@ -50,16 +54,16 @@ if __name__ == '__main__':
 
     colors_dictionary = dict()
     count = 0
-    for x in xrange(height):
-        for y in xrange(width):
+    for x in range(height):
+        for y in range(width):
             cur = process_colors(data[x*width+y], colors)
             if cur not in colors_dictionary:
                 colors_dictionary[cur] = count
                 count += 1
 
     texture = Texture(len(cur_neighbourhood), len(colors_dictionary), textures)
-    for x in xrange(border, height-border-1):
-        for y in xrange(border, width-border-1):
+    for x in range(border, height-border-1):
+        for y in range(border, width-border-1):
             cur = process_colors(data[x*width+y], colors, colors_dictionary)
 
             params = {}
@@ -93,9 +97,9 @@ if __name__ == '__main__':
 
     profile = Profile()
     profile.enable()
-    for x in xrange(test_height):
+    for x in range(test_height):
         row = []
-        for y in xrange(test_width):
+        for y in range(test_width):
             cur = process_colors(data[x*test_width+y], colors,
                                  colors_dictionary)
 
