@@ -1,4 +1,4 @@
-from SemiringBasicProperties import TestSemiringBasicProperties
+from .SemiringBasicProperties import TestSemiringBasicProperties
 
 test_cases = [TestSemiringBasicProperties]
 

@@ -74,7 +74,7 @@ def build_problem(main_img, patterns_imgs, Semiring=SemiringArgminPlusElement):
     Stats(profile).sort_stats('time').print_stats()
     vertices['start'] = [start]
     vertices['end'] = [end]
-    if vertices.has_key(image.get_size()[0]):
+    if image.get_size()[0] in vertices:
         edges = edges.union(Edge(v, end, Semiring.get_unity())
                             for v in vertices[image.get_size()[0]])
 

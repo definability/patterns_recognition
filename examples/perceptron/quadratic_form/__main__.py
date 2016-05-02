@@ -7,6 +7,10 @@ from matplotlib import pyplot as plt
 from matplotlib import animation
 
 from classes.solver import Perceptron
+try:
+    range = xrange
+except NameError:
+    pass
 
 
 LEFT_X = -2
@@ -34,7 +38,7 @@ outside_y_points = []
 A = random_matrix(POLY_ORDER*2, POLY_ORDER*2) - .5
 
 def get_poly(x):
-    return ([1] + [x**i for i in xrange(1, POLY_ORDER)])[::-1]
+    return ([1] + [x**i for i in range(1, POLY_ORDER)])[::-1]
 
 def get_vector(x, y):
     return array(get_poly(x) + get_poly(y))
@@ -88,10 +92,10 @@ def process_perceptron_output(previous_data):
         return previous_data
     if previous_data == data:
         return previous_data
-    print 'Calculated data={}'.format(data)
-    print 'Real data={}'.format(A)
-    #print 'Calculated: a={}, b={}, angle={}'.format(*data)
-    #print 'Real: a={}, b={}, angle={}'.format(a, b, angle)
+    #pring 'Calculated data={}'.format(data)
+    #pring 'Real data={}'.format(A)
+    ##pring 'Calculated: a={}, b={}, angle={}'.format(*data)
+    ##pring 'Real: a={}, b={}, angle={}'.format(a, b, angle)
     #calculated.center = (X0, Y0)
     #calculated.width = 2 * data[0]
     #calculated.height = 2 * data[1]

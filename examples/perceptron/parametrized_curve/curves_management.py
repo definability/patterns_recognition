@@ -1,7 +1,11 @@
 from numpy import array, ones
 
-from utils import *
-from matrices_management import get_product_matrix
+from .utils import *
+from .matrices_management import get_product_matrix
+try:
+    range = xrange
+except NameError:
+    pass
 
 
 def get_poly(x, order):
@@ -9,7 +13,7 @@ def get_poly(x, order):
         return [1]
     elif order == 2:
         return [x, 1]
-    return ([1] + [x**i for i in xrange(1, order)])[::-1]
+    return ([1] + [x**i for i in range(1, order)])[::-1]
 
 
 def get_vector(x, y, order):
