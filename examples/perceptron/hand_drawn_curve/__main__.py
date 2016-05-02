@@ -4,9 +4,9 @@ from numpy import array, linspace, ones
 from numpy.random import rand as random_matrix
 
 from classes.solver import Perceptron
-from draw import run_animation
-from matrices_management import *
-from CurveExample import CurveExample
+from .draw import run_animation
+from .matrices_management import *
+from .CurveExample import CurveExample
 
 SCALE = 1
 
@@ -48,7 +48,7 @@ if __name__ == '__main__':
     #while not is_positive_definite(A):
     #    A = get_product_matrix(random_matrix(order*2, order*2) - .5)
     A = get_product_matrix(random_matrix(order*2, order*2) - .5)
-    print 'Parameters:', A
+    #pring 'Parameters:', A
 
     perceptron = Perceptron((order*2)**2)
 

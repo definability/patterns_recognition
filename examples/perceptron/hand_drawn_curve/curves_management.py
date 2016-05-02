@@ -1,7 +1,7 @@
 from numpy import array, ones
 
-from utils import *
-from matrices_management import get_product_matrix
+from .utils import *
+from .matrices_management import get_product_matrix
 try:
     range = xrange
 except NameError:

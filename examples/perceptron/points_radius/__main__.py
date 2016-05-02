@@ -76,8 +76,8 @@ def animate(i):
     corrected = False
     while need_correction:
         alpha = perceptron.alpha
-        points = zip(inside_x_points, inside_y_points) + \
-                 zip(outside_x_points, outside_y_points)
+        points = list(zip(inside_x_points, inside_y_points)) + \
+                 list(zip(outside_x_points, outside_y_points))
         correction = get_correction_point(alpha, R, points)
         if correction is None:
             need_correction = False
@@ -92,14 +92,14 @@ def animate(i):
             inside_corrections.set_data(inside_x_points_corrections,
                                         inside_y_points_corrections)
             perceptron.setup(left=[Y2X(new_x, new_y)])
-            print 'Corrected left', correction[1:]
+            #pring 'Corrected left', correction[1:]
         if new_x * a + new_y * b + c > 0:
             outside_x_points_corrections.append(new_x)
             outside_y_points_corrections.append(new_y)
             outside_corrections.set_data(outside_x_points_corrections,
                                          outside_y_points_corrections)
             perceptron.setup(right=[Y2X(new_x, new_y)])
-            print 'Corrected right', correction[1:]
+            #pring 'Corrected right', correction[1:]
         corrected = True
 
     if not corrected:
@@ -127,8 +127,8 @@ def animate(i):
         'a': alpha[1]/a_k,
         'b': alpha[2]/a_k
     }
-    #print 'Calculated: a={}, b={}, c={}'.format(prediction['a'], prediction['b'], prediction['c'])
-    #print 'Real: a={}, b={}, c={}'.format(a, b, c)
+    ##pring 'Calculated: a={}, b={}, c={}'.format(prediction['a'], prediction['b'], prediction['c'])
+    ##pring 'Real: a={}, b={}, c={}'.format(a, b, c)
     try:
         y = get_y(prediction['a'], prediction['b'], prediction['c'], X)
     except:
