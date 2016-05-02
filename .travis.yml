@@ -10,7 +10,8 @@ before_install:
   - export PATH="$HOME/miniconda/bin:$PATH"
   - conda update --yes conda
 install:
-  - conda create --yes -n testenv python=$TRAVIS_PYTHON_VERSION numpy scipy
+  - export CONDA_PACKAGES="numpy scipy matplotlib"
+  - conda create --yes -n testenv python=$TRAVIS_PYTHON_VERSION $CONDA_PACKAGES
   - source activate testenv
   - pip install -U -r requirements.txt
 script: coverage run --source=classes -m tests
