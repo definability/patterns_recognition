@@ -1,13 +1,16 @@
 from sys import argv, float_info
+from os.path import join as pjoin, dirname
 from math import log
+import logging
 
-from get_characters import get_characters
-from generate_message import generate_message
-from draw_message import draw_message
-from generate_noise import generate_noise
-from build_problem import build_problem
 from classes.image import *
 from classes.semiring import *
+
+from .get_characters import get_characters
+from .generate_message import generate_message
+from .draw_message import draw_message
+from .generate_noise import generate_noise
+from .build_problem import build_problem
 
 from PIL import Image, ImageDraw
 
@@ -39,9 +42,11 @@ def get_penalty(image, pattern, probability):
 
 if __name__ == '__main__':
 
+    logging.basicConfig(level=logging.DEBUG)
+
     count = int(argv[1])
-    letters = map(lambda x: x[0], argv[2::2])
-    probabilities = map(float, argv[3::2])
+    letters = list(map(lambda x: x[0], argv[2::2]))
+    probabilities = list(map(float, argv[3::2]))
 
     if [p for p in probabilities if p < 0]:
         raise ValueError('Probabilities can not be negative')
@@ -69,26 +74,26 @@ if __name__ == '__main__':
         gc_characters[c] = characters[c].convert('L')
 
     image = image.convert('L')
-    print 'Get vertices and edges'
+    logging.debug('Get vertices and edges')
 
     problem = build_problem(image, gc_characters)
-    print 'Solve'
+    logging.info('Solve')
     solution = problem.solve(SemiringArgminPlusElement)
-    print '"'+''.join(solution.value[1])+'"'
+    logging.info('"'+''.join(solution.value[1])+'"')
     mp_img = MatrixPointer(list(image.getdata()), (image.size[0], image.size[1]))
     diff = mp_img.reduce(lambda accumulator, x, y: accumulator + (x - y)**2, 0, mp_orig) - solution.value[0]
-    print 'Solution is better than original on', diff, '(negative number is bad)'
+    logging.info('Solution is better than original on {} (negative number is bad)'.format(diff))
 
     #recognizer = Recognizer(image, characters, dict(zip(letters, probabilities)))
 
     #domains, result = recognizer.calculate(lambda x, y: min(x, y), lambda x, y: x+y, float('inf'), 0, get_penalty)
     #recognized = recognizer.find_path(domains)
 
-    #print 'ORIGINAL'
-    #print ''.join(message)
-    #print 'Simple'
-    #print ''.join([('' if m == r else bcolors.FAIL) + r + bcolors.ENDC for m, r in zip(message, recognized)])
-    #print 1.0*sum([1 for r, m in zip(recognized, message) if r != m])/count
+    #logging.info('ORIGINAL')
+    #logging.info(''.join(message))
+    #logging.info('Simple')
+    #logging.info(''.join([('' if m == r else bcolors.FAIL) + r + bcolors.ENDC for m, r in zip(message, recognized)]))
+    #logging.info(1.0*sum([1 for r, m in zip(recognized, message) if r != m])/count)
 
-    image.save('out.png')
+    image.save(pjoin(dirname(__file__), 'out.png'))
 
