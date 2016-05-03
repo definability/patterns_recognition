@@ -1,4 +1,4 @@
-from numpy import array, concatenate, unique, histogram, full
+from numpy import array, vstack, unique, histogram, full
 from numpy.random import choice
 from scipy.stats.mstats import mode
 try:
@@ -22,7 +22,7 @@ class ConditionalProbability:
         if self.__sample is None:
             self.__sample = array(sample)
         else:
-            self.__sample = concatenate((self.__sample, sample))
+            self.__sample = vstack((self.__sample, sample))
 
 
     def get_probabilities(self, i, values=None, exclude=None):
