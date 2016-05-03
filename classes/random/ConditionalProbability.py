@@ -12,6 +12,7 @@ class ConditionalProbability:
 
     def __init__(self):
         self.__sample = None
+        self.__modes = {}
 
 
     def add_sample(self, sample):
@@ -65,6 +66,8 @@ class ConditionalProbability:
 
 
     def get_mode(self, i):
-        occurences = self.__sample[:,i]
-        return mode(occurences)[0][0]
+        if i not in self.__modes:
+            occurences = self.__sample[:,i]
+            self.__modes[i] = mode(occurences)[0][0]
+        return self.__modes[i]
 
