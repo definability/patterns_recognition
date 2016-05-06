@@ -23,6 +23,6 @@ class Texture:
             self.__sampler.add_sample(s, k)
 
 
-    def generate(self, mask):
-        return self.__sampler.generate(mask)
+    def generate(self, mask, neighbor_getters=None, iterations=0):
+        return self.__sampler.generate(mask, neighbor_getters, iterations)
 
