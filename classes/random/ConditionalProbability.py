@@ -51,7 +51,7 @@ class ConditionalProbability:
         if exclude is None:
             exclude = [i]
         else:
-            exclude.append([i])
+            exclude.append(i)
 
         masked_sample = None
         if values is not None:
