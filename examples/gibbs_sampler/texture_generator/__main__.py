@@ -97,7 +97,7 @@ if __name__ == '__main__':
 
     profile = Profile()
     profile.enable()
-    field = texture.generate(results)
+    field = texture.generate(results, neighbourhoods[neighbourhood_class], 0)
     profile.disable()
     Stats(profile).sort_stats('time').print_stats()
 
@@ -113,7 +113,7 @@ if __name__ == '__main__':
             result.append((get_c(v, 3), get_c(v, 2), get_c(v, 1)))
     profile.disable()
     Stats(profile).sort_stats('time').print_stats()
-    
+
     result_image = Image.new('RGB', test_image.size)
     result_image.putdata(result)
     result_image.save(pjoin(dirname(__file__), result_name))
