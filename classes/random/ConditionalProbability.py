@@ -55,14 +55,18 @@ class ConditionalProbability:
 
         masked_sample = None
         if values is not None:
-            mask = full(self.__sample.shape[1], True, dtype=bool)
-            mask[exclude] = False
-            indices = (self.__sample[:,mask] == values).all(axis=1)
-            masked_sample = self.__sample[indices]
+            masked_sample = self.__process_masked_sample(exclude, values)
         else:
             masked_sample = self.__sample
 
         return masked_sample if masked_sample.size > 0 else None
+
+
+    def __process_masked_sample(self, exclude, values):
+        mask = array([True] * self.__sample.shape[1])
+        mask[exclude] = False
+        indices = (self.__sample[:,mask] == values).all(axis=1)
+        return self.__sample[indices]
 
 
     def get_mode(self, i):
