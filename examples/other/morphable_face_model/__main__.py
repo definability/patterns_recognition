@@ -13,7 +13,7 @@ from pstats import Stats
 model = load_model()
 
 redraw = True
-light = True
+light = False
 while True:
     profile = Profile()
     profile.enable()
